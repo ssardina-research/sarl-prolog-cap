@@ -1,0 +1,133 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>rmit.agtgrp.sarl</groupId>
+	<artifactId>sarl-prolog-cap</artifactId>
+	<version>1.0.${env.SARL_VERSION}</version>
+    <properties>
+        <!-- SARL framework version and configuration -->
+        <sarl.version>${env.SARL_VERSION}</sarl.version>
+
+        <!-- Janus project version -->
+        <janus.version>2.${sarl.version}</janus.version>
+
+        <!-- Java compiler version to be used -->
+        <compiler.level>1.8</compiler.level>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- Mochalog framework version -->
+        <mochalog.version>ffe16e8</mochalog.version>
+        <!-- <mochalog.version>f03a9d1</mochalog.version> -->
+    </properties>
+    
+
+    <dependencies>
+        <!-- Janus Project kernel (contains SARL language core) -->
+        <dependency>
+            <groupId>io.janusproject</groupId>
+            <artifactId>io.janusproject.kernel</artifactId>
+            <version>${janus.version}</version>
+        </dependency>
+
+        <!--  Mochalog interface for SWI-Prolog -->
+        <dependency>
+            <groupId>com.github.ssardina</groupId>
+            <artifactId>mochalog</artifactId>
+            <version>${mochalog.version}</version>
+        </dependency>
+        
+		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
+		<dependency>
+		    <groupId>org.apache.commons</groupId>
+		    <artifactId>commons-lang3</artifactId>
+		    <version>3.7</version>
+		</dependency>
+        
+        
+        
+    </dependencies>
+
+	<repositories>
+        <!-- Janus Project kernel (contains SARL language core) -->
+	  <repository>
+	    <id>io.sarl-maven</id>
+	    <name>SARL Snapshots</name>
+	    <url>http://maven.sarl.io/</url>
+	  </repository>
+	  
+        <!-- JitPack used for remote installation of dependencies from Github and Bitbucket -->
+        <repository>
+            <id>jitpack.io</id>
+            <name>JitPack Repository</name>
+            <url>https://jitpack.io</url>
+        </repository>
+	</repositories>
+	
+	
+	<pluginRepositories>
+	  <pluginRepository>
+	    <id>io.sarl-maven</id>
+	    <name>SARL Snapshots</name>
+	    <url>http://maven.sarl.io/</url>
+	    <snapshots>
+	      <enabled>true</enabled>
+	    </snapshots>
+	  </pluginRepository>
+	</pluginRepositories>
+
+
+    <!-- Build pipeline plugins -->
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>io.sarl.maven</groupId>
+                <artifactId>sarl-maven-plugin</artifactId>
+                <version>${sarl.version}</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <source>${compiler.level}</source>
+                    <target>${compiler.level}</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+            </plugin>
+        
+		    <plugin>
+		    <artifactId>maven-assembly-plugin</artifactId>
+		    <configuration>
+		        <archive>
+		            <manifest>
+		                <addClasspath>true</addClasspath>
+		                <!-- <mainClass>io.janusproject.Boot</mainClass> -->
+		                <mainClass>au.edu.rmit.agtgrp.elevatorsim.sarlctrl.controllers.bootElevatorCtrl</mainClass>
+		            </manifest>
+		        </archive>
+		        <descriptorRefs>
+		            <descriptorRef>jar-with-dependencies</descriptorRef>
+		        </descriptorRefs>
+		    </configuration>
+		    <executions>
+		        <execution>
+		            <id>make-my-jar-with-dependencies</id>
+		            <phase>package</phase>
+		            <goals>
+		                <goal>single</goal>
+		            </goals>
+		        </execution>
+		    </executions>
+		    </plugin>
+
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>io.janusproject.Boot</mainClass>
+                </configuration>
+            </plugin>
+
+
+		</plugins>
+        
+    </build>
+
+
+</project>

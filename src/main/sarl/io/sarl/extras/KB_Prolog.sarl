@@ -1,0 +1,114 @@
+/** 
+ * Prolog knowledge base Capacity/Skill for SARL
+ * 
+ * Copyright (C) 2018 Sebastian Sardina (ssardina@gmail.com).
+
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package io.sarl.extras
+
+import java.nio.file.Paths
+
+import io.mochalog.bridge.prolog.PrologContext
+import io.mochalog.bridge.prolog.SandboxedPrologContext
+import io.mochalog.bridge.prolog.query.Query
+
+import org.jpl7.Term
+
+import java.util.Map
+import java.util.HashMap
+
+/** 
+ * @author Sebastian Sardina (ssardina@gmail.com)
+ * 
+ */
+capacity KB_Prolog {
+	def consult_file(file : String)
+	def dump_kb() 
+	def dump_kb(id : String)
+	def get_prolog_engine()	: Object
+	def get_kb_name() : String
+	def assertFirst(queryS : String, params : Object*)
+	def buildQuery(queryS : String, params : Object*)
+	def askOnce(queryS : String, outVars : String[], params : Object*) : Map<String, Term>
+
+}
+
+
+
+
+
+
+
+skill SWI_KB_Prolog implements KB_Prolog  {
+	protected val kb_name : String
+	val prolog : PrologContext // Interface to SWI-Prolog interpreter
+	var swi_file : String
+	
+	new(name : String) {
+		super() // Call the super's constructor
+		kb_name = name
+		prolog = new SandboxedPrologContext(this.kb_name)
+	}
+
+	def consult_file(file : String) {
+		swi_file = file
+		
+        // Load agent knowledge base
+		prolog.importFile(Paths.get(file))
+	}
+
+	def dump_kb() {
+		dump_kb(kb_name)
+	}
+
+	
+	def dump_kb(id : String) {
+		prolog.askForSolution(Query.format("save_db(@S)", id))
+	}
+	
+	def get_kb_name() {
+		return kb_name
+	}
+
+	def get_prolog_engine() : PrologContext {
+		return prolog
+	}
+
+	def assertFirst(queryS : String, params : Object*) {
+		prolog.assertFirst(queryS, params)		
+	}
+
+	def buildQuery(queryS : String, params : Object*) {
+		val query = Query.format(queryS, params)
+	}
+	
+	def askOnce(queryS : String, outVars : String[], params : Object*) : Map<String, Term> {
+		val query = Query.format(queryS, params)
+		val solutionCollector = prolog.ask(query)
+		
+		var out : HashMap<String, Term>  = new HashMap()
+		if (solutionCollector.hasSolutions) {
+			for(outVar : outVars) {
+				out.put(outVar, solutionCollector.fetchFirstSolution.get(outVar))
+			}
+			return out			
+		} else {
+			return null
+		}
+	}
+
+
+
+}
