@@ -34,6 +34,10 @@ import java.util.HashMap
  * 
  */
 capacity KB_Prolog {
+	
+	/*
+	 * Consult file into Prolog engine
+	 */
 	def consult_file(file : String)
 	def dump_kb() 
 	def dump_kb(id : String)
