@@ -89,6 +89,7 @@ To use this capacity/skill:
 					
 					....
 				}
+
 3. Your application will use skill *S* (for domain capacity *C*):
 
 				import au.edu.rmit.agtgrp.elevatorsim.sarlctrl.beliefs.KB_Elevator
