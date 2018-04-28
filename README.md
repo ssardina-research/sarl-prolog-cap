@@ -89,51 +89,50 @@ To use this capacity/skill:
 					
 					....
 				}
-3. Your application will use skill *S* (for domain capacity *C*$):
+3. Your application will use skill *S* (for domain capacity *C*):
 
-
-		import au.edu.rmit.agtgrp.elevatorsim.sarlctrl.beliefs.KB_Elevator
-		import au.edu.rmit.agtgrp.elevatorsim.sarlctrl.beliefs.SWI_KB_Elevator
-		
-		// http://gangmax.me/blog/2017/10/10/how-to-return-multiple-values-from-a-java-method/
-		import org.apache.commons.lang3.tuple.Pair
-
-		setSkill(new SWI_KB_Elevator(0, "agent23"))
-
-		// Load agent knowledge base
-		kb_load("src/main/prolog/sweeper_elevator_agent.pl")
-		reportMessage("I have loaded the SWI KB successfully!")		
-
-
-		on CarRequestPercept 
-		{
-			reportPersonRequestedService(occurrence.floor, occurrence.direction)
+			import au.edu.rmit.agtgrp.elevatorsim.sarlctrl.beliefs.KB_Elevator
+			import au.edu.rmit.agtgrp.elevatorsim.sarlctrl.beliefs.SWI_KB_Elevator
 			
-			// Add car request to our beliefs
-			kb_registerCarRequest(occurrence.floor, occurrence.direction.name);
-			
-			kb_dump()
-		}
-
-		/**
-		 * Handle the most preferable next request as soon as
-		 * it is available. Preference is defined by our beliefs.
-		 */
-		private def performNextJob
-		{
-			// Begin polling for new jobs asynchronously
-			execute [
-				val job : Pair<Integer, Direction> = kb_getNextJob()
-				val destination : int = job.left
-				val direction : Direction = job.right
-				
-				reportTravellingTo(carID, destination, direction)
+			// http://gangmax.me/blog/2017/10/10/how-to-return-multiple-values-from-a-java-method/
+			import org.apache.commons.lang3.tuple.Pair
 	
-				// Send car to destination by communicating it to Boss (and everyone else)
-				var sendCar = new SendCarAction(carID, destination, direction)
-				emit(sendCar) // Notify the SweeperBossAgent
-			]
-		}
+			setSkill(new SWI_KB_Elevator(0, "agent23"))
+	
+			// Load agent knowledge base
+			kb_load("src/main/prolog/sweeper_elevator_agent.pl")
+			reportMessage("I have loaded the SWI KB successfully!")		
+	
+	
+			on CarRequestPercept 
+			{
+				reportPersonRequestedService(occurrence.floor, occurrence.direction)
+				
+				// Add car request to our beliefs
+				kb_registerCarRequest(occurrence.floor, occurrence.direction.name);
+				
+				kb_dump()
+			}
+	
+			/**
+			 * Handle the most preferable next request as soon as
+			 * it is available. Preference is defined by our beliefs.
+			 */
+			private def performNextJob
+			{
+				// Begin polling for new jobs asynchronously
+				execute [
+					val job : Pair<Integer, Direction> = kb_getNextJob()
+					val destination : int = job.left
+					val direction : Direction = job.right
+					
+					reportTravellingTo(carID, destination, direction)
+		
+					// Send car to destination by communicating it to Boss (and everyone else)
+					var sendCar = new SendCarAction(carID, destination, direction)
+					emit(sendCar) // Notify the SweeperBossAgent
+				]
+			}
 
 
 ## PROJECT CONTRIBUTORS 
