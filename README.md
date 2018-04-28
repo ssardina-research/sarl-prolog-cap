@@ -4,6 +4,8 @@ This project provides a Prolog knowledge base capacity for SARL agents and one s
 
 The capacity/skill can be used as belief representation.
 
+This package can be obtained via Maven using JitPack: https://jitpack.io/#org.bitbucket.ssardina-research/sarl-prolog-cap
+
 
 ## PRE-REQUISITES
 
@@ -134,6 +136,23 @@ To use this capacity/skill:
 						emit(sendCar) // Notify the SweeperBossAgent
 					]
 				}
+
+
+To add the dependency to this capacity in your SARL application, you can use Maven using JitPack: https://jitpack.io/#org.bitbucket.ssardina-research/sarl-prolog-cap, by adding this dependency and repository in to your `pom.xml`:
+
+        <!--  SARL PROLOG CAPACITY -->
+        <dependency>
+            <groupId>org.bitbucket.ssardina-research</groupId>
+            <artifactId>sarl-prolog-cap</artifactId>
+            <version>-SNAPSHOT</version>
+        </dependency>
+
+        <!-- JitPack used for remote installation of dependencies from Github and Bitbucket -->
+        <repository>
+            <id>jitpack.io</id>
+            <name>JitPack Repository</name>
+            <url>https://jitpack.io</url>
+        </repository>
 
 
 
