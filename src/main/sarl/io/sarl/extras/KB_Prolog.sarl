@@ -40,21 +40,47 @@ import io.mochalog.bridge.prolog.query.QuerySolutionList
 capacity KB_Prolog {
 	
 	/*
-	 * Consult file into Prolog engine
+	 * Consult a into the Prolog engine
+	 * 
+	 * @param file the file to be consulted
 	 */
 	def consult_file(file : String)
-	def dump_kb() 
+	/*
+	 * Dump the current KB to file
+	 */
+	def dump_kb()
+	/*
+	 * Dump the current KB to file and use id in file name
+	 * 
+	 * @param id to add to filename
+	 */ 
 	def dump_kb(id : String)
+	/*
+	 * Return the handler for the prolog engine
+	 */
 	def get_prolog_engine()	: Object
+	/*
+	 * Return name of the KB
+	 */
 	def get_kb_name() : String
 
+	/*
+	 * Assert an unformatted query
+	 */
 	def assertFirst(queryS : String, params : Object*)
 
-	def buildQuery(queryS : String, params : Object*)
-
-	def prove(queryS : String) : boolean
+	/* 
+	 * Prove an unformatted query
+	 */
+	def prove(queryS : String, params : Object*) : boolean
+	/*
+	 * Get the first result of an unformatted query as a Map from variable names to terms
+	 */
 	def askOnce(queryS : String, outVars : String[], params : Object*) : Map<String, Term>
-	def askAllSolutions(QueryS : String, params : Object*) : QuerySolutionList
+	/*
+	 * Get all the answers for an unformatted query
+	 */
+	def askForAllSolutions(QueryS : String, params : Object*) : QuerySolutionList
 
 }
 
@@ -100,12 +126,12 @@ skill SWI_KB_Prolog implements KB_Prolog  {
 		prolog.assertFirst(queryS, params)		
 	}
 
-	def buildQuery(queryS : String, params : Object*) {
-		val query = Query.format(queryS, params)
-	}
+//	def buildQuery(queryS : String, params : Object*) {
+//		val query = Query.format(queryS, params)
+//	}
 
-	def prove(queryS : String) : boolean {
-		return prolog.prove(queryS)
+	def prove(queryS : String, params : Object*) : boolean {
+		return prolog.prove(queryS, params)
 	}
 	
 	def askOnce(queryS : String, outVars : String[], params : Object*) : Map<String, Term> {
@@ -138,7 +164,7 @@ skill SWI_KB_Prolog implements KB_Prolog  {
 //	}
 
 
-	def askAllSolutions(QueryS : String, params : Object*) : QuerySolutionList {
+	def askForAllSolutions(QueryS : String, params : Object*) : QuerySolutionList {
 		return prolog.askForAllSolutions(QueryS, params)
 	}	
 
