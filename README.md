@@ -16,8 +16,8 @@ This package can be obtained via Maven using JitPack: https://jitpack.io/#org.bi
 	* Version tested: 0.6.1, 0.7.2
 	* Obtained via Maven automatically from http://mvnrepository.com/artifact/io.sarl.maven).
 * [SWI Prolog](http://www.swi-prolog.org/) (>7.4.x) with [JPL](http://www.swi-prolog.org/pldoc/doc_for?object=section(%27packages/jpl.html%27)) Bidirectional interface with Java:
-		* This is package `swi-prolog-java` in Linux.
-		* Main Page for JPL: https://jpl7.org/ 
+	* This is package `swi-prolog-java` in Linux.
+	* Main Page for JPL: https://jpl7.org/ 
 * [Mochalog](https://github.com/ssardina/mochalog), a rich bidirectional interface between the Java Runtime and the SWI-Prolog interpreter inspired by JPL.
 	* Obtained via Maven automatically using from [JitPack](https://jitpack.io/#ssardina/mochalog)
 	* If in **Windows**:
