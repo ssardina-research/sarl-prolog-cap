@@ -156,7 +156,7 @@ To add the dependency to this capacity in your SARL application, you can use Mav
 
 
 
-## PROJECT CONTRIBUTORS 
+## CONTACT 
 
 * Sebastian Sardina (ssardina@gmail.com)
 
