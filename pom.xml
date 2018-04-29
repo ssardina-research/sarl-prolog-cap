@@ -1,6 +1,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>rmit.agtgrp.sarl</groupId>
+	<groupId>org.bitbucket.ssardina-research</groupId>
 	<artifactId>sarl-prolog-cap</artifactId>
 	<version>1.0.${env.SARL_VERSION}</version>
     <properties>
@@ -75,8 +75,23 @@
 	</pluginRepositories>
 
 
+
+
+
     <!-- Build pipeline plugins -->
     <build>
+ 			<resources>
+               <resource>
+                    <directory>src/main/sarl</directory>
+                    <filtering>false</filtering>
+                </resource>
+                <resource>
+                    <directory>src/main/java</directory>
+                    <filtering>false</filtering>
+                </resource>
+          </resources>        
+
+
         <plugins>
             <plugin>
                 <groupId>io.sarl.maven</groupId>
@@ -89,45 +104,9 @@
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
-        
-		    <plugin>
-		    <artifactId>maven-assembly-plugin</artifactId>
-		    <configuration>
-		        <archive>
-		            <manifest>
-		                <addClasspath>true</addClasspath>
-		                <!-- <mainClass>io.janusproject.Boot</mainClass> -->
-		                <mainClass>au.edu.rmit.agtgrp.elevatorsim.sarlctrl.controllers.bootElevatorCtrl</mainClass>
-		            </manifest>
-		        </archive>
-		        <descriptorRefs>
-		            <descriptorRef>jar-with-dependencies</descriptorRef>
-		        </descriptorRefs>
-		    </configuration>
-		    <executions>
-		        <execution>
-		            <id>make-my-jar-with-dependencies</id>
-		            <phase>package</phase>
-		            <goals>
-		                <goal>single</goal>
-		            </goals>
-		        </execution>
-		    </executions>
-		    </plugin>
-
-
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <configuration>
-                    <mainClass>io.janusproject.Boot</mainClass>
-                </configuration>
-            </plugin>
-
 
 		</plugins>
-        
-    </build>
 
+    </build>
 
 </project>

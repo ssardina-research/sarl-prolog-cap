@@ -20,14 +20,18 @@ package io.sarl.extras
 
 import java.nio.file.Paths
 
+// MOCHALOG
+// Check https://github.com/ssardina/mochalog/blob/master/subprojects/mochalog-bridge/java-api/src/main/java/io/mochalog/bridge/prolog/PrologContext.java
 import io.mochalog.bridge.prolog.PrologContext
 import io.mochalog.bridge.prolog.SandboxedPrologContext
 import io.mochalog.bridge.prolog.query.Query
+import io.mochalog.bridge.prolog.query.exception.NoSuchSolutionException;
 
 import org.jpl7.Term
 
 import java.util.Map
 import java.util.HashMap
+import io.mochalog.bridge.prolog.query.QuerySolutionList
 
 /** 
  * @author Sebastian Sardina (ssardina@gmail.com)
@@ -43,14 +47,16 @@ capacity KB_Prolog {
 	def dump_kb(id : String)
 	def get_prolog_engine()	: Object
 	def get_kb_name() : String
+
 	def assertFirst(queryS : String, params : Object*)
+
 	def buildQuery(queryS : String, params : Object*)
+
+	def prove(queryS : String) : boolean
 	def askOnce(queryS : String, outVars : String[], params : Object*) : Map<String, Term>
+	def askAllSolutions(QueryS : String, params : Object*) : QuerySolutionList
 
 }
-
-
-
 
 
 
@@ -97,22 +103,44 @@ skill SWI_KB_Prolog implements KB_Prolog  {
 	def buildQuery(queryS : String, params : Object*) {
 		val query = Query.format(queryS, params)
 	}
+
+	def prove(queryS : String) : boolean {
+		return prolog.prove(queryS)
+	}
 	
 	def askOnce(queryS : String, outVars : String[], params : Object*) : Map<String, Term> {
 		val query = Query.format(queryS, params)
-		val solutionCollector = prolog.ask(query)
-		
-		var out : HashMap<String, Term>  = new HashMap()
-		if (solutionCollector.hasSolutions) {
-			for(outVar : outVars) {
-				out.put(outVar, solutionCollector.fetchFirstSolution.get(outVar))
+		try {
+			val solution = prolog.askForSolution(query)
+			var out : HashMap<String, Term> = new HashMap()
+			for (outVar : outVars) {
+				out.put(outVar, solution.get(outVar))
 			}
-			return out			
-		} else {
+			return out
+		} catch (e : NoSuchSolutionException) {
 			return null
-		}
+		} 
 	}
+	
+//	def askOnce(queryS : String, outVars : String[], params : Object*) : Map<String, Term> {
+//		val query = Query.format(queryS, params)
+//		val solutionCollector = prolog.ask(query)
+//		
+//		var out : HashMap<String, Term>  = new HashMap()
+//		if (solutionCollector.hasSolutions) {
+//			for(outVar : outVars) {
+//				out.put(outVar, solutionCollector.fetchFirstSolution.get(outVar))
+//			}
+//			return out			
+//		} else {
+//			return null
+//		}
+//	}
 
+
+	def askAllSolutions(QueryS : String, params : Object*) : QuerySolutionList {
+		return prolog.askForAllSolutions(QueryS, params)
+	}	
 
 
 }
