@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.bitbucket.ssardina-research</groupId>
 	<artifactId>sarl-prolog-cap</artifactId>
-	<version>1.0.${env.SARL_VERSION}</version>
+	<version>1.1.${env.SARL_VERSION}</version>
     <properties>
         <!-- SARL framework version and configuration -->
         <sarl.version>${env.SARL_VERSION}</sarl.version>

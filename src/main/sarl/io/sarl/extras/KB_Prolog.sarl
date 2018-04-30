@@ -69,9 +69,12 @@ capacity KB_Prolog {
 	def get_kb_name() : String
 
 	/*
-	 * Assert an unformatted query
+	 * Assert/retract an unformatted query
 	 */
 	def assertFirst(queryS : String, params : Object*)
+	def assertLast(queryS : String, params : Object*)
+	def retract(queryS : String, params : Object*)
+	def retractAll(queryS : String, params : Object*)
 
 	/* 
 	 * Prove an unformatted query
@@ -122,7 +125,7 @@ skill SWI_KB_Prolog implements KB_Prolog {
 
 	def dump_kb() {
 		dump_kb(kb_name)
-	}
+	} 
 
 	
 	def dump_kb(id : String) {
@@ -153,6 +156,20 @@ skill SWI_KB_Prolog implements KB_Prolog {
 	def assertFirst(queryS : String, params : Object*) {
 		prolog.assertFirst(queryS, params)		
 	}
+
+	def assertLast(queryS : String, params : Object*) {
+		prolog.assertLast(queryS, params)
+	}
+
+	def retract(queryS : String, params : Object*) {
+		prolog.retract(queryS, params)
+	}
+
+	def retractAll(queryS : String, params : Object*) {
+		prolog.retract(queryS, params)
+	}
+
+
 
 	def prove(queryS : String, params : Object*) : boolean {
 		return prolog.prove(queryS, params)
