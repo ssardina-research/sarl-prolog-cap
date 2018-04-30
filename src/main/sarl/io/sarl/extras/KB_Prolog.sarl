@@ -29,12 +29,13 @@ import io.mochalog.bridge.prolog.query.exception.NoSuchSolutionException;
 
 import org.jpl7.Term
 
+import io.mochalog.bridge.prolog.query.collectors.QuerySolutionCollector
+
+import java.util.Collection
 import java.util.Map
 import java.util.HashMap
-import io.mochalog.bridge.prolog.query.QuerySolutionList
-import java.util.Collection
-import io.mochalog.bridge.prolog.query.collectors.QuerySolutionCollector
-import org.eclipse.xtend.lib.annotations.Delegate
+import io.mochalog.bridge.prolog.query.QuerySolution
+import java.util.ArrayList
 
 /** 
  * @author Sebastian Sardina (ssardina@gmail.com)
@@ -81,29 +82,27 @@ capacity KB_Prolog {
 	 */
 	def askOnce(queryS : String, outVars : String[], params : Object*) : Map<String, Term>
 	/*
-	 * Get all the answers for an unformatted query
+	 * Get all the answers for an unformatted query as a COllection of mappings vars --> terms
 	 */
-	def askForAllSolutions(QueryS : String, params : Object*) : QuerySolutionList
+	def askForAllSolutions(QueryS : String, outVars : String[], params : Object*) : Collection<Map<String, Term>>
 
-//	def askAllSolutions(QueryS : String, params : Object*) : Collection<Map<String, Term>>
+	/*
+	 * Open a new query session in Prolog and returns an object with an iterable 
+	 */
+	def ask(queryS : String, outVars : String[], params : Object*) : KB_Solution_Iterator 
 	
 }
 
+interface KB_Solution_Iterator {
+	def hasSolutions : boolean
+
+	def next : Map<String, Term>
+}
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-skill SWI_KB_Prolog implements KB_Prolog  {
+// /////////////////////////////////////////////////////////////////////////////////////////
+// /////////////////////////////////////////////////////////////////////////////////////////
+skill SWI_KB_Prolog implements KB_Prolog {
 	protected val kb_name : String
 	val prolog : PrologContext // Interface to SWI-Prolog interpreter
 	var swi_file : String
@@ -115,7 +114,7 @@ skill SWI_KB_Prolog implements KB_Prolog  {
 	}
 
 	def consult_file(file : String) {
-		swi_file = file
+		this.swi_file = file
 		
         // Load agent knowledge base
 		prolog.importFile(Paths.get(file))
@@ -143,7 +142,7 @@ skill SWI_KB_Prolog implements KB_Prolog  {
 //		prolog.askForSolution(query"save_db(@S)", id)
 }
 	
-	def get_kb_name() {
+	def get_kb_name() : String {
 		return kb_name
 	}
 
@@ -155,10 +154,6 @@ skill SWI_KB_Prolog implements KB_Prolog  {
 		prolog.assertFirst(queryS, params)		
 	}
 
-//	def buildQuery(queryS : String, params : Object*) {
-//		val query = Query.format(queryS, params)
-//	}
-
 	def prove(queryS : String, params : Object*) : boolean {
 		return prolog.prove(queryS, params)
 	}
@@ -167,51 +162,39 @@ skill SWI_KB_Prolog implements KB_Prolog  {
 		val query = Query.format(queryS, params)
 		try {
 			val solution = prolog.askForSolution(query)
-			var out : HashMap<String, Term> = new HashMap()
-			for (outVar : outVars) {
-				out.put(outVar, solution.get(outVar))
-			}
-			return out
+			return fillOutVars(solution, outVars)
 		} catch (e : NoSuchSolutionException) {
 			return null
 		} 
 	}
 	
-//	def askOnce(queryS : String, outVars : String[], params : Object*) : Map<String, Term> {
-//		val query = Query.format(queryS, params)
-//		val solutionCollector = prolog.ask(query)
-//		
-//		var out : HashMap<String, Term>  = new HashMap()
-//		if (solutionCollector.hasSolutions) {
-//			for(outVar : outVars) {
-//				out.put(outVar, solutionCollector.fetchFirstSolution.get(outVar))
-//			}
-//			return out			
-//		} else {
-//			return null
-//		}
-//	}
+	private def fillOutVars(solution : QuerySolution, outVars : String[]) : Map<String, Term> {
+		var out : HashMap<String, Term> = new HashMap()
+		for (outVar : outVars) {
+			out.put(outVar, solution.get(outVar))
+		}
+		return out
+	}
 
-
-	def askForAllSolutions(queryS : String, params : Object*) : QuerySolutionList {
-		return prolog.askForAllSolutions(queryS, params)
+	def askForAllSolutions(queryS : String, outVars : String[], params : Object*) : Collection<Map<String, Term>> {
+		val allSolutions = prolog.askForAllSolutions(queryS, params)
+		
+		val colSolutions : Collection<Map<String, Term>> = new ArrayList()
+		for (solution : allSolutions) {
+			colSolutions.add(fillOutVars(solution, outVars))
+		}
+		return colSolutions
 	}
 
 	def ask(queryS : String, outVars : String[], params : Object*) : KB_Solution_Iterator {
 		 val query = Query.format(queryS, params)
-		 return new KB_Prolog_Solution_Iter(prolog.ask(query), outVars)
+		 return new SWI_KB_Prolog_Solution_Iter(prolog.ask(query), outVars)
 	}	
 
 }
 
 
-interface KB_Solution_Iterator {
-	def hasSolutions : boolean
-	def next : Map<String, Term> 
-}
-
-
-class KB_Prolog_Solution_Iter implements KB_Solution_Iterator  {
+class SWI_KB_Prolog_Solution_Iter implements KB_Solution_Iterator  {
 	
 	 val solutionCollector : QuerySolutionCollector
 	 val outVars : String[]
