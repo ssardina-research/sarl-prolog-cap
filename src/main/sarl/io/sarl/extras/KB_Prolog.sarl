@@ -32,6 +32,9 @@ import org.jpl7.Term
 import java.util.Map
 import java.util.HashMap
 import io.mochalog.bridge.prolog.query.QuerySolutionList
+import java.util.Collection
+import io.mochalog.bridge.prolog.query.collectors.QuerySolutionCollector
+import org.eclipse.xtend.lib.annotations.Delegate
 
 /** 
  * @author Sebastian Sardina (ssardina@gmail.com)
@@ -82,7 +85,20 @@ capacity KB_Prolog {
 	 */
 	def askForAllSolutions(QueryS : String, params : Object*) : QuerySolutionList
 
+//	def askAllSolutions(QueryS : String, params : Object*) : Collection<Map<String, Term>>
+	
 }
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -177,9 +193,46 @@ skill SWI_KB_Prolog implements KB_Prolog  {
 //	}
 
 
-	def askForAllSolutions(QueryS : String, params : Object*) : QuerySolutionList {
-		return prolog.askForAllSolutions(QueryS, params)
+	def askForAllSolutions(queryS : String, params : Object*) : QuerySolutionList {
+		return prolog.askForAllSolutions(queryS, params)
+	}
+
+	def ask(queryS : String, outVars : String[], params : Object*) : KB_Solution_Iterator {
+		 val query = Query.format(queryS, params)
+		 return new KB_Prolog_Solution_Iter(prolog.ask(query), outVars)
 	}	
 
-
 }
+
+
+interface KB_Solution_Iterator {
+	def hasSolutions : boolean
+	def next : Map<String, Term> 
+}
+
+
+class KB_Prolog_Solution_Iter implements KB_Solution_Iterator  {
+	
+	 val solutionCollector : QuerySolutionCollector
+	 val outVars : String[]
+	
+	new(q: QuerySolutionCollector, outVar: String[]){
+		this.solutionCollector = q
+		this.outVars = outVar
+	}
+	
+	def hasSolutions : boolean{
+		this.solutionCollector.hasSolutions
+	}
+	
+	def next : Map<String, Term> {
+		val out : HashMap<String, Term>  = new HashMap()
+		for (outVar : this.outVars) {
+			out.put(outVar, solutionCollector.fetchFirstSolution.get(outVar))
+		 }
+		return out
+	}
+}
+
+
+
