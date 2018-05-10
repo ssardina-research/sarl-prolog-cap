@@ -20,16 +20,23 @@ This package can be obtained via Maven using JitPack: https://jitpack.io/#org.bi
 	* Main Page for JPL: https://jpl7.org/ 
 * [Mochalog](https://github.com/ssardina/mochalog), a rich bidirectional interface between the Java Runtime and the SWI-Prolog interpreter inspired by JPL.
 	* Obtained via Maven automatically using from [JitPack](https://jitpack.io/#ssardina/mochalog)
-	* If in **Windows**:
-		* Ensure that the environment variable `SWI_HOME_DIR` is set to the root directory of your installed version of SWI-Prolog.
-	* If in **Linux**:
-		* Latest package versions at <http://www.swi-prolog.org/build/PPA.txt> 
-		* JPL is provided via package `swi-prolog-java` (interface between Java and SWI) installed. This will include library `libjpl.so` (e.g., `/usr/lib/swi-prolog/lib/amd64/libjpl.so`)
-		* Extend environment library `LD_PRELOAD` for system to pre-load `libswipl.so`:
-			```
-			export LD_PRELOAD=libswipl.so:$LD_PRELOAD 
-			```
-		* Presumably, no need to setup `CLASSPATH` or `SWI_HOME_DIR`.
+* If in **Windows**:
+	* Ensure that the environment variable `SWI_HOME_DIR` is set to the root directory of your installed version of SWI-Prolog.
+	* Presumably, no need to setup `CLASSPATH` or `SWI_HOME_DIR`.
+* If in **Linux**:
+	* Latest SWI versions at <http://www.swi-prolog.org/build/PPA.txt> 
+	* JPL is provided via package `swi-prolog-java` (interface between Java and SWI) installed. This will include library `libjpl.so` (e.g., `/usr/lib/swi-prolog/lib/amd64/libjpl.so`)
+	* Extend environment Variable ` LD_LIBRARY_PATH`  to where ` libjpl.so`:
+		```
+		export LD_LIBRARY_PATH=/usr/lib/swi-prolog/lib/amd64/
+		```
+	* Extend environment library `LD_PRELOAD` for system to pre-load `libswipl.so`:
+		```
+		export LD_PRELOAD=libswipl.so:$LD_PRELOAD 
+		```
+
+* If using RUN AS configuration in ECLIPSE, remember to set up the following environment variables (and check "Append environment to native environment").
+
 
 
 ## CAPACITY *KB_PROLOG*
