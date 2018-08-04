@@ -3,6 +3,30 @@
 	<groupId>org.bitbucket.ssardina-research</groupId>
 	<artifactId>sarl-prolog-cap</artifactId>
 	<version>1.1.${env.SARL_VERSION}</version>
+
+    <name>SARL Capacity for SWI Prolog Connectivity</name>
+    <url>https://bitbucket.org/ssardina-research/sarl-prolog-cap</url>
+    <description>
+    	Capacities and Skills for SARL to connect to SWI Prolog system.
+		Relies on Mochalog (https://github.com/ssardina/mochalog)
+	</description>
+
+  	<developers>
+    	<developer>
+	      <name>Sebastian Sardina</name>
+	      <email>ssardina@gmail.com</email>
+	      <organization>ssardina-research</organization>
+	      <organizationUrl>https://bitbucket.org/ssardina-research/</organizationUrl>
+	    </developer>
+  	</developers>
+
+  	<licenses>
+	    <license>
+	      <name>GNU General Public License, Version 3.0</name>
+	      <url>https://www.gnu.org/licenses/gpl-3.0.en.html</url>
+	    </license>
+  	</licenses>
+
     <properties>
         <!-- SARL framework version and configuration -->
         <sarl.version>${env.SARL_VERSION}</sarl.version>
