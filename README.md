@@ -1,48 +1,55 @@
 # SARL Capacity for Prolog Knowledge Bases
 
-This project provides a Prolog knowledge base capacity for SARL agents and one skill using [SWI Prolog](http://www.swi-prolog.org/).
+This project provides a Prolog knowledge-base capacity for SARL agents and one skill for it using [SWI Prolog](http://www.swi-prolog.org/).
 
-The capacity/skill can be used as belief representation.
+The Prolog capacity/skill can be used as belief representation.
 
 This package can be obtained via Maven using JitPack: https://jitpack.io/#org.bitbucket.ssardina-research/sarl-prolog-cap
 
 
 ## PRE-REQUISITES
 
-* Java Runtime Environment (JRE) and Java Compiler (javac) v1.8 (sun version recommended)
+This capacity/skill depends on two main systems:
+
+* [SWI Prolog](http://www.swi-prolog.org/) (>7.4.x) with [JPL](http://www.swi-prolog.org/pldoc/doc_for?object=section(%27packages/jpl.html%27)) Bidirectional interface with Java:
+	* This is package `swi-prolog-java` in Linux.
+	* In Windows, the Java-SWI interface it can be installed as part of the main install.
+	* Main Page for JPL: https://jpl7.org/ 
+* [Mochalog](https://github.com/ssardina/mochalog), a rich bidirectional interface between the Java Runtime and the SWI-Prolog interpreter inspired by JPL.
+	* Obtained via Maven automatically using from [JitPack](https://jitpack.io/#ssardina/mochalog)
+	*  Check the [Mochalog Wiki](https://github.com/ssardina/mochalog/wiki) to understand how to setup Mochalog in your agent.
+
+Also, depending on the system being used:
+
+* If in **Windows**:
+	* Tested successfully in Windows 7 with SWI 7.6.4.
+	* Make sure SWI is installed with the JPL Java-SWI connectivity.
+	* Define a _system_ environment variable `SWI_HOME_DIR` and set it to the root directory of your installed version of SWI-Prolog (e.g., to `C:\Program Files\swipl`).
+	* Extend `Path` system environment variable with: `...;%SWI_HOME_DIR%\bin;%SWI_HOME_DIR%\lib\jpl.jar`
+	* No changes to `CLASSPATH` are needed.
+* If in **Linux**:
+	* Latest package versions at <http://www.swi-prolog.org/build/PPA.txt> 
+	* JPL is provided via package `swi-prolog-java` (interface between Java and SWI) installed. This will include library `libjpl.so` (e.g., `/usr/lib/swi-prolog/lib/amd64/libjpl.so`)
+	* Extend environment library `LD_PRELOAD` for system to pre-load `libswipl.so`: `export LD_PRELOAD=libswipl.so:$LD_PRELOAD`
+		* Check [this post](https://answers.ros.org/question/132411/unable-to-load-existing-owl-in-semantic-map-editor/) and [this one](https://blog.cryptomilk.org/2014/07/21/what-is-preloading/) about library preloading.
+		* Also, check [this](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=690734) and [this](https://github.com/yuce/pyswip/issues/10) posts.
+	* Extend environment Variable `LD_LIBRARY_PATH`  to point to `libjpl.so`: `export LD_LIBRARY_PATH=/usr/lib/swi-prolog/lib/amd64/`
+	* If using RUN AS configuration in ECLIPSE, remember to set up these two variables `LD_LIBRARY_PATH` and `LD_PRELOAD` too (and check "Append environment to native environment").
+	
+	
+Finally, if one wants to _develop_ this capacity/skill further:
+
+* Java Runtime Environment (JRE) and Java Compiler (javac) v1.8 (Sun version recommended)
 * Maven project management and comprehension tool (to meet dependencies, compile, package, run).
 * SARL modules and execution engine 
 	* Version defined by environment variable `SARL_VERSION`; for example `export SARL_VERSION=0.7.2`
 	* Version tested: 0.6.1, 0.7.2
-	* Obtained via Maven automatically from http://mvnrepository.com/artifact/io.sarl.maven).
-* [SWI Prolog](http://www.swi-prolog.org/) (>7.4.x) with [JPL](http://www.swi-prolog.org/pldoc/doc_for?object=section(%27packages/jpl.html%27)) Bidirectional interface with Java:
-	* This is package `swi-prolog-java` in Linux.
-	* Main Page for JPL: https://jpl7.org/ 
-* [Mochalog](https://github.com/ssardina/mochalog), a rich bidirectional interface between the Java Runtime and the SWI-Prolog interpreter inspired by JPL.
-	* Obtained via Maven automatically using from [JitPack](https://jitpack.io/#ssardina/mochalog)
-* If in **Windows**:
-	* Ensure that the environment variable `SWI_HOME_DIR` is set to the root directory of your installed version of SWI-Prolog.
-	* Presumably, no need to setup `CLASSPATH` or `SWI_HOME_DIR`.
-* If in **Linux**:
-	* Latest SWI versions at <http://www.swi-prolog.org/build/PPA.txt> 
-	* JPL is provided via package `swi-prolog-java` (interface between Java and SWI) installed. This will include library `libjpl.so` (e.g., `/usr/lib/swi-prolog/lib/amd64/libjpl.so`)
-	* Extend environment Variable ` LD_LIBRARY_PATH`  to where ` libjpl.so`:
-		```
-		export LD_LIBRARY_PATH=/usr/lib/swi-prolog/lib/amd64/
-		```
-	* Extend environment library `LD_PRELOAD` for system to pre-load `libswipl.so`:
-		```
-		export LD_PRELOAD=libswipl.so:$LD_PRELOAD 
-		```
-
-* If using RUN AS configuration in ECLIPSE, remember to set up the following environment variables (and check "Append environment to native environment").
+	* Obtained via Maven automatically from http://mvnrepository.com/artifact/io.sarl.maven.
 
 
+## CAPACITY *KB_PROLOG* and SKILL *SWI_KB_Prolog*
 
-## CAPACITY *KB_PROLOG*
-
-
-This capacity provides standard Prolog access:
+This `KB_Prolog` capacity provides the following hooks to Prolog access:
 
 * `consult_file(file : String)`: consult file into Prolog engine.
 * `dump_kb()`: dump the current knowledgebase to a file with timestamp and registered name for kb.
@@ -54,10 +61,8 @@ This capacity provides standard Prolog access:
 * `askOnce(queryS : String, outVars : String[], params : Object*) : Map<String, Term>`: ask a query and get first result.
 
 
-## SKILL *SWI_KB_Prolog*
-
-This implementation of the capacity uses [SWI Prolog](http://www.swi-prolog.org/) and the [Mochalog](https://github.com/ssardina/mochalog) framework.
-
+In terms, the particular skill `SWI_KB_Prolog` uses [SWI Prolog](http://www.swi-prolog.org/) with [JPL](https://jpl7.org/) interface as the Prolog engine, 
+and the [Mochalog](https://github.com/ssardina/mochalog) framework for more high-level access to SWI Prolog via the JPL interface.
 
 Some useful notes:
 
