@@ -107,7 +107,7 @@ Under this approach, the SARL agent will:
 As soon as the agent aquires the skill, a Prolog engine will be created by the skill. Then the agent for example can load a KB by consulting the file: `consult_file('myKB.pl')`.
 3. The lowest level will not even use the Prolog capacity and skill provided here, but will directly access SWI-Prolog via the Mochalog API, for example, by creating a prolog engine in the initialization of agents, etc.
 
-We describe the above strategies with more detail now.
+We describe the above strategies with more detail now. The first two options are preferred as they hide the details of Mochalog, which can be a bit difficult to understand at first glance.
 
 ### 1 - Creating a domain-specific Knowlwedge-base capacity/skill.
 
@@ -163,6 +163,7 @@ We describe the above strategies with more detail now.
 					// Add car request to our beliefs
 					kb_registerCarRequest(occurrence.floor, occurrence.direction.name);
 
+                    // This action comes (is inherited) from KB_Prolog directly
 					kb_dump()
 				}
 
@@ -186,6 +187,28 @@ We describe the above strategies with more detail now.
 					]
 				}
 
+### 2 - Directly using the capacity and skill in agents.
+
+Here, instead of creating a domain capacity and skill for the common Prolog accesses that the application will do (e.g., common queries), we can make the agents
+directly use the `KB_Prolog` capacity. This means that the behaviors of the SARL agent will make the Prolog access directly:
+
+
+				setSkill(new SWI_KB_Prolog("agent23"))
+
+				// Load agent knowledge base
+				consult_file("src/main/prolog/sweeper_elevator_agent.pl")
+				reportMessage("I have loaded the SWI KB successfully!")		
+				
+				on CarRequestPercept 
+				{
+					reportPersonRequestedService(occurrence.floor, occurrence.direction)
+
+					// Add car request to our beliefs
+					assertFirst("open_car_request(@I, @A)", occurrence.floor, occurrence.direction.name)
+
+                    // This action comes (is inherited) from KB_Prolog directly
+					kb_dump()
+				}
 
 
 
