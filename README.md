@@ -36,8 +36,9 @@ Also, depending on the system being used:
 	* Extend environment Variable `LD_LIBRARY_PATH`  to point to `libjpl.so`: `export LD_LIBRARY_PATH=/usr/lib/swi-prolog/lib/amd64/`
 	* If using RUN AS configuration in ECLIPSE, remember to set up these two variables `LD_LIBRARY_PATH` and `LD_PRELOAD` too (and check "Append environment to native environment").
 	
-	
-Finally, if one wants to _develop_ this capacity/skill further:
+### Develop **SARL PROLOG CAP** further
+
+If one wants to _develop_ this capacity/skill further:
 
 * Java Runtime Environment (JRE) and Java Compiler (javac) v1.8 (Sun version recommended)
 * Maven project management and comprehension tool (to meet dependencies, compile, package, run).
@@ -46,8 +47,27 @@ Finally, if one wants to _develop_ this capacity/skill further:
 	* Version tested: 0.6.1, 0.7.2
 	* Obtained via Maven automatically from http://mvnrepository.com/artifact/io.sarl.maven.
 
+### Include **SARL PROLOG CAP** in your SARL application via Maven 
 
-## CAPACITY *KB_PROLOG* and SKILL *SWI_KB_Prolog*
+To add the dependency to this capacity in your SARL application, you can use Maven using JitPack: https://jitpack.io/#org.bitbucket.ssardina-research/sarl-prolog-cap, by adding this dependency and repository in to your `pom.xml`:
+
+        <!--  SARL PROLOG CAPACITY -->
+        <dependency>
+            <groupId>org.bitbucket.ssardina-research</groupId>
+            <artifactId>sarl-prolog-cap</artifactId>
+            <version>-SNAPSHOT</version>
+        </dependency>
+
+        <!-- JitPack used for remote installation of dependencies from Github and Bitbucket -->
+        <repository>
+            <id>jitpack.io</id>
+            <name>JitPack Repository</name>
+            <url>https://jitpack.io</url>
+        </repository>
+
+
+
+## WHAT IS PROVIDED: CAPACITY *KB_PROLOG* and SKILL *SWI_KB_Prolog*
 
 This `KB_Prolog` capacity provides the following hooks to Prolog access:
 
@@ -70,9 +90,26 @@ Some useful notes:
 * To handle pairs of variable name and term unified to, use [Pair](http://gangmax.me/blog/2017/10/10/how-to-return-multiple-values-from-a-java-method/) class; see example below.
 
 
-## EXAMPLE OF USE
+## USING SWI-Prolog IN SARL AGENTS/APPLICATIONS
 
-To use this capacity/skill:
+There are basically three ways one can use SWI-Prolog inside SARL agents, depending on the level of abstraction:
+
+1. **[RECOMMENDED]** Create a capacity **KB_Domain** for your domain application that embodies the usual KB queries required, and a skill **SWI_KB_Domain** for it extending skill **SWI_KB_Prolog** (which implements general Prolog capacity **KB_Prolog**) in the [SARL Prolog Capacity](https://bitbucket.org/ssardina-research/sarl-prolog-cap) framework that implements those queries. 
+That skill will have access to all the SWI Prolog tools provided in skill **SWI_KB_Prolog** and can implement the domain queries via SWI queries. 
+Under this approach, the SARL agent will:
+	* Use capacity **KB_Domain**, which is the capacity for the queries of the domain.
+		* A SARL agent will only use the queries provided by this capability via its functions.
+	* Use skill **SWI_KB_Domain**, which implements capacity **KB_Domain** and extends **SWI_KB_Prolog**.
+		* It is this skill that will perform Prolog queries via the Prolog tools offered by **KB_Prolog**.
+	* Note that the functions in **SWI_KB_Prolog** will _NOT_ be visible to the SARL agent, who can only access functions defined in domain capacity **KB_Domain**.
+		* If the SARL agent wants to do direct Prolog queries, it can also use capacity **KB_Prolog**, which means that the SWI-based functions implemented in skill **SWI_KB_Prolog** are now accessible at the agent level. 
+2. Make your agents use capacity *KB_PROLOG* (and its default skill *SWI_KB_Prolog*), and use what it provides directly in the agent. 
+As soon as the agent aquires the skill, a Prolog engine will be created by the skill. Then the agent for example can load a KB by consulting the file: `consult_file('myKB.pl')`.
+3. The lowest level will not even use the Prolog capacity and skill provided here, but will directly access SWI-Prolog via the Mochalog API, for example, by creating a prolog engine in the initialization of agents, etc.
+
+We describe the above strategies with more detail now.
+
+### 1 - Creating a domain-specific Knowlwedge-base capacity/skill.
 
 1. Create a Capacity *C* for your application that provides the main queries to your domain.
 	* For example, `KB_Elevator` capacity for an elevator domain with functions such as:
@@ -150,23 +187,44 @@ To use this capacity/skill:
 				}
 
 
-To add the dependency to this capacity in your SARL application, you can use Maven using JitPack: https://jitpack.io/#org.bitbucket.ssardina-research/sarl-prolog-cap, by adding this dependency and repository in to your `pom.xml`:
-
-        <!--  SARL PROLOG CAPACITY -->
-        <dependency>
-            <groupId>org.bitbucket.ssardina-research</groupId>
-            <artifactId>sarl-prolog-cap</artifactId>
-            <version>-SNAPSHOT</version>
-        </dependency>
-
-        <!-- JitPack used for remote installation of dependencies from Github and Bitbucket -->
-        <repository>
-            <id>jitpack.io</id>
-            <name>JitPack Repository</name>
-            <url>https://jitpack.io</url>
-        </repository>
 
 
+### 3 - SWI-Prolog Access via Mochalog
+
+In this approach, we directly use SWI-Prolog via the Mochalog high-level infrastructure, which provides a more abstract and accessible interface than JPL itself. 
+
+Here is some example code of its use (though for another application) in an elevator controllre:
+
+```
+#!java
+
+		import io.mochalog.bridge.prolog.PrologContext
+		import io.mochalog.bridge.prolog.SandboxedPrologContext
+		import io.mochalog.bridge.prolog.query.Query
+
+		// Set-up Prolog knowledgebase
+		var prolog_kb : PrologContext
+		val beliefSpace = String.format("swiplayer")
+		prolog_kb = new SandboxedPrologContext(beliefSpace)
+		prolog_kb.importFile("src/main/prolog/masssim_coordinator.pl") // newest version
+
+		// Assert percepts in the KB
+		prolog_kb.assertFirst("percepts(@A, @I, @S)", agentName, agents.get(agentName).step, percepts.toString)
+
+		// Querying one solution - Tell the KB to process last percept
+		agents.keySet().forEach([ agentName : String |
+			prolog_kb.askForSolution(Query.format("process_last_percepts(" + agentName + ")"))
+		])
+		
+		// Querying all solutions - Report percepts available in the KB
+		val query = Query.format("percepts(Agent, Step, Percepts)")
+		for (solution : prolog_kb.askForAllSolutions(query))
+		{
+			System.out.format("Information for agent %s on step %d\n", solution.get("Agent").toString(),  solution.get("Step").intValue)
+		}
+		
+
+```
 
 ## CONTACT 
 
