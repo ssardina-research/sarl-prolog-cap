@@ -103,7 +103,7 @@ Under this approach, the SARL agent will:
 		* It is this skill that will perform Prolog queries via the Prolog tools offered by **KB_Prolog**.
 	* Note that the functions in **SWI_KB_Prolog** will _NOT_ be visible to the SARL agent, who can only access functions defined in domain capacity **KB_Domain**.
 		* If the SARL agent wants to do direct Prolog queries, it can also use capacity **KB_Prolog**, which means that the SWI-based functions implemented in skill **SWI_KB_Prolog** are now accessible at the agent level. 
-2. Make your agents use capacity *KB_PROLOG* (and its default skill *SWI_KB_Prolog*), and use what it provides directly in the agent. 
+2. Make your agents use capacity **KB_PROLOG** (and its default skill **SWI_KB_Prolog**), and use what it provides directly in the agent. 
 As soon as the agent aquires the skill, a Prolog engine will be created by the skill. Then the agent for example can load a KB by consulting the file: `consult_file('myKB.pl')`.
 3. The lowest level will not even use the Prolog capacity and skill provided here, but will directly access SWI-Prolog via the Mochalog API, for example, by creating a prolog engine in the initialization of agents, etc.
 
