@@ -23,9 +23,11 @@ Also, depending on the system being used:
 
 * If in **Windows**:
 	* Tested successfully in Windows 7 with SWI 7.6.4.
-	* Make sure SWI is installed with the JPL Java-SWI connectivity.
+	* Make sure SWI is installed with the JPL Java-SWI connectivity. You should have a `jpl.dll` (in the SWI `bin/` subdir) and a `jpl.jar` (in the SWI `lib/` subdir).
 	* Define a _system_ environment variable `SWI_HOME_DIR` and set it to the root directory of your installed version of SWI-Prolog (e.g., to `C:\Program Files\swipl`).
-	* Extend `Path` system environment variable with: `...;%SWI_HOME_DIR%\bin;%SWI_HOME_DIR%\lib\jpl.jar`
+	* Extend `Path` system environment variable with the following two components:
+		* `%SWI_HOME_DIR%\bin`
+		* `%SWI_HOME_DIR%\lib\jpl.jar`
 	* No changes to `CLASSPATH` are needed.
 * If in **Linux**:
 	* Latest package versions at <http://www.swi-prolog.org/build/PPA.txt> 
