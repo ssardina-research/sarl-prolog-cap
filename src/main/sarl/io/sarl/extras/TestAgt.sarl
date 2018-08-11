@@ -1,0 +1,111 @@
+/** 
+ * 
+ */
+package io.sarl.extras
+
+import io.sarl.core.AgentKilled
+import io.sarl.core.AgentSpawned
+import io.sarl.core.ContextJoined
+import io.sarl.core.ContextLeft
+import io.sarl.core.Destroy
+import io.sarl.core.Initialize
+import io.sarl.core.Logging
+import io.sarl.core.MemberJoined
+import io.sarl.core.MemberLeft
+import io.sarl.core.Lifecycle
+
+/** 
+ * @author ssardina
+ * 
+ */
+agent TestAgt {
+	uses Logging
+	uses KB_Prolog	
+	uses Lifecycle
+	
+	on Initialize {
+		// Event trigger before the agent begin to live or to be used.
+		// You should put all the initialization statements in this block of code.
+		info("The TEST agent was started.")
+
+		setSkill(new SWI_KB_Prolog("test"))
+
+		consult_file("src/main/sarl/io/sarl/extras/testKB.pl")
+		info("1 - File consulted well")
+		
+		if (prove(String.format("test(%s)", 8))) {
+			info("2 - test(8) proven TRUE well")
+		}
+
+		if (!prove(String.format("test(%s)", 3))) {
+			info("3 - test(3) proven FALSE well")
+		}
+
+		assertLast("test(100)")
+		info("4 - test(100) asserted last well")
+
+		val solutions = askForAllSolutions("test(X)", #["X"])
+		if (!solutions.empty) {
+			info(" 5 - test(X) has all solutions as it should:")
+		}
+		for (sol : solutions) {
+			info(" \t Solution found for test(X): {0}", sol.get("X").intValue)
+		}
+
+		var solutionsIter = ask("test(X)", #["X"])
+		if (solutionsIter.hasSolutions) {
+			info(" 6 - test(X) has solution iteration as it should!")
+		}
+		while (solutionsIter.hasSolutions) {
+			val solutionOne = solutionsIter.next()
+			info(" \t Solution found for test(X): {0}", solutionOne.get("X").intValue)
+		}
+
+
+
+//		for (sol : solutions) {
+//			info(" 5 - Solution found for test(X): {0}", sol.get("X").intValue)
+//		}
+
+
+		dump_kb("test")
+		info(" 10 - KB dumpled!")
+		
+		
+		killMe
+	}
+
+	on Destroy {
+		// Event trigger when the agent is destroyed from the system.
+		// You should put all the resource releasing statements in this block of code.
+		info("The TEST agent was stopped -- ALL TESTS DONE.")
+	}
+
+	on AgentSpawned {
+		// A new agent has been spawned in our context.
+	}
+
+	on AgentKilled {
+		// A new agent has been killed in our context.
+	}
+
+	on ContextJoined {
+		// Event trigger when an agent of the level joins a shared context.
+		// Sent to a agent of the same level.
+	}
+
+	on ContextLeft {
+		// Event trigger when an agent of the level jleaves a shared context.
+		// Sent to a agent of the same level.
+	}
+
+	on MemberJoined {
+		// Event trigger when an agent joins one of our shared super-holons.
+		// Sent to all members of the considered super-holon.
+	}
+
+	on MemberLeft {
+		// Event trigger when an agent leaves one of our shared super-holons.
+		// Sent to all members of the considered super-holon.
+	}
+}
