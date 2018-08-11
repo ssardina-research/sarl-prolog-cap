@@ -30,7 +30,7 @@ agent TestAgt {
 
 		setSkill(new SWI_KB_Prolog("test"))
 
-		consult_file("src/main/sarl/io/sarl/extras/testKB.pl")
+		consult_file("src/test/resources/testKB.pl")
 		info("1 - File consulted well")
 		
 		if (prove(String.format("test(%s)", 8))) {
@@ -46,7 +46,7 @@ agent TestAgt {
 
 		val solutions = askForAllSolutions("test(X)", #["X"])
 		if (!solutions.empty) {
-			info(" 5 - test(X) has all solutions as it should:")
+			info("5 - test(X) has all solutions as it should:")
 		}
 		for (sol : solutions) {
 			info(" \t Solution found for test(X): {0}", sol.get("X").intValue)
@@ -54,11 +54,13 @@ agent TestAgt {
 
 		var solutionsIter = ask("test(X)", #["X"])
 		if (solutionsIter.hasSolutions) {
-			info(" 6 - test(X) has solution iteration as it should!")
-		}
-		while (solutionsIter.hasSolutions) {
-			val solutionOne = solutionsIter.next()
-			info(" \t Solution found for test(X): {0}", solutionOne.get("X").intValue)
+			info("6 - test(X) has solution iteration as it should:")
+
+//			info("\t Number of solutions: {0}", solutionsIter.noSolutions)
+			while (solutionsIter.hasNextSolution) {
+				val solutionOne = solutionsIter.next()
+				info(" \t Solution found for test(X): {0}", solutionOne.get("X").intValue)
+			}
 		}
 
 

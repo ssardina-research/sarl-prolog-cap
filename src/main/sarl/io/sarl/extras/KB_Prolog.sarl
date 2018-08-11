@@ -98,7 +98,9 @@ capacity KB_Prolog {
 
 interface KB_Solution_Iterator {
 	def hasSolutions : boolean
+	def hasNextSolution : boolean
 	def next : Map<String, Term>
+	def noSolutions : int
 }
 
 
@@ -224,24 +226,39 @@ class SWI_KB_Prolog_Solution_Iter implements KB_Solution_Iterator  {
 	
 	 val solutionCollector : QuerySolutionCollector
 	 val outVars : String[]
+	 var solIdx : int
 	
 	new(q: QuerySolutionCollector, outVar: String[]){
 		this.solutionCollector = q
 		this.outVars = outVar
+		this.solIdx = 0
 	}
 	
-	def hasSolutions : boolean{
+	def hasSolutions : boolean {
 		this.solutionCollector.hasSolutions
+	}
+
+	def hasNextSolution : boolean {
+		this.solutionCollector.hasSolution(this.solIdx)
+	}
+
+	def noSolutions : int {
+		this.solutionCollector.solutionCount()
 	}
 	
 	def next : Map<String, Term> {
-		val out : HashMap<String, Term>  = new HashMap()
-		for (outVar : this.outVars) {
-			out.put(outVar, solutionCollector.fetchFirstSolution.get(outVar))
-		 }
-		return out
+		if (solutionCollector.hasSolution(this.solIdx)) {
+			val solution = solutionCollector.fetchSolution(this.solIdx)
+
+			var out : HashMap<String, Term> = new HashMap()
+			for (outVar : outVars) {
+				out.put(outVar, solution.get(outVar))
+			}
+			this.solIdx++	// prepare for next solution index
+			return out
+		} else {
+			val detachResult = solutionCollector.detach	// done, detach prolog
+			return null
+		}
 	}
 }
-
-
-
