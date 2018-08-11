@@ -98,7 +98,6 @@ capacity KB_Prolog {
 
 interface KB_Solution_Iterator {
 	def hasSolutions : boolean
-
 	def next : Map<String, Term>
 }
 
@@ -129,26 +128,28 @@ skill SWI_KB_Prolog implements KB_Prolog {
 
 	
 	def dump_kb(id : String) {
-//		prolog.askForSolution(Query.format("save_db(@S)", id))
 
 		//	escape % via double %%
 		// F has to be anonymous because JPL cannot return a blob: gives error (so we use _F)
+		val timestamp_format = "'%Y-%m-%d--%H-%M-%S'"
 		val query = String.format("
-					get_iso_time(_T),
+					get_time(X), 
+					format_time(atom(_T), %s, X, posix),
 					string_concat(\"kb-%s-\", _T,  _BaseName),
 					string_concat(_BaseName, \".pl\", _FileName),
-					open(_FileName, write, _F), set_output(_F), listing, close(_F)", id)
+					open(_FileName, write, _F), set_output(_F), listing, close(_F)", timestamp_format, id)
 		prolog.prove(query)
+		// prolog.askForSolution(query"save_db(@S)", id)
 
-//		val query = "get_iso_time(T), strings_concat([\"kb-\", @S, \"-\", T, \".pl\"], FileName),
-//					open(FileName, write, F), set_output(F), listing, close(F)"
-//		prolog.askForSolution(query"save_db(@S)", id)
+		// Another way by calling Mochalog Query.format and an assumed predicate save_db/1
+		// prolog.askForSolution(Query.format("save_db(@S)", id))
 }
 	
 	def get_kb_name() : String {
 		return kb_name
 	}
 
+	//	This will yield the Mochalog Prolog object (one can then apply Mochalog methods to it directly!)
 	def get_prolog_engine() : PrologContext {
 		return prolog
 	}
@@ -170,11 +171,14 @@ skill SWI_KB_Prolog implements KB_Prolog {
 	}
 
 
-
+	//	Prove a query: just return true or false (no variable bindings!)
+	// Example: 
 	def prove(queryS : String, params : Object*) : boolean {
 		return prolog.prove(queryS, params)
 	}
 	
+	// Prove a query just once, but return mapping from variables to terms
+	// (Returns null object if no solution is found)
 	def askOnce(queryS : String, outVars : String[], params : Object*) : Map<String, Term> {
 		val query = Query.format(queryS, params)
 		try {
@@ -185,6 +189,7 @@ skill SWI_KB_Prolog implements KB_Prolog {
 		} 
 	}
 	
+	//	Given a query solution, build a mapping object of variables to bound terms in the solution
 	private def fillOutVars(solution : QuerySolution, outVars : String[]) : Map<String, Term> {
 		var out : HashMap<String, Term> = new HashMap()
 		for (outVar : outVars) {
@@ -193,6 +198,8 @@ skill SWI_KB_Prolog implements KB_Prolog {
 		return out
 	}
 
+	// Prove a query and get ALL solutions in a collection of mappings from variables to terms
+	// (Returns empty collection if no solution is found)
 	def askForAllSolutions(queryS : String, outVars : String[], params : Object*) : Collection<Map<String, Term>> {
 		val allSolutions = prolog.askForAllSolutions(queryS, params)
 		
@@ -203,6 +210,8 @@ skill SWI_KB_Prolog implements KB_Prolog {
 		return colSolutions
 	}
 
+	// Prove a query incrementally, by returning an iterator solution object (with a .next method for next solution, if any)
+	// (Returns empty collection if no solution is found)
 	def ask(queryS : String, outVars : String[], params : Object*) : KB_Solution_Iterator {
 		 val query = Query.format(queryS, params)
 		 return new SWI_KB_Prolog_Solution_Iter(prolog.ask(query), outVars)
