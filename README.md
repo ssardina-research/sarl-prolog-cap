@@ -23,9 +23,11 @@ Also, depending on the system being used:
 
 * If in **Windows**:
 	* Tested successfully in Windows 7 with SWI 7.6.4.
-	* Make sure SWI is installed with the JPL Java-SWI connectivity.
+	* Make sure SWI is installed with the JPL Java-SWI connectivity. You should have a `jpl.dll` (in the SWI `bin/` subdir) and a `jpl.jar` (in the SWI `lib/` subdir).
 	* Define a _system_ environment variable `SWI_HOME_DIR` and set it to the root directory of your installed version of SWI-Prolog (e.g., to `C:\Program Files\swipl`).
-	* Extend `Path` system environment variable with: `...;%SWI_HOME_DIR%\bin;%SWI_HOME_DIR%\lib\jpl.jar`
+	* Extend `Path` system environment variable with the following two components:
+		* `%SWI_HOME_DIR%\bin`
+		* `%SWI_HOME_DIR%\lib\jpl.jar`
 	* No changes to `CLASSPATH` are needed.
 * If in **Linux**:
 	* Latest package versions at <http://www.swi-prolog.org/build/PPA.txt> 
@@ -33,7 +35,7 @@ Also, depending on the system being used:
 	* Extend environment library `LD_PRELOAD` for system to pre-load `libswipl.so`: `export LD_PRELOAD=libswipl.so:$LD_PRELOAD`
 		* Check [this post](https://answers.ros.org/question/132411/unable-to-load-existing-owl-in-semantic-map-editor/) and [this one](https://blog.cryptomilk.org/2014/07/21/what-is-preloading/) about library preloading.
 		* Also, check [this](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=690734) and [this](https://github.com/yuce/pyswip/issues/10) posts.
-	* Extend environment Variable `LD_LIBRARY_PATH`  to point to `libjpl.so`: `export LD_LIBRARY_PATH=/usr/lib/swi-prolog/lib/amd64/`
+	* Extend environment variable `LD_LIBRARY_PATH`  to point to the directory where `libjpl.so` is located (e.g., `export LD_LIBRARY_PATH=/usr/lib/swi-prolog/lib/amd64/`)
 	* If using RUN AS configuration in ECLIPSE, remember to set up these two variables `LD_LIBRARY_PATH` and `LD_PRELOAD` too (and check "Append environment to native environment").
 	
 ### Develop **SARL PROLOG CAP** further
