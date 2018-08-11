@@ -249,6 +249,24 @@ Here is some example code of its use (though for another application) in an elev
 
 ```
 
+## TROUBLESHOOTING
+
+* Did you get something like this?
+
+			ERROR: /usr/lib/swi-prolog/library/process.pl:53:
+				/usr/lib/swi-prolog/library/process.pl:53: Initialization goal raised exception:
+				'$open_shared_object'/3: /usr/lib/swi-prolog/lib/amd64/process.so: undefined symbol: Sfilefunctions
+			ERROR: /usr/lib/swi-prolog/library/prolog_pack.pl:52:
+				Exported procedure process:process_kill/2 is not defined
+			ERROR: /usr/lib/swi-prolog/library/prolog_pack.pl:52:
+				Exported procedure process:process_group_kill/2 is not defined
+			ERROR: /usr/lib/swi-prolog/library/prolog_pack.pl:52:
+				Exported procedure process:process_wait/3 is not defined
+			java: symbol lookup error: /usr/lib/swi-prolog/lib/amd64/readutil.so: undefined symbol: PL_new_atom
+
+	Then you may not have set `LD_PRELOAD` env variable correctly.
+
+
 ## CONTACT 
 
 * Sebastian Sardina (ssardina@gmail.com)
