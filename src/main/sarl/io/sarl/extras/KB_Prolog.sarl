@@ -36,6 +36,9 @@ import java.util.Map
 import java.util.HashMap
 import io.mochalog.bridge.prolog.query.QuerySolution
 import java.util.ArrayList
+import io.mochalog.bridge.prolog.query.QuerySolutionIterator
+import java.util.Iterator
+import io.mochalog.bridge.prolog.query.QuerySolutionList
 
 /** 
  * @author Sebastian Sardina (ssardina@gmail.com)
@@ -83,24 +86,33 @@ capacity KB_Prolog {
 	/*
 	 * Get the first result of an unformatted query as a Map from variable names to terms
 	 */
-	def askOnce(queryS : String, outVars : String[], params : Object*) : Map<String, Term>
+	def askOnce(queryS : String, params : Object*) : Map<String, Term>
+
 	/*
 	 * Get all the answers for an unformatted query as a COllection of mappings vars --> terms
 	 */
-	def askForAllSolutions(QueryS : String, outVars : String[], params : Object*) : Collection<Map<String, Term>>
+	def askForAllSolutions(QueryS : String, params : Object*) : Collection<Map<String, Term>>
 
 	/*
 	 * Open a new query session in Prolog and returns an object with an iterable 
+	 * TODO: this what we would like to have, very generic
 	 */
-	def ask(queryS : String, outVars : String[], params : Object*) : KB_Solution_Iterator 
+	// def ask(queryS : String, outVars : String[], params : Object*) : Iterator<Map<String, Term>>
 	
+	/* 
+	 * Open a new query session in Prolog and returns an object with an iterable 
+	 */
+	def ask(queryS : String, params : Object*) : Iterator
+
+	/* 
+	 * Open a new query session in Prolog and returns an in-house object with an iterable 
+	 */
+	def ask2(queryS : String, params : Object*) : KB_Solution_Iterator
 }
 
 interface KB_Solution_Iterator {
-	def hasSolutions : boolean
 	def hasNextSolution : boolean
 	def next : Map<String, Term>
-	def noSolutions : int
 }
 
 
@@ -172,7 +184,6 @@ skill SWI_KB_Prolog implements KB_Prolog {
 		prolog.retract(queryS, params)
 	}
 
-
 	//	Prove a query: just return true or false (no variable bindings!)
 	// Example: 
 	def prove(queryS : String, params : Object*) : boolean {
@@ -181,83 +192,83 @@ skill SWI_KB_Prolog implements KB_Prolog {
 	
 	// Prove a query just once, but return mapping from variables to terms
 	// (Returns null object if no solution is found)
-	def askOnce(queryS : String, outVars : String[], params : Object*) : Map<String, Term> {
+	def askOnce(queryS : String, params : Object*) : Map<String, Term> {
 		val query = Query.format(queryS, params)
 		try {
 			val solution = prolog.askForSolution(query)
-			return fillOutVars(solution, outVars)
+			return solution.getMap()
 		} catch (e : NoSuchSolutionException) {
 			return null
 		} 
 	}
 	
-	//	Given a query solution, build a mapping object of variables to bound terms in the solution
-	private def fillOutVars(solution : QuerySolution, outVars : String[]) : Map<String, Term> {
-		var out : HashMap<String, Term> = new HashMap()
-		for (outVar : outVars) {
-			out.put(outVar, solution.get(outVar))
-		}
-		return out
-	}
-
 	// Prove a query and get ALL solutions in a collection of mappings from variables to terms
 	// (Returns empty collection if no solution is found)
-	def askForAllSolutions(queryS : String, outVars : String[], params : Object*) : Collection<Map<String, Term>> {
-		val allSolutions = prolog.askForAllSolutions(queryS, params)
+	def askForAllSolutions(queryS : String, params : Object*) : Collection<Map<String, Term>> {
+		val allSolutions : QuerySolutionList  = prolog.askForAllSolutions(queryS, params)
 		
 		val colSolutions : Collection<Map<String, Term>> = new ArrayList()
 		for (solution : allSolutions) {
-			colSolutions.add(fillOutVars(solution, outVars))
+			// solution is of type QuerySolutoin
+			colSolutions.add(solution.getMap())
 		}
 		return colSolutions
 	}
 
 	// Prove a query incrementally, by returning an iterator solution object (with a .next method for next solution, if any)
 	// (Returns empty collection if no solution is found)
-	def ask(queryS : String, outVars : String[], params : Object*) : KB_Solution_Iterator {
-		 val query = Query.format(queryS, params)
-		 return new SWI_KB_Prolog_Solution_Iter(prolog.ask(query), outVars)
-	}	
+	def ask(queryS : String, params : Object*) : Iterator<QuerySolution> {
+		val query = Query.format(queryS, params)
+		val solutionIter : Iterator<QuerySolution> = new QuerySolutionIterator(prolog.ask(query))
+		
+		return solutionIter
+	}
+
+	// Prove a query incrementally, by returning an iterator solution object (with a .next method for next solution, if any)
+	// (Returns empty collection if no solution is found)
+	def ask2(queryS : String, params : Object*) : SWI_KB_Prolog_Solution_Iter {
+		val query = Query.format(queryS, params)
+		return new SWI_KB_Prolog_Solution_Iter(prolog.ask(query))
+	}
 
 }
 
+/** 
+ * This class implements a solution iterator. 
+ * It should not be really needed as there is already a QuerySolutionIterator in Mochalog
+ */
+class SWI_KB_Prolog_Solution_Iter implements KB_Solution_Iterator {
 
-class SWI_KB_Prolog_Solution_Iter implements KB_Solution_Iterator  {
-	
-	 val solutionCollector : QuerySolutionCollector
-	 val outVars : String[]
-	 var solIdx : int
-	
-	new(q: QuerySolutionCollector, outVar: String[]){
+	val solutionCollector : QuerySolutionCollector
+	var solutionIterator : QuerySolutionIterator
+	val outVars : String[]
+
+	new(q : QuerySolutionCollector, outVar : String[]) {
 		this.solutionCollector = q
+		this.solutionIterator = new QuerySolutionIterator(q)
 		this.outVars = outVar
-		this.solIdx = 0
 	}
-	
-	def hasSolutions : boolean {
-		this.solutionCollector.hasSolutions
+
+	new(q : QuerySolutionCollector) {
+		this.solutionCollector = q
+		this.solutionIterator = new QuerySolutionIterator(q)
+		this.outVars = null
 	}
 
 	def hasNextSolution : boolean {
-		this.solutionCollector.hasSolution(this.solIdx)
+		this.solutionIterator.hasNext
 	}
 
-	def noSolutions : int {
-		this.solutionCollector.solutionCount()
-	}
-	
 	def next : Map<String, Term> {
-		if (solutionCollector.hasSolution(this.solIdx)) {
-			val solution = solutionCollector.fetchSolution(this.solIdx)
+		if (solutionIterator.hasNext) {
+			val solution = solutionIterator.next
 
 			var out : HashMap<String, Term> = new HashMap()
 			for (outVar : outVars) {
 				out.put(outVar, solution.get(outVar))
 			}
-			this.solIdx++	// prepare for next solution index
 			return out
 		} else {
-			val detachResult = solutionCollector.detach	// done, detach prolog
 			return null
 		}
 	}
