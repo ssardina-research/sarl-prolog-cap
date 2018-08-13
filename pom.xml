@@ -37,15 +37,6 @@
         <!-- Java compiler version to be used -->
         <compiler.level>1.8</compiler.level>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
-        <!-- Mochalog framework version -->
-        <mochalog.version>0.4.0</mochalog.version>
-        <!-- 
-        <mochalog.version>0.3.0</mochalog.version>
-        <mochalog.version>0.2.5</mochalog.version>
-        <mochalog.version>ffe16e8</mochalog.version>
-        <mochalog.version>f03a9d1</mochalog.version> 
-        -->
     </properties>
     
 
@@ -62,24 +53,8 @@
         <dependency>
             <groupId>com.github.ssardina</groupId>
             <artifactId>mochalog</artifactId>
-            <version>${mochalog.version}</version>
+            <version>0.4.1</version>
         </dependency>
-
-        <!--  OLD VERSION: 0.3.x Based on Maven with sub-modules (mimicking original gradel project)  
-        <dependency>
-            <groupId>com.github.ssardina.mochalog</groupId>
-            <artifactId>io.mochalog.all</artifactId>
-            <version>${mochalog.version}</version>
-        </dependency>
-		-->
-        <!--  OLD VERSION: 0.2.5 Based on Gradle as per Matt McNally Honours Thesis  
-        <dependency>
-            <groupId>com.github.ssardina</groupId>
-            <artifactId>mochalog</artifactId>
-            <version>0.2.6</version>
-        </dependency>
-		-->
-
  		   
 		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
 		<dependency>
