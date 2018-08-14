@@ -17,7 +17,7 @@ This capacity/skill depends on two main systems:
 	* Main Page for JPL: https://jpl7.org/ 
 * [Mochalog](https://github.com/ssardina/mochalog), a rich bidirectional interface between the Java Runtime and the SWI-Prolog interpreter inspired by JPL.
 	* Obtained via Maven automatically using from [JitPack](https://jitpack.io/#ssardina/mochalog)
-	*  Check the [Mochalog Wiki](https://github.com/ssardina/mochalog/wiki) to understand how to setup Mochalog in your agent.
+	* Check Mochalog page for prerequisites, install, and examples.
 
 Also, depending on the system being used:
 
