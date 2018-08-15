@@ -17,6 +17,8 @@ import io.mochalog.bridge.prolog.query.QuerySolutionIterator
 import java.util.NoSuchElementException
 import io.mochalog.bridge.prolog.query.QuerySolution
 import java.util.Iterator
+import java.util.Map
+import org.jpl7.Term
 
 /** 
  * @author ssardina
@@ -40,6 +42,7 @@ agent TestAgt {
 		test_3();
 		test_4();
 		test_5();
+		test_6();
 
 		test_10();	
 
@@ -113,7 +116,7 @@ agent TestAgt {
 	}
 
 	def test_5() {
-		val no = 4
+		val no = 5
 		val queryText = "person(X, Y, Z)"
 		info("######### Test {0}: query {1} ", no, queryText)
 		
@@ -123,14 +126,34 @@ agent TestAgt {
 			info("5.1 - {0} has solution iteration as it should:", queryText)
 			while (solutionsIter.hasNext) {
 				val solution : QuerySolution = solutionsIter.next()
-				info(" \t Solution found for {0}: {1}", queryText, solution.getMap().toString)
+				info(" \t Solution found for {0}: {1}", queryText, solution.bindings.toString)
+			}
+		}
+	}
+
+	def test_6() {
+		val no = 6
+		val queryText = "person(X, Y, Z)"
+		info("######### Test {0}: query {1} - just extract Y and Z only", no, queryText)
+
+		//	Ask yields a QuerySolutionIterator (from Mochalog), which is an Iterator<QuerySolution>
+		val solutionsIter : Iterator<Map<String,Term>> = ask2(queryText, #["Y","Z"])
+		if (solutionsIter.hasNext) {
+			info("{0}.1 - {1} has solution iteration as it should:", no, queryText)
+			while (solutionsIter.hasNext) {
+				val solution : Map<String,Term> = solutionsIter.next()
+				info(" \t Solution found for {0}: {1}", queryText, solution.toString)
 			}
 		}
 	}
 
 	def test_10() {
+		val no = 10
+		val queryText = "listing the database"
+		info("######### Test {0}: query {1}", no, queryText)
+
 		dump_kb("test")
-		info(" 10 - KB dumped!")
+		info("{0} - KB dumped!", no)
 	}
 
 

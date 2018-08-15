@@ -107,12 +107,7 @@ capacity KB_Prolog {
 	/* 
 	 * Open a new query session in Prolog and returns an in-house object with an iterable 
 	 */
-	def ask2(queryS : String, params : Object*) : KB_Solution_Iterator
-}
-
-interface KB_Solution_Iterator {
-	def hasNextSolution : boolean
-	def next : Map<String, Term>
+	def ask2(queryS : String, outVars : String[], params : Object*) : Iterator
 }
 
 
@@ -152,6 +147,8 @@ skill SWI_KB_Prolog implements KB_Prolog {
 					string_concat(\"kb-%s-\", _T,  _BaseName),
 					string_concat(_BaseName, \".pl\", _FileName),
 					open(_FileName, write, _F), set_output(_F), listing, close(_F)", timestamp_format, id)
+	
+		// When we prove query, we basically execute a listing/0 sending the output to a file with timestamp and id
 		prolog.prove(query)
 		// prolog.askForSolution(query"save_db(@S)", id)
 
@@ -164,6 +161,7 @@ skill SWI_KB_Prolog implements KB_Prolog {
 	}
 
 	//	This will yield the Mochalog Prolog object (one can then apply Mochalog methods to it directly!)
+	// Not probably the more recommended
 	def get_prolog_engine() : PrologContext {
 		return prolog
 	}
@@ -196,7 +194,7 @@ skill SWI_KB_Prolog implements KB_Prolog {
 		val query = Query.format(queryS, params)
 		try {
 			val solution = prolog.askForSolution(query)
-			return solution.getMap()
+			return solution.bindings
 		} catch (e : NoSuchSolutionException) {
 			return null
 		} 
@@ -210,7 +208,7 @@ skill SWI_KB_Prolog implements KB_Prolog {
 		val colSolutions : Collection<Map<String, Term>> = new ArrayList()
 		for (solution : allSolutions) {
 			// solution is of type QuerySolutoin
-			colSolutions.add(solution.getMap())
+			colSolutions.add(solution.bindings)
 		}
 		return colSolutions
 	}
@@ -219,43 +217,40 @@ skill SWI_KB_Prolog implements KB_Prolog {
 	// (Returns empty collection if no solution is found)
 	def ask(queryS : String, params : Object*) : Iterator<QuerySolution> {
 		val query = Query.format(queryS, params)
-		val solutionIter : Iterator<QuerySolution> = new QuerySolutionIterator(prolog.ask(query))
-		
+		val solutionIter : Iterator<QuerySolution> = prolog.askIter(query)
+		// val solutionIter : Iterator<QuerySolution> = new QuerySolutionIterator(prolog.ask(query))	// manual way of creating an iterator
+	
 		return solutionIter
 	}
 
 	// Prove a query incrementally, by returning an iterator solution object (with a .next method for next solution, if any)
 	// (Returns empty collection if no solution is found)
-	def ask2(queryS : String, params : Object*) : SWI_KB_Prolog_Solution_Iter {
+	def ask2(queryS : String, outVars : String[], params : Object*) : Iterator<Map<String,Term>> {
 		val query = Query.format(queryS, params)
-		return new SWI_KB_Prolog_Solution_Iter(prolog.ask(query))
+		return new SWI_KB_Prolog_Solution_Iter(prolog.ask(query), outVars)
 	}
 
 }
 
 /** 
- * This class implements a solution iterator. 
- * It should not be really needed as there is already a QuerySolutionIterator in Mochalog
+ * This class implements a solution iterator that is able to return bindings directly, not just QuerySolutions. 
+ * In reality, one can just get the Mochalog QuerySolutionIterator which yields QuerySolution and then call .bindings 
  */
-class SWI_KB_Prolog_Solution_Iter implements KB_Solution_Iterator {
-
-	val solutionCollector : QuerySolutionCollector
+class SWI_KB_Prolog_Solution_Iter implements Iterator<Map<String, Term>> {
 	var solutionIterator : QuerySolutionIterator
 	val outVars : String[]
 
-	new(q : QuerySolutionCollector, outVar : String[]) {
-		this.solutionCollector = q
+	new(q : QuerySolutionCollector, outVars : String[]) {
 		this.solutionIterator = new QuerySolutionIterator(q)
-		this.outVars = outVar
+		this.outVars = outVars
 	}
 
 	new(q : QuerySolutionCollector) {
-		this.solutionCollector = q
 		this.solutionIterator = new QuerySolutionIterator(q)
 		this.outVars = null
 	}
 
-	def hasNextSolution : boolean {
+	def hasNext : boolean {
 		this.solutionIterator.hasNext
 	}
 
@@ -263,11 +258,15 @@ class SWI_KB_Prolog_Solution_Iter implements KB_Solution_Iterator {
 		if (solutionIterator.hasNext) {
 			val solution = solutionIterator.next
 
-			var out : HashMap<String, Term> = new HashMap()
-			for (outVar : outVars) {
-				out.put(outVar, solution.get(outVar))
-			}
-			return out
+			val binding2 = new HashMap(solution.bindings)
+			binding2.keySet().retainAll(outVars)
+			return binding2
+			
+//			var out : HashMap<String, Term> = new HashMap()
+//			for (outVar : outVars) {
+//				out.put(outVar, solution.get(outVar))
+//			}
+//			return out
 		} else {
 			return null
 		}
