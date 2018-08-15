@@ -48,6 +48,15 @@ If one wants to _develop_ this capacity/skill further:
 	* Version defined by environment variable `SARL_VERSION`; for example `export SARL_VERSION=0.7.2`
 	* Version tested: 0.6.1, 0.7.2
 	* Obtained via Maven automatically from http://mvnrepository.com/artifact/io.sarl.maven.
+	
+
+To verify you have everything setup well, run `mvn clean package` and then run the test agent as follows:
+
+```
+java -jar target/sarl-prolog-cap-1.3.0.7.2-jar-with-dependencies.jar io.sarl.extras.TestAgt
+```
+
+
 
 ### Include **SARL PROLOG CAP** in your SARL application via Maven 
 
