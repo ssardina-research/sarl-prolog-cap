@@ -201,7 +201,7 @@ skill SWI_KB_Prolog implements KB_Prolog {
 	}
 	
 	// Prove a query and get ALL solutions in a collection of mappings from variables to terms
-	// (Returns empty collection if no solution is found)
+// (Returns empty collection if no solution is found)
 	def askForAllSolutions(queryS : String, params : Object*) : Collection<Map<String, Term>> {
 		val allSolutions : QuerySolutionList  = prolog.askForAllSolutions(queryS, params)
 		
