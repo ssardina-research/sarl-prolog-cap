@@ -109,6 +109,19 @@ Some useful notes:
 
 * To handle responses from Prolog, where variables are grounded to Terms, we use the [Term](http://www.swi-prolog.org/packages/jpl/java_api/javadoc/jpl/Term.html) class form JPL
 * To handle pairs of variable name and term unified to, use [Pair](http://gangmax.me/blog/2017/10/10/how-to-return-multiple-values-from-a-java-method/) class; see example below.
+* The `params` arguments above refer to [SARL variadic](http://www.sarl.io/docs/official/reference/general/FuncDecls.html#4-variadic-function) arguments (in Java, called [Varargs](https://www.geeksforgeeks.org/variable-arguments-varargs-in-java/)) to help build the query string by "filling" places using `@A`, `@I`, and `@S` placeholders. For example:
+
+```
+assertFirst("percepts(@A, @I, @S)", agentName, agents.get(agentName).step, percepts.toString)
+```
+
+An alternative, Java-based way to construct the query string, is to use [`String.format`](https://docs.oracle.com/javase/7/docs/api/java/util/Formatter.html):
+
+```
+assertFirst(String.format("percepts(\'%s\', %d, %s)", agentName, agents.get(agentName).step, percepts.toString))
+```
+
+See how single-quoted was used here to make sure agentName becomes an atom (and not a string!).
 
 
 ## USING SWI-Prolog IN SARL AGENTS/APPLICATIONS
