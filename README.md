@@ -48,6 +48,15 @@ If one wants to _develop_ this capacity/skill further:
 	* Version defined by environment variable `SARL_VERSION`; for example `export SARL_VERSION=0.7.2`
 	* Version tested: 0.6.1, 0.7.2
 	* Obtained via Maven automatically from http://mvnrepository.com/artifact/io.sarl.maven.
+	
+
+To verify you have everything setup well, run `mvn clean package` and then run the test agent as follows:
+
+```
+java -jar target/sarl-prolog-cap-1.3.0.7.2-jar-with-dependencies.jar io.sarl.extras.TestAgt
+```
+
+
 
 ### Include **SARL PROLOG CAP** in your SARL application via Maven 
 
@@ -73,14 +82,24 @@ To add the dependency to this capacity in your SARL application, you can use Mav
 
 This `KB_Prolog` capacity provides the following hooks to Prolog access:
 
-* `consult_file(file : String)`: consult file into Prolog engine.
-* `dump_kb()`: dump the current knowledgebase to a file with timestamp and registered name for kb.
-* `dump_kb(id : String)`: : dump the current knowledgebase to a file with timestamp and name of kb.
-* `get_prolog_engine()	: Object`: gives the prolog reference.
-* `get_kb_name() : String`: gives the registered name of the kb.
-* `assertFirst(queryS : String, params : Object*)`: assert a query
-* `buildQuery(queryS : String, params : Object*)`: build a query
-* `askOnce(queryS : String, outVars : String[], params : Object*) : Map<String, Term>`: ask a query and get first result.
+* KB system tools:
+	* `consult_file(file : String)`: consult file into Prolog engine.
+	* `dump_kb()`: dump the current knowledgebase to a file with timestamp and registered name for kb.
+	* `dump_kb(id : String)`: : dump the current knowledgebase to a file with timestamp and name of kb.
+	* `get_prolog_engine()	: Object`: gives the prolog reference.
+	* `get_kb_name() : String`: gives the registered name of the kb.
+* Assert and retract predicates:
+	* `assertFirst(queryS : String, params : Object*)`
+	* `assertLast(queryS : String, params : Object*)`
+	* `retract(queryS : String, params : Object*)`
+	* `retractAll(queryS : String, params : Object*)`
+* Queries:
+	* `prove(queryS : String, params : Object*) : boolean`: prove if a queryS is true
+	* `askOnce(queryS : String, outVars : String[], params : Object*) : Map<String, Term>`: ask a query and get first result.
+	* `askForAllSolutions(QueryS : String, params : Object*) : Collection<Map<String, Term>>`: return the set of all solutions as set of bindings.
+	* `ask(queryS : String, params : Object*) : Iterator`: returns an iterator to solutions (Mochalog's `QuerySolutions`).
+	* `ask2(queryS : String, params : Object*) : Iterator`: returns an iterator to solution bindings `Map<String,Term>`
+
 
 
 In terms, the particular skill `SWI_KB_Prolog` uses [SWI Prolog](http://www.swi-prolog.org/) with [JPL](https://jpl7.org/) interface as the Prolog engine, 
