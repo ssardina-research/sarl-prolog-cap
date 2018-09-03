@@ -40,6 +40,8 @@ import io.mochalog.bridge.prolog.query.QuerySolutionIterator
 import java.util.Iterator
 import io.mochalog.bridge.prolog.query.QuerySolutionList
 
+import java.io.File
+
 /** 
  * @author Sebastian Sardina (ssardina@gmail.com)
  * 
@@ -141,12 +143,21 @@ skill SWI_KB_Prolog implements KB_Prolog {
 		//	escape % via double %%
 		// F has to be anonymous because JPL cannot return a blob: gives error (so we use _F)
 		val timestamp_format = "'%Y-%m-%d--%H-%M-%S'"
+
+		val directory_name = "kb_dump"
+		val path = directory_name.concat(File.separator)
+
+		val directory : File = new File(directory_name)
+
+		if(! directory.exists())
+			directory.mkdir()
+
 		val query = String.format("
 					get_time(X), 
 					format_time(atom(_T), %s, X, posix),
-					string_concat(\"kb-%s-\", _T,  _BaseName),
+					string_concat(\"%skb-%s-\", _T,  _BaseName),
 					string_concat(_BaseName, \".pl\", _FileName),
-					open(_FileName, write, _F), set_output(_F), listing, close(_F)", timestamp_format, id)
+					open(_FileName, write, _F), set_output(_F), listing, close(_F)", timestamp_format, path, id)
 	
 		// When we prove query, we basically execute a listing/0 sending the output to a file with timestamp and id
 		prolog.prove(query)
