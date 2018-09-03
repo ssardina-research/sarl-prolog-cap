@@ -150,7 +150,7 @@ skill SWI_KB_Prolog implements KB_Prolog {
 		val directory : File = new File(directory_name)
 
 		if(! directory.exists())
-            directory.mkdir()
+			directory.mkdir()
 
 		val query = String.format("
 					get_time(X), 
