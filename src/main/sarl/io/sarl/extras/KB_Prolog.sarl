@@ -143,17 +143,13 @@ skill SWI_KB_Prolog implements KB_Prolog {
 		//	escape % via double %%
 		// F has to be anonymous because JPL cannot return a blob: gives error (so we use _F)
 		val timestamp_format = "'%Y-%m-%d--%H-%M-%S'"
-        val directory_name = "kb_dump_test"
+        val directory_name = "kb_dump"
         val path = directory_name.concat(File.separator)
 
         val directory : File = new File(directory_name)
 
-        if(! directory.exists()) {
-            println("DIRECTORY DOES NOT EXIST")
+        if(! directory.exists())
             directory.mkdir()
-        }
-        else
-            println("DIRECTORY ALREADY EXISTS") 
 
 		val query = String.format("
 					get_time(X), 
