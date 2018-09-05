@@ -121,18 +121,18 @@ skill SWI_KB_Prolog implements KB_Prolog {
 	protected val kb_name : String
 	val prolog : PrologContext // Interface to SWI-Prolog interpreter
 	var swi_file : String
-    val runtime : String // store runtime as a String
-   
-	
+	val runtime : String // store runtime as a String
+
+
 	new(name : String) {
 		super() // Call the super's constructor
 		kb_name = name
 		prolog = new SandboxedPrologContext(this.kb_name)
 
-        val formatter = new SimpleDateFormat("yyyy-MM-dd--HH:mm:ss") 
-        val date : Date = new Date() // get current date time when skill is initialized
+		val formatter = new SimpleDateFormat("yyyy-MM-dd--HH:mm:ss") 
+		val date : Date = new Date() // get current date time when skill is initialized
 
-        runtime = formatter.format(date) // store runtime date time as a string
+		runtime = formatter.format(date) // store runtime date time as a string
 	}
 
 	def consult_file(file : String) {
@@ -161,12 +161,12 @@ skill SWI_KB_Prolog implements KB_Prolog {
 		if(! directory.exists())
 			directory.mkdir()
 
-        val runtime_dir : File = new File(path.concat(runtime))
+		val runtime_dir : File = new File(path.concat(runtime))
 
-        if(! runtime_dir.exists())
-            runtime_dir.mkdir()
+		if(! runtime_dir.exists())
+			runtime_dir.mkdir()
 
-        val runtime_path = path.concat(runtime.concat(File.separator))
+		val runtime_path = path.concat(runtime.concat(File.separator))
 
 		val query = String.format("
 					get_time(X), 
