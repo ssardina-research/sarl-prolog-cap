@@ -121,7 +121,7 @@ skill SWI_KB_Prolog implements KB_Prolog {
 	protected val kb_name : String
 	val prolog : PrologContext // Interface to SWI-Prolog interpreter
 	var swi_file : String
-	val runtime : String // store runtime as a String
+	val kb_directory_path : String
 
 
 	new(name : String) {
@@ -132,7 +132,22 @@ skill SWI_KB_Prolog implements KB_Prolog {
 		val formatter = new SimpleDateFormat("yyyy-MM-dd--HH:mm:ss") 
 		val date : Date = new Date() // get current date time when skill is initialized
 
-		runtime = formatter.format(date) // store runtime date time as a string
+		val runtime = formatter.format(date) // store runtime date time as a string
+		
+		val directory_name = "kb_dump"
+		val path = directory_name.concat(File.separator)
+
+		val directory : File = new File(directory_name)
+
+		if(! directory.exists())
+			directory.mkdir()
+
+		val runtime_dir : File = new File(path.concat(runtime))
+
+		if(! runtime_dir.exists())
+			runtime_dir.mkdir()
+
+		kb_directory_path = path.concat(runtime.concat(File.separator))
 	}
 
 	def consult_file(file : String) {
@@ -153,27 +168,12 @@ skill SWI_KB_Prolog implements KB_Prolog {
 		// F has to be anonymous because JPL cannot return a blob: gives error (so we use _F)
 		val timestamp_format = "'%Y-%m-%d--%H-%M-%S'"
 
-		val directory_name = "kb_dump"
-		val path = directory_name.concat(File.separator)
-
-		val directory : File = new File(directory_name)
-
-		if(! directory.exists())
-			directory.mkdir()
-
-		val runtime_dir : File = new File(path.concat(runtime))
-
-		if(! runtime_dir.exists())
-			runtime_dir.mkdir()
-
-		val runtime_path = path.concat(runtime.concat(File.separator))
-
 		val query = String.format("
 					get_time(X), 
 					format_time(atom(_T), %s, X, posix),
 					string_concat(\"%skb-%s-\", _T,  _BaseName),
 					string_concat(_BaseName, \".pl\", _FileName),
-					open(_FileName, write, _F), set_output(_F), listing, close(_F)", timestamp_format, runtime_path, id)
+					open(_FileName, write, _F), set_output(_F), listing, close(_F)", timestamp_format, kb_directory_path, id)
 	
 		// When we prove query, we basically execute a listing/0 sending the output to a file with timestamp and id
 		prolog.prove(query)
