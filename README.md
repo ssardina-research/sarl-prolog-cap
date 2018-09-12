@@ -144,7 +144,7 @@ This `KB_Prolog` capacity provides the following hooks to Prolog access:
 	* `retractAll(queryS : String, params : Object*)`
 * Queries:
 	* `prove(queryS : String, params : Object*) : boolean`: prove if a queryS is true
-	* `askOnce(queryS : String, outVars : String[], params : Object*) : Map<String, Term>`: ask a query and get first result.
+	* `askOnce(queryS : String, params : Object*) : Map<String, Term>`: ask a query and get first result.
 	* `askForAllSolutions(QueryS : String, params : Object*) : Collection<Map<String, Term>>`: return the set of all solutions as set of bindings.
 	* `ask(queryS : String, params : Object*) : Iterator`: returns an iterator to solutions (Mochalog's `QuerySolutions`). You can get the actual variable to term mappings via method `.bindings`
 	* `ask2(queryS : String, params : Object*) : Iterator`: returns an iterator to solution bindings `Map<String,Term>`
