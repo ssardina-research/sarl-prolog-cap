@@ -107,7 +107,7 @@ capacity KB_Prolog {
 	/* 
 	 * Open a new query session in Prolog and returns an in-house object with an iterable 
 	 */
-	def ask2(queryS : String, outVars : String[], params : Object*) : Iterator
+	def ask2(queryS : String, params : Object*) : Iterator
 }
 
 
@@ -225,9 +225,9 @@ skill SWI_KB_Prolog implements KB_Prolog {
 
 	// Prove a query incrementally, by returning an iterator solution object (with a .next method for next solution, if any)
 	// (Returns empty collection if no solution is found)
-	def ask2(queryS : String, outVars : String[], params : Object*) : Iterator<Map<String,Term>> {
+	def ask2(queryS : String, params : Object*) : Iterator<Map<String,Term>> {
 		val query = Query.format(queryS, params)
-		return new SWI_KB_Prolog_Solution_Iter(prolog.ask(query), outVars)
+		return new SWI_KB_Prolog_Solution_Iter(prolog.ask(query))
 	}
 
 }
@@ -258,15 +258,21 @@ class SWI_KB_Prolog_Solution_Iter implements Iterator<Map<String, Term>> {
 		if (solutionIterator.hasNext) {
 			val solution = solutionIterator.next
 
-			val binding2 = new HashMap(solution.bindings)
-			binding2.keySet().retainAll(outVars)
-			return binding2
+			if (outVars === null) {
+				return solution.bindings
+			} else {
+				val bindings2 = new HashMap(solution.bindings)
+				bindings2.keySet().retainAll(outVars)
+				return bindings2
+
+				// var out : HashMap<String, Term> = new HashMap()
+				// for (outVar : outVars) {
+				// out.put(outVar, solution.get(outVar))
+					// }
+				// return out
+
+			}
 			
-//			var out : HashMap<String, Term> = new HashMap()
-//			for (outVar : outVars) {
-//				out.put(outVar, solution.get(outVar))
-//			}
-//			return out
 		} else {
 			return null
 		}
