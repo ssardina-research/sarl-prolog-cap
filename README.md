@@ -50,12 +50,63 @@ If one wants to _develop_ this capacity/skill further:
 	* Obtained via Maven automatically from http://mvnrepository.com/artifact/io.sarl.maven.
 	
 
-To verify you have everything setup well, run `mvn clean package` and then run the test agent as follows:
+To verify you have everything setup well, run `mvn clean package` first. This will run some unit testing on JPL itself (file `src/test/java/io/sarl/extras/JPLTest.java`. Furthermore, you can then run the SARL test agent `io.sarl.extras.TestAgt` as follows:
 
 ```
 java -jar target/sarl-prolog-cap-1.3.0.7.2-jar-with-dependencies.jar io.sarl.extras.TestAgt
 ```
 
+This will run a set of tests against a Prolog database `src/test/resources/testKB.pl` and should give this output:
+
+```
+[INFO, 3:14:12pm, Janus SRE] Launching the agent: io.sarl.extras.TestAgt
+[INFO, 3:14:12pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6] The TEST agent was started.
+[INFO, 3:14:13pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6] ######### Test 1: consult file 
+[INFO, 3:14:13pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6] 1 - File consulted well
+[INFO, 3:14:13pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6] ######### Test 2: query test(x) - proving for various x's and asserting 
+[INFO, 3:14:13pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6] 2.1 - test(8) proven TRUE well
+[INFO, 3:14:13pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6] 2.2 - test(3) proven FALSE well
+[INFO, 3:14:13pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6] 2.2 - test(100) asserted last well
+[INFO, 3:14:13pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6] ######### Test 3: query test(X) 
+[INFO, 3:14:13pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6] 3 - test(X) has all solutions as it should:
+[INFO, 3:14:13pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6]  	 Solution found for test(X): 80
+[INFO, 3:14:13pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6]  	 Solution found for test(X): 2
+[INFO, 3:14:13pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6]  	 Solution found for test(X): 4
+[INFO, 3:14:13pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6]  	 Solution found for test(X): 6
+[INFO, 3:14:13pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6]  	 Solution found for test(X): 8
+[INFO, 3:14:13pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6]  	 Solution found for test(X): 100
+[INFO, 3:14:13pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6] ######### Test 4: query test_slow(X) 
+[INFO, 3:14:13pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6] 4.1 - test_slow(X) has solution iteration as it should:
+[INFO, 3:14:13pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6]  	 Solution found for test_slow(X): 80
+[INFO, 3:14:14pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6]  	 Solution found for test_slow(X): 2
+[INFO, 3:14:14pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6]  	 Solution found for test_slow(X): 4
+[INFO, 3:14:15pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6]  	 Solution found for test_slow(X): 6
+[INFO, 3:14:15pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6]  	 Solution found for test_slow(X): 8
+[INFO, 3:14:16pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6]  	 Solution found for test_slow(X): 100
+[INFO, 3:14:16pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6] 4.2 - test_slow(X) does not have more solutions, all good!
+[INFO, 3:14:16pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6] 4.3 - We tried to get the next query but got exception (good!): No further SWI query solutions remain.
+[INFO, 3:14:16pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6] ######### Test 5: query person(X, Y, Z) 
+[INFO, 3:14:16pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6] 5.1 - person(X, Y, Z) has solution iteration as it should:
+[INFO, 3:14:16pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6]  	 Solution found for person(X, Y, Z): {X=john, Y=20, Z=melbourne}
+[INFO, 3:14:16pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6]  	 Solution found for person(X, Y, Z): {X=maria, Y=31, Z=sydney}
+[INFO, 3:14:16pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6]  	 Solution found for person(X, Y, Z): {X=adam, Y=18, Z=geelong}
+[INFO, 3:14:16pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6]  	 Solution found for person(X, Y, Z): {X=michelle, Y=14, Z=lorne}
+[INFO, 3:14:16pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6] ######### Test 6: query person(X, Y, Z) - just extract Y and Z only
+[INFO, 3:14:16pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6] 6.1 - person(X, Y, Z) has solution iteration as it should:
+[INFO, 3:14:16pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6]  	 Solution found for person(X, Y, Z): {X=john, Y=20, Z=melbourne}
+[INFO, 3:14:16pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6]  	 Solution found for person(X, Y, Z): {X=maria, Y=31, Z=sydney}
+[INFO, 3:14:16pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6]  	 Solution found for person(X, Y, Z): {X=adam, Y=18, Z=geelong}
+[INFO, 3:14:16pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6]  	 Solution found for person(X, Y, Z): {X=michelle, Y=14, Z=lorne}
+[INFO, 3:14:16pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6] ######### Test 7: failing queries
+[INFO, 3:14:16pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6]  	 Well done, no solution for query current_job(2, Floor, Dir)
+[INFO, 3:14:16pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6]  	 PrologException caught well! Predicate current_job2/3 does not exist at all, PrologException correctly caught: PrologException: error(existence_error(procedure, ':'(test, '/'(current_job2, 3))), context(':'(system, '/'('$c_call_prolog', 0)), _12))
+[INFO, 3:14:16pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6] ######### Test 10: query listing the database
+[INFO, 3:14:16pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6] 10 - KB dumped!
+[INFO, 3:14:16pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6] The TEST agent was stopped -- ALL TESTS DONE.
+[INFO, 3:14:16pm, Janus SRE] Stopping kernel services
+```
+
+The last test 10 will dump the Prolog database into subdirectory `kb_dump/<date>/`.
 
 
 ### Include **SARL PROLOG CAP** in your SARL application via Maven 
@@ -95,9 +146,9 @@ This `KB_Prolog` capacity provides the following hooks to Prolog access:
 	* `retractAll(queryS : String, params : Object*)`
 * Queries:
 	* `prove(queryS : String, params : Object*) : boolean`: prove if a queryS is true
-	* `askOnce(queryS : String, outVars : String[], params : Object*) : Map<String, Term>`: ask a query and get first result.
+	* `askOnce(queryS : String, params : Object*) : Map<String, Term>`: ask a query and get first result.
 	* `askForAllSolutions(QueryS : String, params : Object*) : Collection<Map<String, Term>>`: return the set of all solutions as set of bindings.
-	* `ask(queryS : String, params : Object*) : Iterator`: returns an iterator to solutions (Mochalog's `QuerySolutions`).
+	* `ask(queryS : String, params : Object*) : Iterator`: returns an iterator to solutions (Mochalog's `QuerySolutions`). You can get the actual variable to term mappings via method `.bindings`
 	* `ask2(queryS : String, params : Object*) : Iterator`: returns an iterator to solution bindings `Map<String,Term>`
 
 
