@@ -106,6 +106,8 @@ This will run a set of tests against a Prolog database `src/test/resources/testK
 [INFO, 3:14:16pm, Janus SRE] Stopping kernel services
 ```
 
+The last test 10 will dump the Prolog database into subdirectory `kb_dump/<date>/`.
+
 
 ### Include **SARL PROLOG CAP** in your SARL application via Maven 
 
