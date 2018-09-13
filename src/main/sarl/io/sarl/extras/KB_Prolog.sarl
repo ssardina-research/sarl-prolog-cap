@@ -148,6 +148,8 @@ skill SWI_KB_Prolog implements KB_Prolog {
 			runtime_dir.mkdir()
 
 		kb_directory_path = path.concat(runtime.concat(File.separator))
+
+		kb_directory_path.replace("\\\\", "\\")
 	}
 
 	def consult_file(file : String) {
