@@ -129,7 +129,7 @@ skill SWI_KB_Prolog implements KB_Prolog {
 		kb_name = name
 		prolog = new SandboxedPrologContext(this.kb_name)
 
-		val formatter = new SimpleDateFormat("yyyy-MM-dd--HH:mm:ss") 
+		val formatter = new SimpleDateFormat("yyyy-MM-dd--HH-mm-ss") 
 		val date : Date = new Date() // get current date time when skill is initialized
 
 		val runtime = formatter.format(date) // store runtime date time as a string
