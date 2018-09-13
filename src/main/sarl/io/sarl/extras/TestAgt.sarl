@@ -214,11 +214,14 @@ agent TestAgt {
 					}
 				}
 				if (solution.get("X").listNil) {
-					info(" \t\t Value as EMPTY LIST: {1}", solution.get("X").toString)
+					info(" \t\t Value as EMPTY LIST: {0}", solution.get("X").toString)
 				}
 				if (solution.get("X").listPair) {
-					info(" \t\t Value as PAIR LIST of length {0}: {1}", Util.listToLength(solution.get("X")),
-						solution.get("X").toTermArray.toString)
+					val listSolution = solution.get("X").toTermArray.toArray
+					info(" \t\t Value as PAIR LIST of length {0}: {1}", Util.listToLength(solution.get("X")), listSolution.toString)
+					for (item : listSolution) {
+						info(" \t\t\t One member: {0}", item.toString)	
+					}
 				}
 				if (solution.get("X").variable) {
 					info(" \t\t Value as VARIABLE: {0}", solution.get("X").toString)
@@ -267,7 +270,6 @@ agent TestAgt {
 		} else {
 			error("10.2 - FAILED! - data_string(string) proven TRUE wrongly! It should be FALSE!")
 		}
-
 	}
 				
 
