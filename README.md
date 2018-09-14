@@ -140,6 +140,7 @@ This `KB_Prolog` capacity provides the following hooks to Prolog access:
 	* `dump_kb(id : String)`: : dump the current knowledgebase to a file with timestamp and name of kb.
 	* `get_prolog_engine()	: Object`: gives the prolog reference.
 	* `get_kb_name() : String`: gives the registered name of the kb.
+	* `set_dump_root(dir : String)`: set the root directory where to dump KBs.
 * Assert and retract predicates:
 	* `assertFirst(queryS : String, params : Object*)`
 	* `assertLast(queryS : String, params : Object*)`
