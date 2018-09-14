@@ -155,8 +155,7 @@ This `KB_Prolog` capacity provides the following hooks to Prolog access:
 
 
 
-In terms, the particular skill `SWI_KB_Prolog` uses [SWI Prolog](http://www.swi-prolog.org/) with [JPL](https://jpl7.org/) interface as the Prolog engine, 
-and the [Mochalog](https://github.com/ssardina/mochalog) framework for more high-level access to SWI Prolog via the JPL interface.
+In terms, the particular skill `SWI_KB_Prolog` uses [SWI Prolog](http://www.swi-prolog.org/) with [JPL](https://jpl7.org/) interface as the Prolog engine, and the [Mochalog](https://github.com/ssardina/mochalog) framework for more high-level access to SWI Prolog via the JPL interface.
 
 Some useful notes:
 
@@ -236,7 +235,7 @@ We describe the above strategies with more detail now. The first two options are
 				// http://gangmax.me/blog/2017/10/10/how-to-return-multiple-values-from-a-java-method/
 				import org.apache.commons.lang3.tuple.Pair
 
-				setSkill(new SWI_KB_Elevator(0, "agent23"))
+				setSkill(new SWI_KB_Elevator(0, "agent23", "my_dump"))
 
 				// Load agent knowledge base
 				kb_load("src/main/prolog/sweeper_elevator_agent.pl")
