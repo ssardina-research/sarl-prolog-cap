@@ -25,7 +25,7 @@ class BootTestAgt {
 		val type = Class.forName(fullyQualifiedAgent)
 		var SARLagent : Class<? extends Agent>
 		SARLagent = type.asSubclass(Agent)
-		assert SARLagent != null;
+		assert SARLagent !== null;
 		Boot.startJanus(SARLagent)
 	}
 	

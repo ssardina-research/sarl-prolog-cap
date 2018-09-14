@@ -178,6 +178,64 @@
                 </configuration>
             </plugin>
 
+			<!--  Aggregate project into a JAR packages
+			https://maven.apache.org/plugins/maven-assembly-plugin/
+			
+			Commented out by default as it is too slow. Uncomment for final release.
+			-->
+		    <plugin>
+			    <artifactId>maven-assembly-plugin</artifactId>
+			    <version>3.1.0</version>
+			    <configuration>
+			        <archive>
+			            <manifest>
+			                <addClasspath>true</addClasspath>
+			                <mainClass>io.janusproject.Boot</mainClass>
+			            </manifest>
+			        </archive>
+			        <descriptorRefs>
+			            <descriptorRef>jar-with-dependencies</descriptorRef>
+			        </descriptorRefs>
+			    </configuration>
+			    
+				<!--  EXECUTIONS -->
+			    <executions>
+
+					<!--  Assemble an application bundle or distribution from an assembly descriptor.  -->
+			        <execution>
+			            <phase>package</phase>
+			            <goals>
+			                <goal>single</goal>
+			            </goals>
+			        </execution>
+
+					<!--  TEST AGENT -->
+				    <execution>
+	                        <id>TestAgt</id>
+	                        <phase>package</phase>
+	                        <goals>
+	                            <goal>single</goal>
+	                        </goals>
+	                        <configuration>
+	                            <archive>
+	                                <manifest>
+	                                    <addClasspath>true</addClasspath>
+	                                    <mainClass>BootTestAgt</mainClass>
+	                                </manifest>
+	                            </archive>
+	                            <!-- 
+	                            <descriptorRefs>
+	                                <descriptorRef>jar-with-dependencies</descriptorRef>
+	                            </descriptorRefs>
+	                             -->
+	                            <finalName>BootTestAgt</finalName>
+	                            <appendAssemblyId>false</appendAssemblyId>
+	                        </configuration>
+	                 </execution>
+			    </executions>
+		    </plugin>
+
+
 			<!--  Class to execute via maven exec:java 
 			https://www.mojohaus.org/exec-maven-plugin/
 			-->
@@ -185,10 +243,12 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <configuration>
-	                <mainClass>BootTestAgt</mainClass>
+	                <!-- 
+                    <mainClass>io.janusproject.Boot</mainClass>
+	                 -->
+	                <mainClass>BootMAS</mainClass>
                 </configuration>
             </plugin>
-
 
 
 		</plugins>

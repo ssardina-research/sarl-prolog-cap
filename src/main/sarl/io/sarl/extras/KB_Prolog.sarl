@@ -56,6 +56,10 @@ capacity KB_Prolog {
 	 * @param file the file to be consulted
 	 */
 	def consult_file(file : String)
+	/* 
+	 * Set the root dir for dumping knolwedge bases
+	 */
+	def set_dump_root(dir : String)
 	/*
 	 * Dump the current KB to file
 	 */
@@ -119,38 +123,29 @@ capacity KB_Prolog {
 // /////////////////////////////////////////////////////////////////////////////////////////
 skill SWI_KB_Prolog implements KB_Prolog {
 	protected val kb_name : String
+	
 	val prolog : PrologContext // Interface to SWI-Prolog interpreter
 	var swi_file : String
-	val kb_directory_path : String
 
+	// All data for the directory where KB will be dump
+	val formatter = new SimpleDateFormat("yyyy-MM-dd--HH-mm-ss")
+	val runtime_timestamp = formatter.format(new Date()) // store runtime date time as a string
+	var kb_dump_root_dir : String
+	var kb_directory_path_posix : String
+	var kb_dump_dir : File
 
-	new(name : String) {
+	new(name : String, dump_dir : String) {
 		super() // Call the super's constructor
 		kb_name = name
 		prolog = new SandboxedPrologContext(this.kb_name)
 
-		val formatter = new SimpleDateFormat("yyyy-MM-dd--HH-mm-ss") 
-		val date : Date = new Date() // get current date time when skill is initialized
-
-		val runtime = formatter.format(date) // store runtime date time as a string
-		
-		val directory_name = "kb_dump"
-		val path = directory_name.concat(File.separator)
-
-		val directory : File = new File(directory_name)
-
-		if(! directory.exists())
-			directory.mkdir()
-
-		val runtime_dir : File = new File(path.concat(runtime))
-
-		if(! runtime_dir.exists())
-			runtime_dir.mkdir()
-
-		kb_directory_path = path.concat(runtime.concat(File.separator))
-
-		kb_directory_path.replace("\\\\", "\\")
+		set_dump_root(dump_dir)
 	}
+	
+	new(name : String) {
+		this(name, "kb_dump")
+	}
+	
 
 	def consult_file(file : String) {
 		this.swi_file = file
@@ -158,6 +153,19 @@ skill SWI_KB_Prolog implements KB_Prolog {
         // Load agent knowledge base
 		prolog.importFile(Paths.get(file))
 	}
+
+	def set_dump_root(dir : String) {
+		kb_dump_root_dir = dir
+
+		// Create if necessary the directory where the KB will be dump for this exec: kb_dump_root_dir/runtime_timestamp/
+		kb_dump_dir = new File(kb_dump_root_dir.concat(File.separator).concat(runtime_timestamp))
+		if (!kb_dump_dir.exists())
+			kb_dump_dir.mkdirs()
+
+		kb_directory_path_posix = String.format("%s/%s", kb_dump_root_dir, runtime_timestamp)
+	}
+
+	
 
 	def dump_kb() {
 		dump_kb(kb_name)
@@ -170,19 +178,24 @@ skill SWI_KB_Prolog implements KB_Prolog {
 		// F has to be anonymous because JPL cannot return a blob: gives error (so we use _F)
 		val timestamp_format = "'%Y-%m-%d--%H-%M-%S'"
 
+		// Format of file to dump: kb_directory_path/
+//		val query = String.format("
+//					get_time(X), 
+//					format_time(atom(_T), %s, X, posix),
+//					string_concat(\"%s/kb-%s-\", _T,  _BaseNamePosix2), 
+//					string_concat(_BaseNamePosix2, \"/\",  _BaseNamePosix), 
+//					string_concat(_BaseNamePosix, \".pl\", _FileNamePosix),
+//					prolog_to_os_filename(_FileNamePosix, _FileName),
+//					open(_FileName, write, _F), set_output(_F), listing, close(_F)", 
+//						timestamp_format, kb_directory_path, id)
+
 		val query = String.format("
-					get_time(X), 
-					format_time(atom(_T), %s, X, posix),
-					string_concat(\"%skb-%s-\", _T,  _BaseName),
-					string_concat(_BaseName, \".pl\", _FileName),
-					open(_FileName, write, _F), set_output(_F), listing, close(_F)", timestamp_format, kb_directory_path, id)
-	
+					prolog_to_os_filename(\"%s/kb-%s-%s.pl\", _FileName),
+					open(_FileName, write, _F), set_output(_F), listing, close(_F)", 
+						kb_directory_path_posix, id, formatter.format(new Date()))
+
 		// When we prove query, we basically execute a listing/0 sending the output to a file with timestamp and id
 		prolog.prove(query)
-		// prolog.askForSolution(query"save_db(@S)", id)
-
-		// Another way by calling Mochalog MQuery.format and an assumed predicate save_db/1
-		// prolog.askForSolution(MQuery.format("save_db(@S)", id))
 }
 	
 	def get_kb_name() : String {

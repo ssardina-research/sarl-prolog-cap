@@ -43,7 +43,7 @@ agent TestAgt {
 		// You should put all the initialization statements in this block of code.
 		info("The TEST agent was started.")
 
-		setSkill(new SWI_KB_Prolog("test"))
+		setSkill(new SWI_KB_Prolog("test", "my_dump_test"))
 
 		test_1()
 		test_2()
@@ -298,6 +298,9 @@ agent TestAgt {
 
 		dump_kb("test")
 		info("{0} - KB dumped!", no)
+		set_dump_root("my_dump_test2")
+		dump_kb("again")
+		info("{0} - KB dumped AGAIN (in another dir)!", no)
 	}
 
 
