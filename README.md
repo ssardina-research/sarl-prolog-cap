@@ -15,6 +15,7 @@ This capacity/skill depends on two main systems:
 	* This is package `swi-prolog-java` in Linux.
 	* In Windows, the Java-SWI interface it can be installed as part of the main install.
 	* Main Page for JPL: https://jpl7.org/ 
+		* Check some [good examples on how to use JPL](https://github.com/SWI-Prolog/packages-jpl/blob/master/examples/java/) including the good [Family Example]([good examples on how to use JPL](https://github.com/SWI-Prolog/packages-jpl/blob/master/examples/java/Family/Family.java)). 
 * [Mochalog](https://github.com/ssardina/mochalog), a rich bidirectional interface between the Java Runtime and the SWI-Prolog interpreter inspired by JPL.
 	* Obtained via Maven automatically using from [JitPack](https://jitpack.io/#ssardina/mochalog)
 	* Check Mochalog page for prerequisites, install, and examples.
@@ -321,7 +322,7 @@ Here is some example code of its use (though for another application) in an elev
 
 		// Querying one solution - Tell the KB to process last percept
 		agents.keySet().forEach([ agentName : String |
-			prolog_kb.askForSolution(Query.format("process_last_percepts(" + agentName + ")"))
+			prolog_kb.askForSolution(Query.format("process_last_percepts(@A)", agentName))
 		])
 		
 		// Querying all solutions - Report percepts available in the KB
