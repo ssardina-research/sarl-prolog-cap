@@ -13,14 +13,17 @@ import io.sarl.core.Logging
 import io.sarl.core.MemberJoined
 import io.sarl.core.MemberLeft
 import io.sarl.core.Lifecycle
-import io.mochalog.bridge.prolog.query.QuerySolutionIterator
 import java.util.NoSuchElementException
-import io.mochalog.bridge.prolog.query.QuerySolution
 import java.util.Iterator
 import java.util.Map
 import org.jpl7.Term
 import org.jpl7.PrologException
 import org.jpl7.Util
+import org.jpl7.Query
+
+import io.mochalog.bridge.prolog.query.MQuerySolutionIterator
+import io.mochalog.bridge.prolog.query.MQuerySolution
+
 
 /** 
  * @author ssardina
@@ -107,12 +110,12 @@ agent TestAgt {
 		val queryText = "test_slow(X)"
 		info("######### Test {0}: query {1} ", no, queryText)
 
-		//	Ask yields a QuerySolutionIterator (from Mochalog), which is an Iterator<QuerySolution>
-		val solutionsIter : Iterator<QuerySolution> = ask(queryText)
+		//	Ask yields a MQuerySolutionIterator (from Mochalog), which is an Iterator<MQuerySolution>
+		val solutionsIter : Iterator<MQuerySolution> = ask(queryText)
 		if (solutionsIter.hasNext) {
 			info("4.1 - {0} has solution iteration as it should:", queryText)
 			while (solutionsIter.hasNext) {
-				val solution : QuerySolution = solutionsIter.next()
+				val solution : MQuerySolution = solutionsIter.next()
 				info(" \t Solution found for {0}: {1}", queryText, solution.get("X").intValue)
 			}
 		}
@@ -132,12 +135,12 @@ agent TestAgt {
 		val queryText = "person(X, Y, Z)"
 		info("######### Test {0}: query {1} ", no, queryText)
 		
-		//	Ask yields a QuerySolutionIterator (from Mochalog), which is an Iterator<QuerySolution>
-		val solutionsIter : Iterator<QuerySolution> = ask(queryText)
+		//	Ask yields a MQuerySolutionIterator (from Mochalog), which is an Iterator<MQuerySolution>
+		val solutionsIter : Iterator<MQuerySolution> = ask(queryText)
 		if (solutionsIter.hasNext) {
 			info("5.1 - {0} has solution iteration as it should:", queryText)
 			while (solutionsIter.hasNext) {
-				val solution : QuerySolution = solutionsIter.next()
+				val solution : MQuerySolution = solutionsIter.next()
 				info(" \t Solution found for {0}: {1}", queryText, solution.bindings.toString)
 			}
 		}
@@ -148,7 +151,7 @@ agent TestAgt {
 		val queryText = "person(X, Y, Z)"
 		info("######### Test {0}: query {1} - just extract Y and Z only", no, queryText)
 
-		//	Ask yields a QuerySolutionIterator (from Mochalog), which is an Iterator<QuerySolution>
+		//	Ask yields a MQuerySolutionIterator (from Mochalog), which is an Iterator<MQuerySolution>
 		val solutionsIter : Iterator<Map<String,Term>> = ask2(queryText)
 		if (solutionsIter.hasNext) {
 			info("{0}.1 - {1} has solution iteration as it should:", no, queryText)
@@ -165,7 +168,7 @@ agent TestAgt {
 		var queryText = "current_job(2, Floor, Dir)"
 		info("######### Test {0}: failing queries", no, queryText)
 
-		//	Ask yields a QuerySolutionIterator (from Mochalog), which is an Iterator<QuerySolution>
+		//	Ask yields a MQuerySolutionIterator (from Mochalog), which is an Iterator<MQuerySolution>
 		val solution = askOnce(queryText)
 		if (solution === null) {
 			info(" \t Well done, no solution for query {0}", queryText)
@@ -186,14 +189,14 @@ agent TestAgt {
 	def test_8() {
 		val no = 8
 		var queryText = "data(X)"
-		info("######### Test {0}: Query iterator with different answer types: integer, float, atom, compound", no, queryText)
+		info("######### Test {0}: MQuery iterator with different answer types: integer, float, atom, compound", no, queryText)
 
-		//	Ask yields a QuerySolutionIterator (from Mochalog), which is an Iterator<QuerySolution>
-		val solutionsIter : Iterator<QuerySolution> = ask(queryText)
+		//	Ask yields a MQuerySolutionIterator (from Mochalog), which is an Iterator<MQuerySolution>
+		val solutionsIter : Iterator<MQuerySolution> = ask(queryText)
 		if (solutionsIter.hasNext) {
 			info("8.1 - {0} has solution iteration as it should:", queryText)
 			while (solutionsIter.hasNext) {
-				val solution : QuerySolution = solutionsIter.next()
+				val solution : MQuerySolution = solutionsIter.next()
 				info(" \t Solution found of type {0}", solution.get("X").typeName.toUpperCase)
 
 				if (solution.get("X").integer) {
@@ -235,13 +238,13 @@ agent TestAgt {
 		val queryText = "member(X,[1,2,3,4])"
 		info("######### Test {0}: query {1}", no, queryText)
 	
-		//	Ask yields a QuerySolutionIterator (from Mochalog), which is an Iterator<QuerySolution>
-//		val solutionsIter : Iterator<QuerySolution> = ask("member(X,[1,2,3,4])")
-		val solutionsIter : Iterator<QuerySolution> = ask(String.format("member(X, %s)", "[1,2,3,4]"))
+		//	Ask yields a MQuerySolutionIterator (from Mochalog), which is an Iterator<MQuerySolution>
+//		val solutionsIter : Iterator<MQuerySolution> = ask("member(X,[1,2,3,4])")
+		val solutionsIter : Iterator<MQuerySolution> = ask(String.format("member(X, %s)", "[1,2,3,4]"))
 		if (solutionsIter.hasNext) {
 			info("9.1 - {0} has solution iteration as it should:", queryText)
 			while (solutionsIter.hasNext) {
-				val solution : QuerySolution = solutionsIter.next()
+				val solution : MQuerySolution = solutionsIter.next()
 				info(" \t Solution found of type {0}: {1}", solution.get("X").typeName.toUpperCase,
 					solution.get("X").toString)
 			}
@@ -250,26 +253,41 @@ agent TestAgt {
 
 	def test_10() {
 		val no = 10
-		val queryText = "data_string(\"string\")"
+		var subno : int
+		var queryText = "data_string(\"string\")"
 		info("######### Test {0}: query {1}", no, queryText)
 
-		val x  : String = "string"
-//		assertLast("data_string(@S)", x)
-//		assertLast(String.format("data_string(\"%s\")", x))
-		assertLast("data_string(\"string\")")
-		info("10.1 - asserting a string into data_string/1: {0}", String.format("data_string(\"%s\")", x))
 		
-		if (prove(String.format("data_string(\"%s\")", "string"))) {
-			info("10.2 - data_string(\"string\") proven TRUE well")
+		subno = 1
+		queryText = "data_string(\"string0\")"
+		if (prove(queryText)) {
+			info("{0}.{1} - Query {2} proven  TRUE correctly!", no, subno, queryText)
 		} else {
-			error("10.2 - FAILED! - data_string(\"string\") proven FALSE wrongly! It should be TRUE!")
+			error("{0}.{1} - Query {0} proven FALSE wrongly!", no, subno, queryText)
 		}
-
-		if (!prove("data_string(string)")) {
-			info("10.2 - data_string(string) proven FALSE well")
-		} else {
-			error("10.2 - FAILED! - data_string(string) proven TRUE wrongly! It should be FALSE!")
-		}
+//
+//		val x  : String = "string"
+////		assertLast("data_string(@S)", x)
+////		assertLast(String.format("data_string(\"%s\")", x))
+//		assertLast("data_string(\"string\")")
+//		info("10.2 - Asserting Last data_string/1: {0}", String.format("data_string(\"%s\")", x))
+//
+//		if (prove("assertz(data_string(\"string3\"))")) {
+//			info("10.3 - proving assertz(data_string(@S))")
+//		}
+//		
+//		
+//		if (prove(String.format("data_string(\"%s\")", "string"))) {
+//			info("10.4 - data_string(\"string\") proven TRUE well")
+//		} else {
+//			error("10.4 - FAILED! - data_string(\"string\") proven FALSE wrongly! It should be TRUE!")
+//		}
+//
+//		if (!prove("data_string(string)")) {
+//			info("10.5 - data_string(string) proven FALSE well")
+//		} else {
+//			error("10.5 - FAILED! - data_string(string) proven TRUE wrongly! It should be FALSE!")
+//		}
 	}
 				
 

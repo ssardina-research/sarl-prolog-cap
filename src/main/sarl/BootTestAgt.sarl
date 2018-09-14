@@ -1,0 +1,32 @@
+/** 
+ * Class to boot up task 2 agent controller
+ */
+import io.janusproject.Boot
+import io.sarl.lang.core.Agent
+
+/** 
+ * @author Sebastian Sardina
+ * 
+ */
+class BootTestAgt {
+	// Code adapted from example how to boot from name string: 	http://tinyurl.com/ycolmey5
+	def static main(args : String[]) : void {
+		Boot.offline = true
+		Boot.verboseLevel = 7 //ALL
+		var fullyQualifiedAgent : String
+		val basePackage = "io.sarl.extras"
+
+		val AGENT : String = "TestAgt"
+
+		fullyQualifiedAgent = basePackage + "." + AGENT
+		
+		// now get agent class for fullQualifiedAgent and boot it
+		System.out.println(String.format("Loading SARL controller agent %s", AGENT))
+		val type = Class.forName(fullyQualifiedAgent)
+		var SARLagent : Class<? extends Agent>
+		SARLagent = type.asSubclass(Agent)
+		assert SARLagent != null;
+		Boot.startJanus(SARLagent)
+	}
+	
+}
