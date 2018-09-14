@@ -134,16 +134,12 @@ skill SWI_KB_Prolog implements KB_Prolog {
 	var kb_directory_path_posix : String
 	var kb_dump_dir : File
 
-	new(name : String, dump_dir : String) {
+	new(name : String, dump_dir : String = "kb_dump") {
 		super() // Call the super's constructor
 		kb_name = name
 		prolog = new SandboxedPrologContext(this.kb_name)
 
 		set_dump_root(dump_dir)
-	}
-	
-	new(name : String) {
-		this(name, "kb_dump")
 	}
 	
 
