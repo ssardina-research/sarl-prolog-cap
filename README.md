@@ -153,9 +153,8 @@ This `KB_Prolog` capacity provides the following hooks to Prolog access:
 	* `ask(queryS : String, params : Object*) : Iterator`: returns an iterator to solutions (Mochalog's `QuerySolutions`). You can get the actual variable to term mappings via method `.bindings`
 	* `ask2(queryS : String, params : Object*) : Iterator`: returns an iterator to solution bindings `Map<String,Term>`
 
-
-
-In terms, the particular skill `SWI_KB_Prolog` uses [SWI Prolog](http://www.swi-prolog.org/) with [JPL](https://jpl7.org/) interface as the Prolog engine, and the [Mochalog](https://github.com/ssardina/mochalog) framework for more high-level access to SWI Prolog via the JPL interface.
+In terms, the particular skill `SWI_KB_Prolog` uses [SWI Prolog](http://www.swi-prolog.org/) with [JPL](https://jpl7.org/) interface as the Prolog engine, and the 
+[Mochalog](https://github.com/ssardina/mochalog) framework for more high-level access to SWI Prolog via the JPL interface. The implementation of the above primitives is, basically, by using the Mochalog API.
 
 Some useful notes:
 
@@ -180,9 +179,11 @@ See how single-quoted was used here to make sure agentName becomes an atom (and 
 
 There are basically three ways one can use SWI-Prolog inside SARL agents, depending on the level of abstraction:
 
-1. **[RECOMMENDED]** Create a capacity **KB_Domain** for your domain application that embodies the usual KB queries required, and a skill **SWI_KB_Domain** for it extending skill **SWI_KB_Prolog** (which implements general Prolog capacity **KB_Prolog**) in the [SARL Prolog Capacity](https://bitbucket.org/ssardina-research/sarl-prolog-cap) framework that implements those queries. 
+1. **[RECOMMENDED]** Create a capacity **KB_Domain** for your domain application that embodies the usual KB queries required, and a skill **SWI_KB_Domain** for it extending skill 
+**SWI_KB_Prolog** (which implements general Prolog capacity **KB_Prolog**) in the [SARL Prolog Capacity](https://bitbucket.org/ssardina-research/sarl-prolog-cap) framework that implements those queries. 
 That skill will have access to all the SWI Prolog tools provided in skill **SWI_KB_Prolog** and can implement the domain queries via SWI queries. 
-Under this approach, the SARL agent will:
+To develop this domain skill, you will most probably rely on the [Mochalog](https://github.com/ssardina/mochalog) framework (to build and post queries, and process solutions). 
+Make sure you read the readme there to understand how to use the three place-holders `@I`, `@A` and `@I` correctly. Under this approach, the SARL agent will:
 	* Use capacity **KB_Domain**, which is the capacity for the queries of the domain.
 		* A SARL agent will only use the queries provided by this capability via its functions.
 	* Use skill **SWI_KB_Domain**, which implements capacity **KB_Domain** and extends **SWI_KB_Prolog**.
