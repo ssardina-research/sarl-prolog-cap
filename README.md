@@ -180,16 +180,17 @@ See how single-quoted was used here to make sure agentName becomes an atom (and 
 There are basically three ways one can use SWI-Prolog inside SARL agents, depending on the level of abstraction:
 
 1. **[RECOMMENDED]** Create a capacity **KB_Domain** for your domain application that embodies the usual KB queries required, and a skill **SWI_KB_Domain** for it extending skill 
-**SWI_KB_Prolog** (which implements general Prolog capacity **KB_Prolog**) in the [SARL Prolog Capacity](https://bitbucket.org/ssardina-research/sarl-prolog-cap) framework that implements those queries. 
-That skill will have access to all the SWI Prolog tools provided in skill **SWI_KB_Prolog** and can implement the domain queries via SWI queries. 
-To develop this domain skill, you will most probably rely on the [Mochalog](https://github.com/ssardina/mochalog) framework (to build and post queries, and process solutions). 
-Make sure you read the readme there to understand how to use the three place-holders `@I`, `@A` and `@I` correctly. Under this approach, the SARL agent will:
-	* Use capacity **KB_Domain**, which is the capacity for the queries of the domain.
-		* A SARL agent will only use the queries provided by this capability via its functions.
-	* Use skill **SWI_KB_Domain**, which implements capacity **KB_Domain** and extends **SWI_KB_Prolog**.
-		* It is this skill that will perform Prolog queries via the Prolog tools offered by **KB_Prolog**.
-	* Note that the functions in **SWI_KB_Prolog** will _NOT_ be visible to the SARL agent, who can only access functions defined in domain capacity **KB_Domain**.
-		* If the SARL agent wants to do direct Prolog queries, it can also use capacity **KB_Prolog**, which means that the SWI-based functions implemented in skill **SWI_KB_Prolog** are now accessible at the agent level. 
+**SWI_KB_Prolog** (which implements general Prolog capacity **KB_Prolog**) in the [SARL Prolog Capacity](https://bitbucket.org/ssardina-research/sarl-prolog-cap) framework that implements those queries.
+	* That skill will have access to all the SWI Prolog tools provided in skill **SWI_KB_Prolog** and can implement the domain queries via SWI queries. 
+	* To develop this domain skill, you will most probably rely on the [Mochalog](https://github.com/ssardina/mochalog) framework (to build and post queries, and process solutions). Make sure you check the 
+	README there to understand how to use the three place-holders `@I`, `@A` and `@I` correctly in goal queries. 
+	* Under this approach, the SARL agent will:
+		* Use capacity **KB_Domain**, which is the capacity for the queries of the domain.
+			* A SARL agent will only use the queries provided by this capability via its functions.
+		* Use skill **SWI_KB_Domain**, which implements capacity **KB_Domain** and extends **SWI_KB_Prolog**.
+			* It is this skill that will perform Prolog queries via the Prolog tools offered by **KB_Prolog**.
+		* Note that the functions in **SWI_KB_Prolog** will _NOT_ be visible to the SARL agent, who can only access functions defined in domain capacity **KB_Domain**.
+			* If the SARL agent wants to do direct Prolog queries, it can also use capacity **KB_Prolog**, which means that the SWI-based functions implemented in skill **SWI_KB_Prolog** are now accessible at the agent level. 
 2. Make your agents use capacity **KB_PROLOG** (and its default skill **SWI_KB_Prolog**), and use what it provides directly in the agent. 
 As soon as the agent aquires the skill, a Prolog engine will be created by the skill. Then the agent for example can load a KB by consulting the file: `consult_file('myKB.pl')`.
 3. The lowest level will not even use the Prolog capacity and skill provided here, but will directly access SWI-Prolog via the Mochalog API, for example, by creating a prolog engine in the initialization of agents, etc.
