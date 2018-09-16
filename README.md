@@ -180,22 +180,28 @@ See how single-quoted was used here to make sure agentName becomes an atom (and 
 
 There are basically three ways one can use SWI-Prolog inside SARL agents, depending on the level of abstraction:
 
-1. **[RECOMMENDED]** Create a capacity **KB_Domain** for your domain application that embodies the usual KB queries required, and a skill **SWI_KB_Domain** for it extending skill **SWI_KB_Prolog** (which implements general Prolog capacity **KB_Prolog**) in the [SARL Prolog Capacity](https://bitbucket.org/ssardina-research/sarl-prolog-cap) framework that implements those queries. 
-That skill will have access to all the SWI Prolog tools provided in skill **SWI_KB_Prolog** and can implement the domain queries via SWI queries. 
+
+1. **[RECOMMENDED]** Create a capacity **KB_Domain** for your domain application that embodies the usual KB queries required, and a skill **SWI_KB_Domain** for it extending skill **SWI_KB_Prolog** (which implements general Prolog capacity **KB_Prolog**) in the [SARL Prolog Capacity](https://bitbucket.org/ssardina-research/sarl-prolog-cap) framework that implements those queries. The SARL agent will use this capacity and skill.
+2. Make the agents directly use capacity **KB_PROLOG** (and its default skill **SWI_KB_Prolog**). As soon as the agent acquires such a skill, a Prolog engine will be created by the skill. Then the agent for example can load a KB by consulting the file: `consult_file('myKB.pl')`. This is similar to the first option but the code will be in the SARL agent itself rather than encapsulated in a domain capacity/skill.
+3. Make the agents directly access SWI-Prolog via the Mochalog and JPL APIs, for example, by creating a Prolog engine in the initialization of agents, etc.
+
+
+
+### 1 - Creating a domain-specific Knowlwedge-base capacity/skill.
+
+This is the recommended approach. The idea is to create a capacity **KB_Domain** for your domain application that embodies the usual KB queries required, and a corresponding skill **SWI_KB_Domain** for it that _extends_ the base **SWI_KB_Prolog** skill (which itself implements general Prolog capacity **KB_Prolog**) in the [SARL Prolog Capacity](https://bitbucket.org/ssardina-research/sarl-prolog-cap) framework that implements those queries. 
+
+The domain-dependent **SWI_KB_Domain** skill will have access to all the SWI Prolog tools provided in skill **SWI_KB_Prolog** and can implement the domain queries via SWI queries using the Mochalog and JPL infrastructures.
+ 
 Under this approach, the SARL agent will:
 	* Use capacity **KB_Domain**, which is the capacity for the queries of the domain.
 		* A SARL agent will only use the queries provided by this capability via its functions.
 	* Use skill **SWI_KB_Domain**, which implements capacity **KB_Domain** and extends **SWI_KB_Prolog**.
 		* It is this skill that will perform Prolog queries via the Prolog tools offered by **KB_Prolog**.
-	* Note that the functions in **SWI_KB_Prolog** will _NOT_ be visible to the SARL agent, who can only access functions defined in domain capacity **KB_Domain**.
-		* If the SARL agent wants to do direct Prolog queries, it can also use capacity **KB_Prolog**, which means that the SWI-based functions implemented in skill **SWI_KB_Prolog** are now accessible at the agent level. 
-2. Make your agents use capacity **KB_PROLOG** (and its default skill **SWI_KB_Prolog**), and use what it provides directly in the agent. 
-As soon as the agent aquires the skill, a Prolog engine will be created by the skill. Then the agent for example can load a KB by consulting the file: `consult_file('myKB.pl')`.
-3. The lowest level will not even use the Prolog capacity and skill provided here, but will directly access SWI-Prolog via the Mochalog API, for example, by creating a prolog engine in the initialization of agents, etc.
 
-We describe the above strategies with more detail now. The first two options are preferred as they hide the details of Mochalog, which can be a bit difficult to understand at first glance.
+Note that the functions in **SWI_KB_Prolog** will _NOT_ be visible to the SARL agent itself, who can only access functions defined in domain capacity **KB_Domain**. If the SARL agent wants to do direct Prolog queries, it can also use capacity **KB_Prolog**, which means that the SWI-based functions implemented in skill **SWI_KB_Prolog** are now accessible at the agent level. 
 
-### 1 - Creating a domain-specific Knowlwedge-base capacity/skill.
+Here are the steps to this approach:
 
 1. Create a Capacity *C* for your application that provides the main queries to your domain.
 	* For example, `KB_Elevator` capacity for an elevator domain with functions such as:
@@ -275,9 +281,7 @@ We describe the above strategies with more detail now. The first two options are
 
 ### 2 - Directly using the capacity and skill in agents.
 
-Here, instead of creating a domain capacity and skill for the common Prolog accesses that the application will do (e.g., common queries), we can make the agents
-directly use the `KB_Prolog` capacity. This means that the behaviors of the SARL agent will make the Prolog access directly:
-
+Here, instead of creating a domain capacity and skill for the common Prolog accesses that the application will do (e.g., common queries), we can make the agents directly use the `KB_Prolog` capacity. This means that the behaviors of the SARL agent will make the Prolog access directly:
 
 				setSkill(new SWI_KB_Prolog("agent23"))
 
@@ -302,7 +306,7 @@ directly use the `KB_Prolog` capacity. This means that the behaviors of the SARL
 
 In this approach, we directly use SWI-Prolog via the Mochalog high-level infrastructure, which provides a more abstract and accessible interface than JPL itself. 
 
-Here is some example code of its use (though for another application) in an elevator controllre:
+Here is some example code of its use (though for another application) in an elevator controller:
 
 ```
 #!java
@@ -331,9 +335,8 @@ Here is some example code of its use (though for another application) in an elev
 		{
 			System.out.format("Information for agent %s on step %d\n", solution.get("Agent").toString(),  solution.get("Step").intValue)
 		}
-		
-
 ```
+
 
 ## TROUBLESHOOTING
 
