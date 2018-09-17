@@ -200,6 +200,7 @@ Under this approach, the SARL agent will:
 
 Note that the functions in **SWI_KB_Prolog** will _NOT_ be visible to the SARL agent itself, who can only access functions defined in domain capacity **KB_Domain**. If the SARL agent wants to do direct Prolog queries, it can also use capacity **KB_Prolog**, which means that the SWI-based functions implemented in skill **SWI_KB_Prolog** are now accessible at the agent level. 
 
+
 Here are the steps to this approach:
 
 1. Create a Capacity *C* for your application that provides the main queries to your domain.
@@ -209,9 +210,7 @@ Here are the steps to this approach:
 		* `kb_getNextJob() : Pair<Integer, Direction>`: get the next job (floor & direction) to serve. (see the [Pair](http://gangmax.me/blog/2017/10/10/how-to-return-multiple-values-from-a-java-method/) class)
 	* Observe this capacity can be implemented in many ways, for example, with plan Java.
 2. Create a skill *S* for the capacity *C* that will be a Prolog Knowledgebase.
-	* The skill will *extend* a skill for *KB_Prolog*, for example it can extend the skill `SWI_KB_Prolog`.
-		* This means that everything in the *KB_Prolog* capacity will be available in *S* so that *S* can use Prolog to implement the domain queries.
-		* For example:
+	* The skill will *extend* a skill for *KB_Prolog*, for example it can extend the skill `SWI_KB_Prolog`. This means that everything in the *KB_Prolog* capacity will be available in *S* so that *S* can use Prolog to implement the domain queries. For example:
 		
 				skill SWI_KB_Elevator extends SWI_KB_Prolog implements KB_Elevator  {
 		
