@@ -153,9 +153,8 @@ This `KB_Prolog` capacity provides the following hooks to Prolog access:
 	* `ask(queryS : String, params : Object*) : Iterator`: returns an iterator to solutions (Mochalog's `QuerySolutions`). You can get the actual variable to term mappings via method `.bindings`
 	* `ask2(queryS : String, params : Object*) : Iterator`: returns an iterator to solution bindings `Map<String,Term>`
 
-
-
-In terms, the particular skill `SWI_KB_Prolog` uses [SWI Prolog](http://www.swi-prolog.org/) with [JPL](https://jpl7.org/) interface as the Prolog engine, and the [Mochalog](https://github.com/ssardina/mochalog) framework for more high-level access to SWI Prolog via the JPL interface.
+In terms, the particular skill `SWI_KB_Prolog` uses [SWI Prolog](http://www.swi-prolog.org/) with [JPL](https://jpl7.org/) interface as the Prolog engine, and the 
+[Mochalog](https://github.com/ssardina/mochalog) framework for more high-level access to SWI Prolog via the JPL interface. The implementation of the above primitives is, basically, by using the Mochalog API.
 
 Some useful notes:
 
@@ -336,7 +335,6 @@ Here is some example code of its use (though for another application) in an elev
 			System.out.format("Information for agent %s on step %d\n", solution.get("Agent").toString(),  solution.get("Step").intValue)
 		}
 ```
-
 
 ## TROUBLESHOOTING
 
