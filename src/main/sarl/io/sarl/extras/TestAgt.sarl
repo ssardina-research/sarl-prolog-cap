@@ -43,7 +43,7 @@ agent TestAgt {
 		// You should put all the initialization statements in this block of code.
 		info("The TEST agent was started.")
 
-		setSkill(new SWI_KB_Prolog("test", "my_dump_test"))
+		setSkill(new SWI_KB_Prolog("test", "kb_dump_test"))
 
 		test_1()
 		test_2()

@@ -144,4 +144,4 @@ src/main/generated-sources
 src/test
 .metadata/
 wiki
-kb_dump
+kb_dump*
