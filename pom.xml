@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.bitbucket.ssardina-research</groupId>
 	<artifactId>sarl-prolog-cap</artifactId>
-	<version>1.5.${env.SARL_VERSION}</version>
+	<version>1.6.${env.SARL_VERSION}-devel</version>
 
     <name>SARL Capacity for SWI Prolog Connectivity</name>
     <url>https://bitbucket.org/ssardina-research/sarl-prolog-cap</url>
