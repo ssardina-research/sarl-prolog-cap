@@ -1,6 +1,7 @@
 # SARL Capacity for Prolog Knowledge Bases
 
 This project provides a Prolog knowledge-base capacity for SARL agents and one skill for it using [SWI Prolog](http://www.swi-prolog.org/).
+It relies on [Mochalog](https://github.com/ssardina/mochalog) and [JPL](https://jpl7.org) frameworks that provide a high-level view and API of SWI Prolog in Java.
 
 The Prolog capacity/skill can be used as belief representation.
 
