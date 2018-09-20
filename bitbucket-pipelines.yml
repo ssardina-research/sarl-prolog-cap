@@ -11,5 +11,5 @@ pipelines:
         caches:
           - maven
         script: # Modify the commands below to build your repository.
-          - export SARL_VERSION=0.7.5
-          - mvn -B verify # -B batch mode makes Maven less verbose
+          - export SARL_VERSION=0.7.2
+          - SARL_VERSION=0.7.2 mvn -B verify # -B batch mode makes Maven less verbose
