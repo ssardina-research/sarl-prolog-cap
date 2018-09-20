@@ -30,7 +30,7 @@ import io.mochalog.bridge.prolog.query.MQuerySolution
  * You can test it as follows:
 // * 		java -jar target/sarl-prolog-cap-1.3.0.7.2-jar-with-dependencies.jar io.sarl.extras.TestAgt
  */
-agent TestAgt {
+agent TestAgt_JPL {
 	uses Logging
 	uses KB_Prolog	
 	uses Lifecycle
@@ -43,19 +43,9 @@ agent TestAgt {
 		// You should put all the initialization statements in this block of code.
 		info("The TEST agent was started.")
 
-		setSkill(new SWI_KB_Prolog("test", "my_dump_test"))
+		setSkill(new JPL_KB_Prolog("test", "my_dump_test"))
 
 		test_1()
-		test_2()
-		test_3()
-		test_4()
-		test_5()
-		test_6()
-		test_7()
-		test_8()
-		test_9()
-		test_10()
-		
 		
 		
 		test_100()	
@@ -69,7 +59,7 @@ agent TestAgt {
 		val queryText = testFile
 		info("######### Test {0}: consult file ", no, queryText)
 		
-		consult_file(queryText)
+		consult(queryText)
 		info("1 - File consulted well")
 	}
 
