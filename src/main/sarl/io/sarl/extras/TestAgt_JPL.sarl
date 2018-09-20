@@ -47,8 +47,12 @@ agent TestAgt_JPL {
 
 		setSkill(new JPL_KB_Prolog("test", "my_dump_test"))
 
+		info("################################ START TESTING ################################")
 		if(test_1()) info("Test 1 passed!") else debug("Test 1 failed!")
 		if(test_2()) info("Test 2 passed!") else debug("Test 2 failed!")
+		if(test_3()) info("Test 3 passed!") else debug("Test 3 failed!")
+		if(test_4()) info("Test 4 passed!") else debug("Test 4 failed!")
+		info("################################ END TESTING ################################")
 		
 //		test_100()	
 
@@ -67,43 +71,52 @@ agent TestAgt_JPL {
 
 	def test_2() : boolean {
 		val no = 2
-		val queryText = "test(x) - proving for various x's and asserting"
-		info("######### Test {0}: query {1} ", no, queryText)
+		val queryText = "Simple prove, assert, retract, ask once tests"
+		info("######### Test {0}: {1} ", no, queryText)
 
 		if(!prove("test(8)")) return false
 		if(prove("test(3)")) return false
 		
 		assertLast("test(200)")
 		if(!prove("test(200)")) return false
+		retract("test(200)")
+		if(prove("test(200)")) return false
+
+		val solutions = askOnce("test(X)")
+		if(solutions.empty) return false
+		info("\t Variable X = {0}", solutions.get("X").intValue)
 		
 		return true
 	}
 
 	def test_3() {
 		val no = 3
-		val queryText = "test(X)"
-		info("######### Test {0}: query {1} ", no, queryText)
+		val queryText = "Ask for all solutions"
+		info("######### Test {0}: {1} ", no, queryText)
 
-		val solutions = askForAllSolutions(queryText)
-		if (!solutions.empty) {
-			info("3 - {0} has all solutions as it should:", queryText)
+		val expectedSolutions : int[] = #[80, 2, 4, 6, 8]
+
+	
+		val solutions = askForAllSolutions("test(X)")
+		if (solutions.empty || solutions.size !== expectedSolutions.size) return false
+		for (var i : int; i < solutions.size; i++) {
+			info("\t Variable X = {0}", solutions.get(i).get("X").intValue)
+			if (solutions.get(i).get("X").intValue !== expectedSolutions.get(i)) return false
 		}
-		for (sol : solutions) {
-			info(" \t Solution found for {0}: {1}", queryText, sol.get("X").intValue)
-		}
+		return true
 	}
 
 	// Iteration
 	def test_4() {
 		val no = 4
-		val queryText = "test_slow(X)"
-		info("######### Test {0}: query {1} ", no, queryText)
+		val queryText = "Ask for all solutions incrementally with iteration"
+		info("######### Test {0}: {1} ", no, queryText)
 
 		//	Ask yields a MQuerySolutionIterator (from Mochalog), which is an Iterator<MQuerySolution>
-		val solutionsIter : Iterator<MQuerySolution> = ask(queryText)
+		val solutionsIter : Iterator<Map<String,Term>> = ask("test_slow(X)")
 		while (solutionsIter.hasNext) {
-			val solution : MQuerySolution = solutionsIter.next()
-			info(" \t Solution found for {0}: {1}", queryText, solution.get("X").intValue)
+			val solution : Map<String, Term> = solutionsIter.next()
+			info(" \t Value of X: {0}", solution.get("X").intValue)
 		}
 		if (!solutionsIter.hasNext) {
 			info("4.2 - {0} does not have more solutions, all good!", queryText)
@@ -114,6 +127,7 @@ agent TestAgt_JPL {
 		} catch (e : NoSuchElementException) {
 			info("4.3 - We tried to get the next query but got exception (good!): {0}", e.message)
 		}
+		return true
 	}
 
 	def test_5() {

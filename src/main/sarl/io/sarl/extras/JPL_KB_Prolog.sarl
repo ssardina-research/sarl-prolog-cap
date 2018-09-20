@@ -40,7 +40,9 @@ import java.util.Random
 // /////////////////////////////////////////////////////////////////////////////////////////
 // /////////////////////////////////////////////////////////////////////////////////////////
 skill JPL_KB_Prolog implements KB_Prolog {
+	requires Logging
 	uses Logging
+	
 	
 	protected val kb_name : String
 	var swi_file : String
@@ -58,10 +60,12 @@ skill JPL_KB_Prolog implements KB_Prolog {
 		super() // Call the super's constructor
 		kb_name = name
 
-		if (this.owner === null) { System.out.println("NOOOOOOOOOOOOOOOOOOOO")}
+
+		if (this.owner === null) { System.out.println("Agent owner not yet at Initialize, only after skill has been installed!")}
+
 //		module_name = this.owner.toString
 		module_name = String.format("agt%d", new Random().nextInt(10000))
-		System.out.println(module_name)
+		System.out.println("The SWI module name for this KB will be called: " + module_name)
 			
 
 		set_dump_root(dump_dir)
