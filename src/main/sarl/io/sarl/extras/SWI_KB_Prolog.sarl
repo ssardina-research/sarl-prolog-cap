@@ -40,8 +40,11 @@ skill SWI_KB_Prolog implements KB_Prolog {
 
 	// All data for the directory where KB will be dump
 	val formatter = new SimpleDateFormat("yyyy-MM-dd--HH-mm-ss")
-	var kb_directory_path_posix : String 
+	var kb_directory_path_posix : String
 
+	/** 
+	 * Create the Skill and set KB dump directory to kb_dump_dir
+	 */
 	new(name : String, kb_dump_dir : String) {
 		super() // Call the super's constructor
 		kb_name = name
@@ -50,9 +53,12 @@ skill SWI_KB_Prolog implements KB_Prolog {
 		if (kb_dump_dir !== null)	set_dump_root(kb_dump_dir)
 	}
 	
+	/**
+	 * Create the Skill and set KB dump directory to kb_dump/<time of skill creation>
+	 */
 	new(name : String) {
 		this(name, null)
-		set_dump_root("kb_dump".concat(File.separator).concat(formatter.format(new Date())))
+		set_dump_root(Paths.get("kb_dump", formatter.format(new Date())).toString)
 	}
 	
 
