@@ -31,6 +31,8 @@ import java.text.SimpleDateFormat
 import java.nio.file.Paths
 import org.jpl7.Query
 import org.jpl7.Util
+
+
 import java.util.List
 import java.util.UUID
 import java.util.Random
@@ -41,8 +43,6 @@ skill JPL_KB_Prolog implements KB_Prolog {
 	uses Logging
 	
 	protected val kb_name : String
-
-	val prolog : PrologContext // Interface to SWI-Prolog interpreter
 	var swi_file : String
 
 	// All data for the directory where KB will be dump
@@ -63,7 +63,6 @@ skill JPL_KB_Prolog implements KB_Prolog {
 		module_name = String.format("agt%d", new Random().nextInt(10000))
 		System.out.println(module_name)
 			
-		prolog = new SandboxedPrologContext(this.kb_name)
 
 		set_dump_root(dump_dir)
 	}
@@ -105,15 +104,6 @@ skill JPL_KB_Prolog implements KB_Prolog {
 		val timestamp_format = "'%Y-%m-%d--%H-%M-%S'"
 
 		// Format of file to dump: kb_directory_path/
-		// val query = String.format("
-		// get_time(X),
-		// format_time(atom(_T), %s, X, posix),
-		// string_concat(\"%s/kb-%s-\", _T,  _BaseNamePosix2),
-		// string_concat(_BaseNamePosix2, \"/\",  _BaseNamePosix),
-		// string_concat(_BaseNamePosix, \".pl\", _FileNamePosix),
-		// prolog_to_os_filename(_FileNamePosix, _FileName),
-		// open(_FileName, write, _F), set_output(_F), listing, close(_F)",
-		// timestamp_format, kb_directory_path, id)
 		val query = String.format("
 					prolog_to_os_filename(\"%s/kb-%s-%s.pl\", _FileName),
 					open(_FileName, write, _F), set_output(_F), listing, close(_F)", kb_directory_path_posix, id,
@@ -131,8 +121,9 @@ skill JPL_KB_Prolog implements KB_Prolog {
 
 	//	This will yield the Mochalog Prolog object (one can then apply Mochalog methods to it directly!)
 	// Not probably the more recommended
-	def get_prolog_engine() : PrologContext {
-		return prolog
+	def get_prolog_engine() : String {
+//		return engine_t
+		return module_name
 	}
 
 	private def paramsToTerms(params : Object*) {
@@ -190,64 +181,14 @@ skill JPL_KB_Prolog implements KB_Prolog {
 
 	// Prove a query incrementally, by returning an iterator solution object (with a .next method for next solution, if any)
 	// (Returns empty collection if no solution is found)
-	def ask(queryS : String, params : Object*) : Iterator<MQuerySolution> {
-		val query = MQuery.format(queryS, params)
-		val solutionIter : Iterator<MQuerySolution> = prolog.askIter(query)
-		// val solutionIter : Iterator<MQuerySolution> = new MQuerySolutionIterator(prolog.ask(query))	// manual way of creating an iterator
-		return solutionIter
+	def ask(queryS : String, params : Object*) : Iterator<Map<String, Term>> {
+		return new Query(String.format("%s:%s", module_name, queryS), paramsToTerms(params))
 	}
 
 	// Prove a query incrementally, by returning an iterator solution object (with a .next method for next solution, if any)
 	// (Returns empty collection if no solution is found)
 	def ask2(queryS : String, params : Object*) : Iterator<Map<String, Term>> {
-		val query = MQuery.format(queryS, params)
-		return new SWI_KB_Prolog_Solution_Iter(prolog.ask(query))
+		return new Query(String.format("%s:%s", module_name, queryS), paramsToTerms(params))
 	}
 
-}
-
-/** 
- * This class implements a solution iterator that is able to return bindings directly, not just MQuerySolutions. 
- * In reality, one can just get the Mochalog MQuerySolutionIterator which yields MQuerySolution and then call .bindings 
- */
-class SWI_KB_Prolog_Solution_Iter implements Iterator<Map<String, Term>> {
-	var solutionIterator : MQuerySolutionIterator
-	val outVars : String[]
-
-	new(q : MQuerySolutionCollector, outVars : String[]) {
-		this.solutionIterator = new MQuerySolutionIterator(q)
-		this.outVars = outVars
-	}
-
-	new(q : MQuerySolutionCollector) {
-		this.solutionIterator = new MQuerySolutionIterator(q)
-		this.outVars = null
-	}
-
-	def hasNext : boolean {
-		this.solutionIterator.hasNext
-	}
-
-	def next : Map<String, Term> {
-		if (solutionIterator.hasNext) {
-			val solution = solutionIterator.next
-
-			if (outVars === null) {
-				return solution.bindings
-			} else {
-				val bindings2 = new HashMap(solution.bindings)
-				bindings2.keySet().retainAll(outVars)
-				return bindings2
-
-				// var out : HashMap<String, Term> = new HashMap()
-					// for (outVar : outVars) {
-				// out.put(outVar, solution.get(outVar))
-				// }
-					// return out
-			}
-
-		} else {
-			return null
-		}
-	}
 }
