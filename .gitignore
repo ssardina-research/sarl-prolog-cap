@@ -145,3 +145,4 @@ src/test
 .metadata/
 wiki
 kb_dump
+my_dump*

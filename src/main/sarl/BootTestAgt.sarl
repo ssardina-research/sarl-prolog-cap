@@ -16,7 +16,7 @@ class BootTestAgt {
 		var fullyQualifiedAgent : String
 		val basePackage = "io.sarl.extras"
 
-		val AGENT : String = "TestAgt"
+		val AGENT : String = "TestAgt_JPL"
 
 		fullyQualifiedAgent = basePackage + "." + AGENT
 		

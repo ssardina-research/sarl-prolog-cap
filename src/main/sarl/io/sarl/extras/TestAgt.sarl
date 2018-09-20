@@ -28,7 +28,7 @@ import io.mochalog.bridge.prolog.query.MQuerySolution
 /** 
  * @author ssardina
  * You can test it as follows:
-// * 		java -jar target/sarl-prolog-cap-1.3.0.7.2-jar-with-dependencies.jar io.sarl.extras.TestAgt
+ * 		java -jar target/sarl-prolog-cap-1.3.0.7.2-jar-with-dependencies.jar io.sarl.extras.TestAgt
  */
 agent TestAgt {
 	uses Logging

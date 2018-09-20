@@ -31,6 +31,9 @@ import java.text.SimpleDateFormat
 import java.nio.file.Paths
 import org.jpl7.Query
 import org.jpl7.Util
+import java.util.List
+import java.util.UUID
+import java.util.Random
 
 // /////////////////////////////////////////////////////////////////////////////////////////
 // /////////////////////////////////////////////////////////////////////////////////////////
@@ -54,9 +57,12 @@ skill JPL_KB_Prolog implements KB_Prolog {
 	new(name : String, dump_dir : String = "kb_jpl_dump") {
 		super() // Call the super's constructor
 		kb_name = name
-		
-		module_name = this.owner.ID.toString;
-		
+
+		if (this.owner === null) { System.out.println("NOOOOOOOOOOOOOOOOOOOO")}
+//		module_name = this.owner.toString
+		module_name = String.format("agt%d", new Random().nextInt(10000))
+		System.out.println(module_name)
+			
 		prolog = new SandboxedPrologContext(this.kb_name)
 
 		set_dump_root(dump_dir)
@@ -129,53 +135,57 @@ skill JPL_KB_Prolog implements KB_Prolog {
 		return prolog
 	}
 
+	private def paramsToTerms(params : Object*) {
+		val paramsTerms : List<Term> = new ArrayList<Term>(params.size)
+
+		params.forEach [ param : Object |
+			if (param instanceof Integer) {
+				paramsTerms.add(new org.jpl7.Integer(param.intValue))
+			}
+			if (param instanceof Float) {
+				paramsTerms.add(new org.jpl7.Float(param.floatValue))
+			}
+			if (param instanceof String) {
+				paramsTerms.add(new org.jpl7.Atom(param))
+			}
+		// We are missing Variables (string first letter capital), compounds, and JREF
+		]
+		return paramsTerms
+	}
+
 	def assertFirst(queryS : String, params : Object*) {
-		prolog.assertFirst(queryS, params)
+		// Extend params with the agent name (last argument)
+		Query.hasSolution(String.format("%s:asserta(%s)", module_name, queryS), paramsToTerms(params))
 	}
 
 	def assertLast(queryS : String, params : Object*) {
-		prolog.assertLast(queryS, params)
+		Query.hasSolution(String.format("%s:assertz(%s)", module_name, queryS), paramsToTerms(params))
 	}
 
 	def retract(queryS : String, params : Object*) {
-		prolog.retract(queryS, params)
+		Query.hasSolution(String.format("%s:retract(%s)", module_name, queryS), paramsToTerms(params))
 	}
 
 	def retractAll(queryS : String, params : Object*) {
-		prolog.retract(queryS, params)
+		Query.hasSolution(String.format("%s:retractall(%s)", module_name, queryS), paramsToTerms(params))
 	}
 
 	//	Prove a query: just return true or false (no variable bindings!)
 	// Example:
 	def prove(queryS : String, params : Object*) : boolean {
-		val termParams = Util.textParamsToTerm()
-		params.forEach[]
-		return Query.hasSolution(quertyS, termParams)
+		return Query.hasSolution(String.format("%s:%s", module_name, queryS), paramsToTerms(params))
 	}
 
 	// Prove a query just once, but return mapping from variables to terms
 	// (Returns null object if no solution is found)
 	def askOnce(queryS : String, params : Object*) : Map<String, Term> {
-		val query = MQuery.format(queryS, params)
-		try {
-			val solution = prolog.askForSolution(query)
-			return solution.bindings
-		} catch (e : NoSuchSolutionException) {
-			return null
-		}
+		return Query.oneSolution(String.format("%s:%s", module_name, queryS), paramsToTerms(params))
 	}
 
 	// Prove a query and get ALL solutions in a collection of mappings from variables to terms
 	// (Returns empty collection if no solution is found)
 	def askForAllSolutions(queryS : String, params : Object*) : Collection<Map<String, Term>> {
-		val allSolutions : MQuerySolutionList = prolog.askForAllSolutions(queryS, params)
-
-		val colSolutions : Collection<Map<String, Term>> = new ArrayList()
-		for (solution : allSolutions) {
-			// solution is of type MQuerySolutoin
-			colSolutions.add(solution.bindings)
-		}
-		return colSolutions
+		return Query.allSolutions(String.format("%s:%s", module_name, queryS), paramsToTerms(params))
 	}
 
 	// Prove a query incrementally, by returning an iterator solution object (with a .next method for next solution, if any)

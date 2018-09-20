@@ -28,7 +28,9 @@ import io.mochalog.bridge.prolog.query.MQuerySolution
 /** 
  * @author ssardina
  * You can test it as follows:
-// * 		java -jar target/sarl-prolog-cap-1.3.0.7.2-jar-with-dependencies.jar io.sarl.extras.TestAgt
+ * 		java -jar target/sarl-prolog-cap-1.3.0.7.2-jar-with-dependencies.jar io.sarl.extras.TestAgt
+ * 		mvn -o exec:java -Dexec.args=io.sarl.extras.TestAgt_JPL
+ * 		
  */
 agent TestAgt_JPL {
 	uses Logging
@@ -45,40 +47,36 @@ agent TestAgt_JPL {
 
 		setSkill(new JPL_KB_Prolog("test", "my_dump_test"))
 
-		test_1()
+		if(test_1()) info("Test 1 passed!") else debug("Test 1 failed!")
+		if(test_2()) info("Test 2 passed!") else debug("Test 2 failed!")
 		
-		
-		test_100()	
+//		test_100()	
 
 		
 		killMe
 	}
 
-	def test_1() {
+	def test_1() : boolean {
 		val no = 1
 		val queryText = testFile
 		info("######### Test {0}: consult file ", no, queryText)
 		
-		consult(queryText)
-		info("1 - File consulted well")
+		if  (!consult(queryText)) return false
+		return true
 	}
 
-	def test_2() {
+	def test_2() : boolean {
 		val no = 2
 		val queryText = "test(x) - proving for various x's and asserting"
 		info("######### Test {0}: query {1} ", no, queryText)
 
-		if (prove(String.format("test(%s)", 8))) {
-				info("2.1 - test(8) proven TRUE well")
-		} 
+		if(!prove("test(8)")) return false
+		if(prove("test(3)")) return false
 		
-		if (!prove(String.format("test(%s)", 3))) {
-			info("2.2 - test(3) proven FALSE well")
-		}
-
-		assertLast("test(@I)", 200)
-		info("2.2 - test(100) asserted last well")
+		assertLast("test(200)")
+		if(!prove("test(200)")) return false
 		
+		return true
 	}
 
 	def test_3() {
