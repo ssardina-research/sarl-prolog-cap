@@ -69,10 +69,7 @@ skill JPL_KB_Prolog implements KB_Prolog {
 
 		if (this.owner === null) { System.out.println("Agent owner not yet at Initialize, only after skill has been installed!")}
 
-//		module_name = this.owner.toString
 		module_name = String.format("agt%d", new Random().nextInt(10000))
-		System.out.println("The SWI module name for this KB will be called: " + module_name)
-			
 
 		set_dump_root(dump_dir)
 	}
@@ -120,7 +117,7 @@ skill JPL_KB_Prolog implements KB_Prolog {
 			formatter.format(new Date()))
 
 		// When we prove query, we basically execute a listing/0 sending the output to a file with timestamp and id
-		if (!Query.hasSolution(query)) {
+		if (!Query.hasSolution(String.format("%s:(%s)", module_name, query))) {
 			error("Dumping the database did not work!")
 		}
 	}
@@ -140,38 +137,29 @@ skill JPL_KB_Prolog implements KB_Prolog {
 		val paramsTerms : List<Term> = new ArrayList<Term>(params.size)
 
 		params.forEach [ param : Object |
-			debug("Processing parameter: ", param.toString)
 			if (param instanceof Integer) {
 				paramsTerms.add(new org.jpl7.Integer(param.intValue))
-				debug("\t Was an integer!")
 			} else if (param instanceof Float) {
 				paramsTerms.add(new org.jpl7.Float(param.floatValue))
 			} else if (param instanceof String) {
 				if (Character.isUpperCase(param.charAt(0))) {	
-					debug("\t\t is a VARIABLE string!")
 					paramsTerms.add(new org.jpl7.Variable(param))
 				} else if (param.startsWith("'")) {
-					debug("\t\t is a QUOTED ATOM!")
 					val prolog_atom : String = StringUtils.substringBetween(param, "'", "'")
 					paramsTerms.add(new org.jpl7.Atom(prolog_atom))
 				} else if (param.contains("(")) {
-					debug("\t\t is a COMPOUND TERM")
 					val prolog_term = Util.textToTerm(param)
-					debug("\t\t\t Term: {0}", prolog_term.toString)
 					paramsTerms.add(prolog_term)
 				} else {
-					debug("\t\t is a ATOM CLASSIC")
 					paramsTerms.add(new org.jpl7.Atom(param))
 				}
 			} else if (param instanceof JRef || param instanceof Atom || param instanceof Compound ||
 				param instanceof org.jpl7.Integer || param instanceof org.jpl7.Float) {
 				paramsTerms.add(param as Term)
 			} else if (param instanceof Object) {
-				debug("\t\t is a JREF")
 				paramsTerms.add(new JRef(param))
 			}
-			debug("\t The converted parameter is: {0}", paramsTerms.last)
-		// We are missing Variables (string first letter capital), compounds, and JREF
+//			debug("\t The converted parameter is: {0}", paramsTerms.last)
 		]
 		return paramsTerms
 	}
@@ -222,5 +210,4 @@ skill JPL_KB_Prolog implements KB_Prolog {
 	def ask2(queryS : String, params : Object*) : Iterator<Map<String, Term>> {
 		return new Query(String.format("%s:%s", module_name, queryS), paramsToTerms(params))
 	}
-
 }
