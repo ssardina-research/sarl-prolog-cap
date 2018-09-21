@@ -23,7 +23,7 @@ import org.jpl7.Query
 
 import io.mochalog.bridge.prolog.query.MQuerySolutionIterator
 import io.mochalog.bridge.prolog.query.MQuerySolution
-
+import org.jpl7.JPLException
 
 /** 
  * @author ssardina
@@ -52,6 +52,11 @@ agent TestAgt_JPL {
 		if(test_2()) info("Test 2 passed!") else debug("Test 2 failed!")
 		if(test_3()) info("Test 3 passed!") else debug("Test 3 failed!")
 		if(test_4()) info("Test 4 passed!") else debug("Test 4 failed!")
+		if(test_5()) info("Test 5 passed!") else debug("Test 5 failed!")
+		if(test_6()) info("Test 6 passed!") else debug("Test 6 failed!")
+		if(test_7()) info("Test 7 passed!") else debug("Test 7 failed!")
+		if(test_8()) info("Test 8 passed!") else debug("Test 8 failed!")
+		if(test_9()) info("Test 9 passed!") else debug("Test 9 failed!")
 		info("################################ END TESTING ################################")
 		
 //		test_100()	
@@ -71,7 +76,7 @@ agent TestAgt_JPL {
 
 	def test_2() : boolean {
 		val no = 2
-		val queryText = "Simple prove, assert, retract, ask once tests"
+		val queryText = "Simple prove, assert, retract."
 		info("######### Test {0}: {1} ", no, queryText)
 
 		if(!prove("test(8)")) return false
@@ -89,8 +94,21 @@ agent TestAgt_JPL {
 		return true
 	}
 
-	def test_3() {
+	def test_3() : boolean {
 		val no = 3
+		val queryText = "Ask once and retrieve answer"
+		info("######### Test {0}: {1} ", no, queryText)
+
+		val solutions = askOnce("test(X)")
+		if(solutions.empty) return false
+		info("\t Variable X = {0}", solutions.get("X").intValue)
+
+		return true
+	}
+
+	
+	def test_4() : boolean {
+		val no = 4
 		val queryText = "Ask for all solutions"
 		info("######### Test {0}: {1} ", no, queryText)
 
@@ -107,8 +125,8 @@ agent TestAgt_JPL {
 	}
 
 	// Iteration
-	def test_4() {
-		val no = 4
+	def test_5() : boolean {
+		val no = 5
 		val queryText = "Ask for all solutions incrementally with iteration"
 		info("######### Test {0}: {1} ", no, queryText)
 
@@ -116,139 +134,111 @@ agent TestAgt_JPL {
 		val solutionsIter : Iterator<Map<String,Term>> = ask("test_slow(X)")
 		while (solutionsIter.hasNext) {
 			val solution : Map<String, Term> = solutionsIter.next()
-			info(" \t Value of X: {0}", solution.get("X").intValue)
+			info("\t Value of X: {0}", solution.get("X").intValue)
 		}
-		if (!solutionsIter.hasNext) {
-			info("4.2 - {0} does not have more solutions, all good!", queryText)
-		}
-		try {
-			val solutionOne = solutionsIter.next()
-
-		} catch (e : NoSuchElementException) {
-			info("4.3 - We tried to get the next query but got exception (good!): {0}", e.message)
+		info("Will check hasNext again and it will re-open the query... not so nice implementation from JPL...")
+		// https://github.com/SWI-Prolog/packages-jpl/issues/12
+		while (solutionsIter.hasNext) {
+			val solution : Map<String, Term> = solutionsIter.next()
+			info("\t Value of X: {0}", solution.get("X").intValue)
 		}
 		return true
 	}
 
-	def test_5() {
-		val no = 5
-		val queryText = "person(X, Y, Z)"
-		info("######### Test {0}: query {1} ", no, queryText)
+	def test_6() : boolean {
+		val no = 6
+		val queryText = "Ask for all solutions incrementally with three variables on it"
+		info("######### Test {0}: {1} ", no, queryText)
 		
 		//	Ask yields a MQuerySolutionIterator (from Mochalog), which is an Iterator<MQuerySolution>
-		val solutionsIter : Iterator<MQuerySolution> = ask(queryText)
-		if (solutionsIter.hasNext) {
-			info("5.1 - {0} has solution iteration as it should:", queryText)
-			while (solutionsIter.hasNext) {
-				val solution : MQuerySolution = solutionsIter.next()
-				info(" \t Solution found for {0}: {1}", queryText, solution.bindings.toString)
-			}
+		val solutionsIter : Iterator<Map<String, Term>> = ask("person(X, Y, Z)")
+		while (solutionsIter.hasNext) {
+			info("\t Solution found: {0}", solutionsIter.next.toString)
 		}
+		try {
+			info("\t Solution found: {0}", solutionsIter.next.toString)
+		} catch (e : JPLException) {
+			info("\t EXCEPTION CAUGHT! - No more solutions available: {0}", e.message)
+		}
+		return true
 	}
 
-	def test_6() {
-		val no = 6
-		val queryText = "person(X, Y, Z)"
-		info("######### Test {0}: query {1} - just extract Y and Z only", no, queryText)
-
-		//	Ask yields a MQuerySolutionIterator (from Mochalog), which is an Iterator<MQuerySolution>
-		val solutionsIter : Iterator<Map<String,Term>> = ask2(queryText)
-		if (solutionsIter.hasNext) {
-			info("{0}.1 - {1} has solution iteration as it should:", no, queryText)
-			while (solutionsIter.hasNext) {
-				val solution : Map<String,Term> = solutionsIter.next()
-				info(" \t Solution found for {0}: {1}", queryText, solution.toString)
-			}
-		}
-	}
-
+	
 	//	Test when a query has no solution or predicate does not even exist!
-	def test_7() {
+	def test_7() : boolean {
 		val no = 7
-		var queryText = "current_job(2, Floor, Dir)"
-		info("######### Test {0}: failing queries", no, queryText)
-
-		//	Ask yields a MQuerySolutionIterator (from Mochalog), which is an Iterator<MQuerySolution>
-		val solution = askOnce(queryText)
-		if (solution === null) {
-			info(" \t Well done, no solution for query {0}", queryText)
-		} else {
-			warning(" \t A solution was returned where it should no!!!")
-		}
+		val queryText = "Predicate does not exist test."
+		info("######### Test {0}: {1} ", no, queryText)
 
 		// this predicate does not work as current_job2/3 does not exist at all
-		queryText = "current_job2(2, Floor, Dir)"
 		try {
-			val solution2 = askOnce(queryText)
+			val solution = askOnce("current_job2(2, Floor, Dir)")
 			warning(" \t Problem: predicate current_job2/3 does not exist at all but no exception generated by SWI")
+			return false
 		} catch (e : PrologException) {
 			info(" \t PrologException caught well! Predicate current_job2/3 does not exist at all. Exception: {0}", e.message)
 		}
+		return true
 	}
 	
-	def test_8() {
+	def test_8() : boolean {
 		val no = 8
-		var queryText = "data(X)"
-		info("######### Test {0}: MQuery iterator with different answer types: integer, float, atom, compound", no, queryText)
+		val queryText = "Iterator with different answer types: integer, float, atom, compound."
+		info("######### Test {0}: {1} ", no, queryText)
 
 		//	Ask yields a MQuerySolutionIterator (from Mochalog), which is an Iterator<MQuerySolution>
-		val solutionsIter : Iterator<MQuerySolution> = ask(queryText)
-		if (solutionsIter.hasNext) {
-			info("8.1 - {0} has solution iteration as it should:", queryText)
-			while (solutionsIter.hasNext) {
-				val solution : MQuerySolution = solutionsIter.next()
-				info(" \t Solution found of type {0}", solution.get("X").typeName.toUpperCase)
+		val solutionsIter : Iterator<Map<String,Term>> = ask("data(X)")
+		while (solutionsIter.hasNext) {
+			val solution : Map<String, Term> = solutionsIter.next()
+			info(" \t Solution found of type {0}", solution.get("X").typeName.toUpperCase)
 
-				if (solution.get("X").integer) {
-					info(" \t\t Value as INTEGER: {0}", solution.get("X").intValue)
-				}
-				if (solution.get("X").float) {
-					info(" \t\t Value as FLOAT: {0}", solution.get("X").floatValue)
-					info(" \t\t Value as DOUBLE: {0}", solution.get("X").doubleValue)
-				}
-				if (solution.get("X").atom) {
-					info(" \t\t Value of type {0} as String: {1}", solution.get("X").atomType, solution.get("X").toString)
-				}
-				if (solution.get("X").compound && !solution.get("X").listNil && !solution.get("X").listPair) {
-					info(" \t\t Value as COMPOUND TERM of arity {0}: {1}", solution.get("X").arity, solution.get("X").toString)
-					for (var i = 0; i < solution.get("X").arity; i++) {
-						info(" \t\t\t Term {0} of type {1}: {2}", i,
-							solution.get("X").args.get(i).typeName, solution.get("X").args.get(i).toString)
-					}
-				}
-				if (solution.get("X").listNil) {
-					info(" \t\t Value as EMPTY LIST: {0}", solution.get("X").toString)
-				}
-				if (solution.get("X").listPair) {
-					val listSolution = solution.get("X").toTermArray.toArray
-					info(" \t\t Value as PAIR LIST of length {0}: {1}", Util.listToLength(solution.get("X")), listSolution.toString)
-					for (item : listSolution) {
-						info(" \t\t\t One member: {0}", item.toString)	
-					}
-				}
-				if (solution.get("X").variable) {
-					info(" \t\t Value as VARIABLE: {0}", solution.get("X").toString)
+			if (solution.get("X").integer) {
+				info(" \t\t Value as INTEGER: {0}", solution.get("X").intValue)
+			}
+			if (solution.get("X").float) {
+				info(" \t\t Value as FLOAT: {0}", solution.get("X").floatValue)
+				info(" \t\t Value as DOUBLE: {0}", solution.get("X").doubleValue)
+			}
+			if (solution.get("X").atom) {
+				info(" \t\t Value of type {0} as String: {1}", solution.get("X").atomType, solution.get("X").toString)
+			}
+			if (solution.get("X").compound && !solution.get("X").listNil && !solution.get("X").listPair) {
+				info(" \t\t Value as COMPOUND TERM of arity {0}: {1}", solution.get("X").arity, solution.get("X").toString)
+				for (var i = 0; i < solution.get("X").arity; i++) {
+					info(" \t\t\t Term {0} of type {1}: {2}", i,
+						solution.get("X").args.get(i).typeName, solution.get("X").args.get(i).toString)
 				}
 			}
-	}
-	}
-
-	def test_9() {
-		val no = 9
-		val queryText = "member(X,[1,2,3,4])"
-		info("######### Test {0}: query {1}", no, queryText)
-	
-		//	Ask yields a MQuerySolutionIterator (from Mochalog), which is an Iterator<MQuerySolution>
-//		val solutionsIter : Iterator<MQuerySolution> = ask("member(X,[1,2,3,4])")
-		val solutionsIter : Iterator<MQuerySolution> = ask(String.format("member(X, %s)", "[1,2,3,4]"))
-		if (solutionsIter.hasNext) {
-			info("9.1 - {0} has solution iteration as it should:", queryText)
-			while (solutionsIter.hasNext) {
-				val solution : MQuerySolution = solutionsIter.next()
-				info(" \t Solution found of type {0}: {1}", solution.get("X").typeName.toUpperCase,
-					solution.get("X").toString)
+			if (solution.get("X").listNil) {
+				info(" \t\t Value as EMPTY LIST: {0}", solution.get("X").toString)
+			}
+			if (solution.get("X").listPair) {
+				val listSolution = solution.get("X").toTermArray.toArray
+				info(" \t\t Value as PAIR LIST of length {0}: {1}", Util.listToLength(solution.get("X")), listSolution.toString)
+				for (item : listSolution) {
+					info(" \t\t\t One member: {0}", item.toString)	
+				}
+			}
+			if (solution.get("X").variable) {
+				info(" \t\t Value as VARIABLE: {0}", solution.get("X").toString)
 			}
 		}
+		return true
+	}
+
+	def test_9() : boolean {
+		val no = 9
+		val queryText = "Membership query on a list: member(X, [1,2,3,4])"
+		info("######### Test {0}: {1} ", no, queryText)
+	
+		//	Ask yields a MQuerySolutionIterator (from Mochalog), which is an Iterator<MQuerySolution>
+		val solutionsIter : Iterator<Map<String,Term>> = ask(String.format("member(X, %s)", "[1,2,3,4]"))
+		while (solutionsIter.hasNext) {
+			val solution : Map<String, Term> = solutionsIter.next()
+			info(" \t Value of X (type: {0}): {1}", solution.get("X").typeName.toUpperCase,
+				solution.get("X").toString)
+		}
+		return true
 	}
 
 	def test_10() {
