@@ -24,6 +24,8 @@ import org.jpl7.Query
 import io.mochalog.bridge.prolog.query.MQuerySolutionIterator
 import io.mochalog.bridge.prolog.query.MQuerySolution
 import org.jpl7.JPLException
+import org.jpl7.JRef
+import org.jpl7.JPL
 
 /** 
  * @author ssardina
@@ -246,15 +248,37 @@ agent TestAgt_JPL {
 
 	def test_10() {
 		val no = 10
-		val queryText = "Query formatting"
+		val queryText = "Query formatting of various types"
 		info("######### Test {0}: {1} ", no, queryText)
+		var solution : Map<String, Term>
 
-		//	Ask yields a MQuerySolutionIterator (from Mochalog), which is an Iterator<MQuerySolution>
-		val solution : Map<String, Term> = askOnce("person(?, ?, city(?))", "var(X)", 11, "perth")
+		solution = askOnce("person(?, ?, city(?))", "X", 11, "perth")
 		if (solution === null) return false
-		info("Solution for query person(X,Y,Z): {0}", solution.toString)
+		info("Solution for query person(X,11,city(perth)): {0}", solution.toString)
+
+		
+		val int_obj : Integer = new Integer(232)
+		solution = askOnce("print_integer(?, ?)", JPL.newJRef(int_obj), "Minumero")
+		if(solution === null) return false
+		info("Solution for query print_integer(<int-objcet>, Minumero): {0}", solution.toString)
+
+
+
 		return true
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 				
 
 	def test_100() : boolean {

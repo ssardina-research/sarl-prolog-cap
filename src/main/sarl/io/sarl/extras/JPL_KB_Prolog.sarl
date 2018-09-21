@@ -38,6 +38,10 @@ import java.util.UUID
 import java.util.Random
 import java.util.regex.Pattern
 import java.util.regex.Matcher
+import org.apache.commons.lang3.StringUtils
+import org.jpl7.JRef
+import org.jpl7.Compound
+import org.jpl7.Atom
 
 // /////////////////////////////////////////////////////////////////////////////////////////
 // /////////////////////////////////////////////////////////////////////////////////////////
@@ -140,25 +144,33 @@ skill JPL_KB_Prolog implements KB_Prolog {
 			if (param instanceof Integer) {
 				paramsTerms.add(new org.jpl7.Integer(param.intValue))
 				debug("\t Was an integer!")
-			}
-			if (param instanceof Float) {
+			} else if (param instanceof Float) {
 				paramsTerms.add(new org.jpl7.Float(param.floatValue))
-				debug("\t Was a float!")
-			}
-			if (param instanceof String) {
-				debug("\t is a string!")
-				if (param.startsWith("var")) {
+			} else if (param instanceof String) {
+				if (Character.isUpperCase(param.charAt(0))) {	
 					debug("\t\t is a VARIABLE string!")
-					val pattern : Pattern = Pattern.compile("'var(.*)'")
-					val matcher : Matcher = pattern.matcher(param);
-					if (matcher.find()) {
-						System.out.println(matcher.group(1))
-						paramsTerms.add(new org.jpl7.Atom(matcher.group(1)))
-					}
+					paramsTerms.add(new org.jpl7.Variable(param))
+				} else if (param.startsWith("'")) {
+					debug("\t\t is a QUOTED ATOM!")
+					val prolog_atom : String = StringUtils.substringBetween(param, "'", "'")
+					paramsTerms.add(new org.jpl7.Atom(prolog_atom))
+				} else if (param.contains("(")) {
+					debug("\t\t is a COMPOUND TERM")
+					val prolog_term = Util.textToTerm(param)
+					debug("\t\t\t Term: {0}", prolog_term.toString)
+					paramsTerms.add(prolog_term)
 				} else {
+					debug("\t\t is a ATOM CLASSIC")
 					paramsTerms.add(new org.jpl7.Atom(param))
 				}
+			} else if (param instanceof JRef || param instanceof Atom || param instanceof Compound ||
+				param instanceof org.jpl7.Integer || param instanceof org.jpl7.Float) {
+				paramsTerms.add(param as Term)
+			} else if (param instanceof Object) {
+				debug("\t\t is a JREF")
+				paramsTerms.add(new JRef(param))
 			}
+			debug("\t The converted parameter is: {0}", paramsTerms.last)
 		// We are missing Variables (string first letter capital), compounds, and JREF
 		]
 		return paramsTerms
