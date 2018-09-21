@@ -57,6 +57,9 @@ agent TestAgt_JPL {
 		if(test_7()) info("Test 7 passed!") else debug("Test 7 failed!")
 		if(test_8()) info("Test 8 passed!") else debug("Test 8 failed!")
 		if(test_9()) info("Test 9 passed!") else debug("Test 9 failed!")
+		if(test_10()) info("Test 10 passed!") else debug("Test 10 failed!")
+
+		if(test_100()) info("Test 100 passed!") else debug("Test 100 failed!")
 		info("################################ END TESTING ################################")
 		
 //		test_100()	
@@ -243,54 +246,27 @@ agent TestAgt_JPL {
 
 	def test_10() {
 		val no = 10
-		var subno : int
-		var queryText = "data_string(\"string\")"
-		info("######### Test {0}: query {1}", no, queryText)
+		val queryText = "Query formatting"
+		info("######### Test {0}: {1} ", no, queryText)
 
-		
-		subno = 1
-		queryText = "data_string(\"string0\")"
-		if (prove(queryText)) {
-			info("{0}.{1} - Query {2} proven  TRUE correctly!", no, subno, queryText)
-		} else {
-			error("{0}.{1} - Query {0} proven FALSE wrongly!", no, subno, queryText)
-		}
-//
-//		val x  : String = "string"
-////		assertLast("data_string(@S)", x)
-////		assertLast(String.format("data_string(\"%s\")", x))
-//		assertLast("data_string(\"string\")")
-//		info("10.2 - Asserting Last data_string/1: {0}", String.format("data_string(\"%s\")", x))
-//
-//		if (prove("assertz(data_string(\"string3\"))")) {
-//			info("10.3 - proving assertz(data_string(@S))")
-//		}
-//		
-//		
-//		if (prove(String.format("data_string(\"%s\")", "string"))) {
-//			info("10.4 - data_string(\"string\") proven TRUE well")
-//		} else {
-//			error("10.4 - FAILED! - data_string(\"string\") proven FALSE wrongly! It should be TRUE!")
-//		}
-//
-//		if (!prove("data_string(string)")) {
-//			info("10.5 - data_string(string) proven FALSE well")
-//		} else {
-//			error("10.5 - FAILED! - data_string(string) proven TRUE wrongly! It should be FALSE!")
-//		}
+		//	Ask yields a MQuerySolutionIterator (from Mochalog), which is an Iterator<MQuerySolution>
+		val solution : Map<String, Term> = askOnce("person(?, ?, city(?))", "var(X)", 11, "perth")
+		if (solution === null) return false
+		info("Solution for query person(X,Y,Z): {0}", solution.toString)
+		return true
 	}
 				
 
-	def test_100() {
+	def test_100() : boolean {
 		val no = 100
 		val queryText = "listing the database"
-		info("######### Test {0}: query {1}", no, queryText)
+		info("######### Test {0}: {1}", no, queryText)
 
 		dump_kb("test")
-		info("{0} - KB dumped!", no)
-		set_dump_root("my_dump_test2")
+		info("\t KB dumped!")
 		dump_kb("again")
-		info("{0} - KB dumped AGAIN (in another dir)!", no)
+		info("\t KB dumped again!!")
+		return true
 	}
 
 

@@ -36,6 +36,8 @@ import org.jpl7.Util
 import java.util.List
 import java.util.UUID
 import java.util.Random
+import java.util.regex.Pattern
+import java.util.regex.Matcher
 
 // /////////////////////////////////////////////////////////////////////////////////////////
 // /////////////////////////////////////////////////////////////////////////////////////////
@@ -134,14 +136,28 @@ skill JPL_KB_Prolog implements KB_Prolog {
 		val paramsTerms : List<Term> = new ArrayList<Term>(params.size)
 
 		params.forEach [ param : Object |
+			debug("Processing parameter: ", param.toString)
 			if (param instanceof Integer) {
 				paramsTerms.add(new org.jpl7.Integer(param.intValue))
+				debug("\t Was an integer!")
 			}
 			if (param instanceof Float) {
 				paramsTerms.add(new org.jpl7.Float(param.floatValue))
+				debug("\t Was a float!")
 			}
 			if (param instanceof String) {
-				paramsTerms.add(new org.jpl7.Atom(param))
+				debug("\t is a string!")
+				if (param.startsWith("var")) {
+					debug("\t\t is a VARIABLE string!")
+					val pattern : Pattern = Pattern.compile("'var(.*)'")
+					val matcher : Matcher = pattern.matcher(param);
+					if (matcher.find()) {
+						System.out.println(matcher.group(1))
+						paramsTerms.add(new org.jpl7.Atom(matcher.group(1)))
+					}
+				} else {
+					paramsTerms.add(new org.jpl7.Atom(param))
+				}
 			}
 		// We are missing Variables (string first letter capital), compounds, and JREF
 		]
