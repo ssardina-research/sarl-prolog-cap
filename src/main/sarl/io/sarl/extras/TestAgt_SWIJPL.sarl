@@ -31,10 +31,10 @@ import org.jpl7.JPL
  * @author ssardina
  * You can test it as follows:
  * 		java -jar target/sarl-prolog-cap-1.3.0.7.2-jar-with-dependencies.jar io.sarl.extras.TestAgt
- * 		mvn -o exec:java -Dexec.args=io.sarl.extras.TestAgt_JPL
+ * 		mvn -o exec:java -Dexec.args=io.sarl.extras.TestAgt_SWIJPL
  * 		
  */
-agent TestAgt_JPL {
+agent TestAgt_SWIJPL {
 	uses Logging
 	uses KB_Prolog	
 	uses Lifecycle
@@ -47,7 +47,7 @@ agent TestAgt_JPL {
 		// You should put all the initialization statements in this block of code.
 		info("The TEST agent was started.")
 
-		setSkill(new JPL_KB_Prolog("test", "my_dump_test"))
+		setSkill(new SWIJPL_KB_Prolog("test", "my_dump_test"))
 
 		info("################################ START TESTING ################################")
 		if(test_1()) info("Test 1 passed!") else debug("Test 1 failed!")
