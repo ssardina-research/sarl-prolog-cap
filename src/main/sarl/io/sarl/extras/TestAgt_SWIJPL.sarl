@@ -237,7 +237,7 @@ agent TestAgt_SWIJPL {
 		info("######### Test {0}: {1} ", no, queryText)
 	
 		//	Ask yields a MQuerySolutionIterator (from Mochalog), which is an Iterator<MQuerySolution>
-		val solutionsIter : Iterator<Map<String,Term>> = ask(String.format("member(X, %s)", "[1,2,3,4]"))
+		val solutionsIter : Iterator<Map<String,Term>> = ask("member(X, ?)", "[1,2,3,4]")
 		while (solutionsIter.hasNext) {
 			val solution : Map<String, Term> = solutionsIter.next()
 			info(" \t Value of X (type: {0}): {1}", solution.get("X").typeName.toUpperCase,

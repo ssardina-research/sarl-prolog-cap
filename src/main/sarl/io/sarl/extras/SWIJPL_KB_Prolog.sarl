@@ -43,8 +43,6 @@ import org.jpl7.JRef
 import org.jpl7.Compound
 import org.jpl7.Atom
 
-// /////////////////////////////////////////////////////////////////////////////////////////
-// /////////////////////////////////////////////////////////////////////////////////////////
 skill SWIJPL_KB_Prolog implements KB_Prolog {
 	requires Logging
 	uses Logging
@@ -67,7 +65,9 @@ skill SWIJPL_KB_Prolog implements KB_Prolog {
 		kb_name = name
 
 
-		if (this.owner === null) { System.out.println("Agent owner not yet at Initialize, only after skill has been installed!")}
+		if (this.owner === null) {
+			System.out.println("Agent owner not yet at Initialize, only after skill has been installed!")
+		}
 
 		module_name = String.format("agt%d", new Random().nextInt(10000))
 
@@ -75,7 +75,11 @@ skill SWIJPL_KB_Prolog implements KB_Prolog {
 	}
 
 	private def add_module(query : String) : String {
-		return String.format("%s:%s", this.module_name, query)
+		return add_module(this.module_name, query) 
+	}
+
+	private def add_module(module : String, query : String) : String {
+		return String.format("%s:(%s)", module, query)
 	}
 
 	@Deprecated
@@ -117,7 +121,7 @@ skill SWIJPL_KB_Prolog implements KB_Prolog {
 			formatter.format(new Date()))
 
 		// When we prove query, we basically execute a listing/0 sending the output to a file with timestamp and id
-		if (!Query.hasSolution(String.format("%s:(%s)", module_name, query))) {
+		if (!Query.hasSolution(add_module(query))) {
 			error("Dumping the database did not work!")
 		}
 	}
@@ -166,50 +170,50 @@ skill SWIJPL_KB_Prolog implements KB_Prolog {
 		return paramsTerms
 	}
 
-	def assertFirst(queryS : String, params : Object*) {
+	def assertFirst(queryString : String, params : Object*) {
 		// Extend params with the agent name (last argument)
-		Query.hasSolution(String.format("%s:asserta(%s)", module_name, queryS), paramsToTerms(params))
+		Query.hasSolution(add_module(String.format("asserta(%s)", queryString)), paramsToTerms(params))
 	}
 
-	def assertLast(queryS : String, params : Object*) {
-		Query.hasSolution(String.format("%s:assertz(%s)", module_name, queryS), paramsToTerms(params))
+	def assertLast(queryString : String, params : Object*) {
+		Query.hasSolution(add_module(String.format("assertz(%s)", queryString)), paramsToTerms(params))
 	}
 
-	def retract(queryS : String, params : Object*) {
-		Query.hasSolution(String.format("%s:retract(%s)", module_name, queryS), paramsToTerms(params))
+	def retract(queryString : String, params : Object*) {
+		Query.hasSolution(add_module(String.format("retract(%s)", queryString)), paramsToTerms(params))
 	}
 
-	def retractAll(queryS : String, params : Object*) {
-		Query.hasSolution(String.format("%s:retractall(%s)", module_name, queryS), paramsToTerms(params))
+	def retractAll(queryString : String, params : Object*) {
+		Query.hasSolution(String.format(add_module("retractall(%s)"), queryString), paramsToTerms(params))
 	}
 
 	//	Prove a query: just return true or false (no variable bindings!)
 	// Example:
-	def prove(queryS : String, params : Object*) : boolean {
-		return Query.hasSolution(String.format("%s:%s", module_name, queryS), paramsToTerms(params))
+	def prove(queryString : String, params : Object*) : boolean {
+		return Query.hasSolution(add_module(queryString), paramsToTerms(params))
 	}
 
 	// Prove a query just once, but return mapping from variables to terms
 	// (Returns null object if no solution is found)
-	def askOnce(queryS : String, params : Object*) : Map<String, Term> {
-		return Query.oneSolution(String.format("%s:%s", module_name, queryS), paramsToTerms(params))
+	def askOnce(queryString : String, params : Object*) : Map<String, Term> {
+		return Query.oneSolution(add_module(queryString), paramsToTerms(params))
 	}
 
 	// Prove a query and get ALL solutions in a collection of mappings from variables to terms
 	// (Returns empty collection if no solution is found)
-	def askForAllSolutions(queryS : String, params : Object*) : Collection<Map<String, Term>> {
-		return Query.allSolutions(String.format("%s:%s", module_name, queryS), paramsToTerms(params))
+	def askForAllSolutions(queryString : String, params : Object*) : Collection<Map<String, Term>> {
+		return Query.allSolutions(add_module(queryString), paramsToTerms(params))
 	}
 
 	// Prove a query incrementally, by returning an iterator solution object (with a .next method for next solution, if any)
 	// (Returns empty collection if no solution is found)
-	def ask(queryS : String, params : Object*) : Iterator<Map<String, Term>> {
-		return new Query(String.format("%s:%s", module_name, queryS), paramsToTerms(params))
+	def ask(queryString : String, params : Object*) : Iterator<Map<String, Term>> {
+		return new Query(add_module(queryString), paramsToTerms(params))
 	}
 
 	// Prove a query incrementally, by returning an iterator solution object (with a .next method for next solution, if any)
 	// (Returns empty collection if no solution is found)
-	def ask2(queryS : String, params : Object*) : Iterator<Map<String, Term>> {
-		return new Query(String.format("%s:%s", module_name, queryS), paramsToTerms(params))
+	def ask2(queryString : String, params : Object*) : Iterator<Map<String, Term>> {
+		return new Query(add_module(queryString), paramsToTerms(params))
 	}
 }
