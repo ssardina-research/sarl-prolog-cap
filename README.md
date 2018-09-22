@@ -50,7 +50,7 @@ Also, depending on the system being used:
 	
 
 
-### Develop **SARL PROLOG CAP** further
+### Develop it  further
 
 To _develop_ this capacity/skills framework further, one would need:
 
@@ -73,7 +73,7 @@ Both test agents are registered in the `BootTestAgt` class, which if run with no
 Check the source of the above two test agents to see the types of queries, from simple to more complex, that one could do.
 
 
-### Include **SARL PROLOG CAP** in your SARL application via Maven 
+### Include capacity/skills in your SARL application via Maven 
 
 To add the dependency to this capacity/skills in your SARL application, you can use Maven with JitPack, by adding this dependency and repository in to your `pom.xml`:
 
@@ -97,7 +97,7 @@ Replace `-SNAPSHOT` by the specific version (e.g., commit id) you want to use in
 
 ## WHAT IS PROVIDED:  
 
-### CAPACITY *KB_PROLOG*
+### CAPACITY KB_PROLOG
 
 This `KB_Prolog` capacity provides the following hooks to Prolog access:
 
@@ -121,10 +121,9 @@ This `KB_Prolog` capacity provides the following hooks to Prolog access:
 	* `ask2(queryS : String, params : Object*) : Iterator`: returns an iterator to solution bindings `Map<String,Term>`.
 
 
-### SKILL *SWIJPL_KB_Prolog* [RECOMENDED]
+### SKILL SWIJPL_KB_Prolog (via JPL) [RECOMENDED]
 
 This skill is the recommended one to use and basically relies directly on the [JPL infrastructure](https://jpl7.org/).
-
 The main tools at disposal to extend this skill are JPL:
 
 * `Query.hasSolution`: boolean result answering whether the query is true or not.
@@ -187,7 +186,7 @@ while the Prolog counterpart is:
 
 
 
-### SKILL *SWI_KB_Prolog*
+### SKILL SWI_KB_Prolog (via Mochalog)
 
 The `SWI_KB_Prolog` is built on top of the [Mochalog](https://github.com/ssardina/mochalog) framework for more high-level access to SWI Prolog via the JPL interface. The implementation of the above primitives is, basically, by using the Mochalog API. In turn, Mochalog relies on JPL](https://jpl7.org/) framework.
 
