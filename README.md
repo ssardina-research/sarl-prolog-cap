@@ -1,25 +1,33 @@
 # SARL Capacity for Prolog Knowledge Bases
 
-This project provides a Prolog knowledge-base capacity for SARL agents and one skill for it using [SWI Prolog](http://www.swi-prolog.org/).
-It relies on [Mochalog](https://github.com/ssardina/mochalog) and [JPL](https://jpl7.org) frameworks that provide a high-level view and API of SWI Prolog in Java.
+This project provides a Prolog knowledge-base capacity for SARL agents and TWO skills for it using [SWI Prolog](http://www.swi-prolog.org/). The Prolog capacity/skill can be used as belief representation for agents, as a replacement of Java data-structures. This yield much more succinct and declarative agent systems.
 
-The Prolog capacity/skill can be used as belief representation.
+The capacity provided is **KB_Prolog** (under package `io.sarl.extras`). The skills are **SWI_KB_Prolog** and **SWIJPL_KB_Prolog**.
 
-This package can be obtained via Maven using JitPack: https://jitpack.io/#org.bitbucket.ssardina-research/sarl-prolog-cap
+
+The skills implementing the capacity rely on [Mochalog](https://github.com/ssardina/mochalog) and [JPL](https://jpl7.org) frameworks, which provide a high-level view and API of SWI Prolog in Java.
+
+
+This package can be obtained via Maven using JitPack: <https://jitpack.io/#org.bitbucket.ssardina-research/sarl-prolog-cap>
 
 
 ## PRE-REQUISITES
 
-This capacity/skill depends on two main systems:
+The capacity and skills depend on the following two systems/frameworks:
 
-* [SWI Prolog](http://www.swi-prolog.org/) (>7.4.x) with [JPL](http://www.swi-prolog.org/pldoc/doc_for?object=section(%27packages/jpl.html%27)) Bidirectional interface with Java:
-	* This is package `swi-prolog-java` in Linux.
+* [SWI Prolog](http://www.swi-prolog.org/) (>7.4.x).
+* [SWI JPL](http://www.swi-prolog.org/pldoc/doc_for?object=section(%27packages/jpl.html%27)) Bidirectional interface with Java:
+	* Main Page for JPL: <https://jpl7.org/> 
+	* Github development repository: <https://github.com/SWI-Prolog/packages-jpl>
+		* Forked version being used: <https://github.com/ssardina/packages-jpl>
+	* In Linux Ubuntu JPL is provided by package `swi-prolog-java`.
 	* In Windows, the Java-SWI interface it can be installed as part of the main install.
-	* Main Page for JPL: https://jpl7.org/ 
 		* Check some [good examples on how to use JPL](https://github.com/SWI-Prolog/packages-jpl/blob/master/examples/java/) including the good [Family Example]([good examples on how to use JPL](https://github.com/SWI-Prolog/packages-jpl/blob/master/examples/java/Family/Family.java)). 
-* [Mochalog](https://github.com/ssardina/mochalog), a rich bidirectional interface between the Java Runtime and the SWI-Prolog interpreter inspired by JPL.
+* [Mochalog](https://github.com/ssardina/mochalog), an even higher abstraction than JPL.
+	* Required only by skill **SWI_KB_Prolog**.
 	* Obtained via Maven automatically using from [JitPack](https://jitpack.io/#ssardina/mochalog)
 	* Check Mochalog page for prerequisites, install, and examples.
+
 
 Also, depending on the system being used:
 
@@ -40,9 +48,11 @@ Also, depending on the system being used:
 	* Extend environment variable `LD_LIBRARY_PATH`  to point to the directory where `libjpl.so` is located (e.g., `export LD_LIBRARY_PATH=/usr/lib/swi-prolog/lib/amd64/`)
 	* If using RUN AS configuration in ECLIPSE, remember to set up these two variables `LD_LIBRARY_PATH` and `LD_PRELOAD` too (and check "Append environment to native environment").
 	
-### Develop **SARL PROLOG CAP** further
 
-If one wants to _develop_ this capacity/skill further:
+
+### Develop it  further
+
+To _develop_ this capacity/skills framework further, one would need:
 
 * Java Runtime Environment (JRE) and Java Compiler (javac) v1.8 (Sun version recommended)
 * Maven project management and comprehension tool (to meet dependencies, compile, package, run).
@@ -51,69 +61,21 @@ If one wants to _develop_ this capacity/skill further:
 	* Version tested: 0.6.1, 0.7.2
 	* Obtained via Maven automatically from http://mvnrepository.com/artifact/io.sarl.maven.
 	
+To verify you have everything setup well, run `mvn clean package` first. 
+This will run some unit testing on JPL itself (file `src/test/java/io/sarl/extras/JPLTest.java`. 
+Furthermore, you can then run the SARL test agents:
+	
+	* `io.sarl.extras.TestAgt_SWI`: dummy agent testing Mochalog-based skill **SWI_KB_Prolog**. Check [source here](src/main/sarl/io/sarl/extras/TestAgt_SWIJPL.sarl).
+	* `io.sarl.extras.TestAgt_SWIJPL`: dummy agent testing JPL-based skill **SWI_KB_Prolog**. Check [source here](src/main/sarl/io/sarl/extras/TestAgt_SWI.sarl).
 
-To verify you have everything setup well, run `mvn clean package` first. This will run some unit testing on JPL itself (file `src/test/java/io/sarl/extras/JPLTest.java`. Furthermore, you can then run the SARL test agent `io.sarl.extras.TestAgt` as follows:
+Both test agents are registered in the `BootTestAgt` class, which if run with no arguments will ask which agent test to execute. You can run that booting class by doing: `mvn -o exec:java`. Both tests will at the end dump the Prolog databases into directory `my_dump_test`.
 
-```
-java -jar target/sarl-prolog-cap-1.3.0.7.2-jar-with-dependencies.jar io.sarl.extras.TestAgt
-```
-
-This will run a set of tests against a Prolog database `src/test/resources/testKB.pl` and should give this output:
-
-```
-[INFO, 3:14:12pm, Janus SRE] Launching the agent: io.sarl.extras.TestAgt
-[INFO, 3:14:12pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6] The TEST agent was started.
-[INFO, 3:14:13pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6] ######### Test 1: consult file 
-[INFO, 3:14:13pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6] 1 - File consulted well
-[INFO, 3:14:13pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6] ######### Test 2: query test(x) - proving for various x's and asserting 
-[INFO, 3:14:13pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6] 2.1 - test(8) proven TRUE well
-[INFO, 3:14:13pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6] 2.2 - test(3) proven FALSE well
-[INFO, 3:14:13pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6] 2.2 - test(100) asserted last well
-[INFO, 3:14:13pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6] ######### Test 3: query test(X) 
-[INFO, 3:14:13pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6] 3 - test(X) has all solutions as it should:
-[INFO, 3:14:13pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6]  	 Solution found for test(X): 80
-[INFO, 3:14:13pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6]  	 Solution found for test(X): 2
-[INFO, 3:14:13pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6]  	 Solution found for test(X): 4
-[INFO, 3:14:13pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6]  	 Solution found for test(X): 6
-[INFO, 3:14:13pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6]  	 Solution found for test(X): 8
-[INFO, 3:14:13pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6]  	 Solution found for test(X): 100
-[INFO, 3:14:13pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6] ######### Test 4: query test_slow(X) 
-[INFO, 3:14:13pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6] 4.1 - test_slow(X) has solution iteration as it should:
-[INFO, 3:14:13pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6]  	 Solution found for test_slow(X): 80
-[INFO, 3:14:14pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6]  	 Solution found for test_slow(X): 2
-[INFO, 3:14:14pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6]  	 Solution found for test_slow(X): 4
-[INFO, 3:14:15pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6]  	 Solution found for test_slow(X): 6
-[INFO, 3:14:15pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6]  	 Solution found for test_slow(X): 8
-[INFO, 3:14:16pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6]  	 Solution found for test_slow(X): 100
-[INFO, 3:14:16pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6] 4.2 - test_slow(X) does not have more solutions, all good!
-[INFO, 3:14:16pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6] 4.3 - We tried to get the next query but got exception (good!): No further SWI query solutions remain.
-[INFO, 3:14:16pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6] ######### Test 5: query person(X, Y, Z) 
-[INFO, 3:14:16pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6] 5.1 - person(X, Y, Z) has solution iteration as it should:
-[INFO, 3:14:16pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6]  	 Solution found for person(X, Y, Z): {X=john, Y=20, Z=melbourne}
-[INFO, 3:14:16pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6]  	 Solution found for person(X, Y, Z): {X=maria, Y=31, Z=sydney}
-[INFO, 3:14:16pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6]  	 Solution found for person(X, Y, Z): {X=adam, Y=18, Z=geelong}
-[INFO, 3:14:16pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6]  	 Solution found for person(X, Y, Z): {X=michelle, Y=14, Z=lorne}
-[INFO, 3:14:16pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6] ######### Test 6: query person(X, Y, Z) - just extract Y and Z only
-[INFO, 3:14:16pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6] 6.1 - person(X, Y, Z) has solution iteration as it should:
-[INFO, 3:14:16pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6]  	 Solution found for person(X, Y, Z): {X=john, Y=20, Z=melbourne}
-[INFO, 3:14:16pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6]  	 Solution found for person(X, Y, Z): {X=maria, Y=31, Z=sydney}
-[INFO, 3:14:16pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6]  	 Solution found for person(X, Y, Z): {X=adam, Y=18, Z=geelong}
-[INFO, 3:14:16pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6]  	 Solution found for person(X, Y, Z): {X=michelle, Y=14, Z=lorne}
-[INFO, 3:14:16pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6] ######### Test 7: failing queries
-[INFO, 3:14:16pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6]  	 Well done, no solution for query current_job(2, Floor, Dir)
-[INFO, 3:14:16pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6]  	 PrologException caught well! Predicate current_job2/3 does not exist at all, PrologException correctly caught: PrologException: error(existence_error(procedure, ':'(test, '/'(current_job2, 3))), context(':'(system, '/'('$c_call_prolog', 0)), _12))
-[INFO, 3:14:16pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6] ######### Test 10: query listing the database
-[INFO, 3:14:16pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6] 10 - KB dumped!
-[INFO, 3:14:16pm, AGENT-9ad1f1b0-b47a-4be5-bd2d-a885f6b373d6] The TEST agent was stopped -- ALL TESTS DONE.
-[INFO, 3:14:16pm, Janus SRE] Stopping kernel services
-```
-
-The last test 10 will dump the Prolog database into subdirectory `kb_dump/<date>/`.
+Check the source of the above two test agents to see the types of queries, from simple to more complex, that one could do.
 
 
-### Include **SARL PROLOG CAP** in your SARL application via Maven 
+### Include capacity/skills in your SARL application via Maven 
 
-To add the dependency to this capacity in your SARL application, you can use Maven using JitPack: https://jitpack.io/#org.bitbucket.ssardina-research/sarl-prolog-cap, by adding this dependency and repository in to your `pom.xml`:
+To add the dependency to this capacity/skills in your SARL application, you can use Maven with JitPack, by adding this dependency and repository in to your `pom.xml`:
 
         <!--  SARL PROLOG CAPACITY -->
         <dependency>
@@ -129,9 +91,13 @@ To add the dependency to this capacity in your SARL application, you can use Mav
             <url>https://jitpack.io</url>
         </repository>
 
+The JitPack link for this repository is here](https://jitpack.io/#org.bitbucket.ssardina-research/sarl-prolog-cap).
+Replace `-SNAPSHOT` by the specific version (e.g., commit id) you want to use in your application.
 
 
-## WHAT IS PROVIDED: CAPACITY *KB_PROLOG* and SKILL *SWI_KB_Prolog*
+## WHAT IS PROVIDED:  
+
+### CAPACITY KB_PROLOG
 
 This `KB_Prolog` capacity provides the following hooks to Prolog access:
 
@@ -151,16 +117,86 @@ This `KB_Prolog` capacity provides the following hooks to Prolog access:
 	* `prove(queryS : String, params : Object*) : boolean`: prove if a queryS is true
 	* `askOnce(queryS : String, params : Object*) : Map<String, Term>`: ask a query and get first result.
 	* `askForAllSolutions(QueryS : String, params : Object*) : Collection<Map<String, Term>>`: return the set of all solutions as set of bindings.
-	* `ask(queryS : String, params : Object*) : Iterator`: returns an iterator to solutions (Mochalog's `QuerySolutions`). You can get the actual variable to term mappings via method `.bindings`
-	* `ask2(queryS : String, params : Object*) : Iterator`: returns an iterator to solution bindings `Map<String,Term>`
+	* `ask(queryS : String, params : Object*) : Iterator`: returns an iterator to solutions.
+	* `ask2(queryS : String, params : Object*) : Iterator`: returns an iterator to solution bindings `Map<String,Term>`.
 
-In terms, the particular skill `SWI_KB_Prolog` uses [SWI Prolog](http://www.swi-prolog.org/) with [JPL](https://jpl7.org/) interface as the Prolog engine, and the 
-[Mochalog](https://github.com/ssardina/mochalog) framework for more high-level access to SWI Prolog via the JPL interface. The implementation of the above primitives is, basically, by using the Mochalog API.
+
+### SKILL SWIJPL_KB_Prolog (via JPL) [RECOMENDED]
+
+This skill is the recommended one to use and basically relies directly on the [JPL infrastructure](https://jpl7.org/).
+The main tools at disposal to extend this skill are JPL:
+
+* `Query.hasSolution`: boolean result answering whether the query is true or not.
+* `Query.oneSolution`: a `Map<String,Term>` returning a binding if there is a solution to the query, otherwise `null`.
+* `Query.allSolution`: an array `Map<String,Term>[]` returning a set of bindings for all solutions (length zero if no solutions available).
+* `Query.allSolution`: an array `Map<String,Term>[]` returning a set of bindings for all solutions (length zero if no solutions available).
+* `Query.hasNext()`: boolean stating whether there is a "next" solution available for the query. Will re-start the query if it is executed again after being false.
+* `Query.next()`: returns the next solution, in the form of a `Map<String,Term>`, if there is one. Exception if we have already arrived to the last one.
+
+So what does the skill provide beyond JPL itself? In a nutshell, two things:
+
+1. Automatic handling of local agent KB, so that each agent can keep its own KB. This is done by using [SWI modules](http://www.swi-prolog.org/pldoc/man?section=modules), because the Prolog engine itself is the same for everyone.
+2. A higher abstraction in queries when using placeholders `?`. To fill the placeholders, we do not need to create specific JPL terms (such as JPL `Atom`, `Integer`, `Float`, `Compound`, `JRef`, or `Variable`), but we can just write the content and the skill will figure out its type:
+	* If it is a string starting with a capital letter, then it is a variable term, e.g., `X` or `Numero`.
+	* If it is a number without decimals, it is an integer term, e.g., `23` or `123`.
+	* If it is a number with decimals, it is a float term, e.g., `23.21`.
+	* If it is quoted with, then it is an atom, e.g., `this is a complex(123) atom`.
+	* If nothing above applies, and has no `(`, `[` or `is`, then it is also an atom, e.g., `hello` or `sebastian`.
+	* If itself is a `JRef` object, then it is indeed already a `JRef` term. 
+	* Otherwise it is a compound term, like `[1,2,3,4]`, `father(maria, john)`, or `X is Y + 23`.
+	
+
+To state placeholders, use the `?` symbol and a string, number or JRef filler, such as:
+
+		assertFirst("agentName(?)", mySARLname)	// myName is a string
+		
+		val solution = askOnce("get_player_last_loc(?, ?, Lat, Long)", playerName, 23)
+		if (solution !== null) {
+				agent_says(
+					"Player **{0}** location is ({1},{2}) and charge is {3} at step {4}", 
+					playerName,
+					solution.get("Lat").floatValue,
+					solution.get("Long").floatValue,
+					solution.get("Charge").floatValue,
+					solution.get("Step").intValue
+					)
+			} else {
+		
+		
+In this skill one can pass Prolog a Java object, and SWI will be able to use it (e.g., call a method on it). For example:
+		
+		// JREF
+		val int_obj : Integer = new Integer(232)
+		solution = askOnce("print_integer(?, ?)", JPL.newJRef(int_obj), "N")
+		if(solution === null) return false
+		info("Solution for N: {0}", solution.get("N").intValue)
+
+while the Prolog counterpart is:
+
+		%% Check what can you do from Prolog to call Java: http://www.swi-prolog.org/pldoc/man?section=jpl
+		print_integer(JRef, X2) :-
+		%    jpl_get(JRef, intValue, X),         % this if it is accessing a field
+		    jpl_call(JRef, intValue, [], X),    % X should be the int value of object Integer JRef
+		    jpl_ref_to_type(JRef, T),           % T should be class([java,lang],[Integer])
+		    jpl_type_to_classname(T, ClassName),    % ClassName should be java.lang.Integer
+		    X2 is X+1,
+		    format(string(Text), "MESSAGE FROM PROLOG: The integer value of JAVA object (~s) is ~d", [ClassName, X2]),
+		    writeln(Text).	
+
+
+
+
+### SKILL SWI_KB_Prolog (via Mochalog)
+
+The `SWI_KB_Prolog` is built on top of the [Mochalog](https://github.com/ssardina/mochalog) framework for more high-level access to SWI Prolog via the JPL interface. The implementation of the above primitives is, basically, by using the Mochalog API. In turn, Mochalog relies on JPL](https://jpl7.org/) framework.
 
 Some useful notes:
 
+* Refer to the [Mochalog](https://github.com/ssardina/mochalog) readme to understand how to build queries using Mochalog (e.g., using `@` placeholders).
+* Mochalog API does not allow passing Java objects (`JRef`) to Prolog (the JPL-based skill does!). 
 * To handle responses from Prolog, where variables are grounded to Terms, we use the [Term](http://www.swi-prolog.org/packages/jpl/java_api/javadoc/jpl/Term.html) class form JPL
 * To handle pairs of variable name and term unified to, use [Pair](http://gangmax.me/blog/2017/10/10/how-to-return-multiple-values-from-a-java-method/) class; see example below.
+* The function `ask(queryS : String, params : Object*) : Iterator`: returns a Mochalog's `QuerySolutions` iterator. You can get the actual variable to term mappings via method `.bindings`
 * The `params` arguments above refer to [SARL variadic](http://www.sarl.io/docs/official/reference/general/FuncDecls.html#4-variadic-function) arguments (in Java, called [Varargs](https://www.geeksforgeeks.org/variable-arguments-varargs-in-java/)) to help build the query string by "filling" places using `@A`, `@I`, and `@S` placeholders. For example:
 
 ```
@@ -176,6 +212,9 @@ assertFirst(String.format("percepts(\'%s\', %d, %s)", agentName, agents.get(agen
 See how single-quoted was used here to make sure agentName becomes an atom (and not a string!).
 
 
+
+
+
 ## USING SWI-Prolog IN SARL AGENTS/APPLICATIONS
 
 There are basically three ways one can use SWI-Prolog inside SARL agents, depending on the level of abstraction:
@@ -183,11 +222,11 @@ There are basically three ways one can use SWI-Prolog inside SARL agents, depend
 
 1. **[RECOMMENDED]** Create a capacity **KB_Domain** for your domain application that embodies the usual KB queries required, and a skill **SWI_KB_Domain** for it extending skill **SWI_KB_Prolog** (which implements general Prolog capacity **KB_Prolog**) in the [SARL Prolog Capacity](https://bitbucket.org/ssardina-research/sarl-prolog-cap) framework that implements those queries. The SARL agent will use this capacity and skill.
 2. Make the agents directly use capacity **KB_PROLOG** (and its default skill **SWI_KB_Prolog**). As soon as the agent acquires such a skill, a Prolog engine will be created by the skill. Then the agent for example can load a KB by consulting the file: `consult_file('myKB.pl')`. This is similar to the first option but the code will be in the SARL agent itself rather than encapsulated in a domain capacity/skill.
-3. Make the agents directly access SWI-Prolog via the Mochalog and JPL APIs, for example, by creating a Prolog engine in the initialization of agents, etc.
+3. Make the agents directly access SWI-Prolog via the Mochalog or JPL APIs (depending which skill you use), for example, by creating a Prolog engine in the initialization of agents, etc.
 
 
 
-### 1 - Creating a domain-specific Knowlwedge-base capacity/skill.
+### 1 - Creating a domain-specific Knowledge-base capacity/skill.
 
 This is the recommended approach. The idea is to create a capacity **KB_Domain** for your domain application that embodies the usual KB queries required, and a corresponding skill **SWI_KB_Domain** for it that _extends_ the base **SWI_KB_Prolog** skill (which itself implements general Prolog capacity **KB_Prolog**) in the [SARL Prolog Capacity](https://bitbucket.org/ssardina-research/sarl-prolog-cap) framework that implements those queries. 
 
@@ -211,9 +250,9 @@ Here are the steps to this approach:
 		* `kb_getNextJob() : Pair<Integer, Direction>`: get the next job (floor & direction) to serve. (see the [Pair](http://gangmax.me/blog/2017/10/10/how-to-return-multiple-values-from-a-java-method/) class)
 	* Observe this capacity can be implemented in many ways, for example, with plan Java.
 2. Create a skill *S* for the capacity *C* that will be a Prolog Knowledgebase.
-	* The skill will *extend* a skill for *KB_Prolog*, for example it can extend the skill `SWI_KB_Prolog`. This means that everything in the *KB_Prolog* capacity will be available in *S* so that *S* can use Prolog to implement the domain queries. For example:
+	* The skill will *extend* a skill for *KB_Prolog*, for example it can extend the skill `SWIJPL_KB_Prolog`. This means that everything in the *KB_Prolog* capacity will be available in *S* so that *S* can use Prolog to implement the domain queries. For example:
 		
-				skill SWI_KB_Elevator extends SWI_KB_Prolog implements KB_Elevator  {
+				skill SWI_KB_Elevator extends SWIJPL_KB_Prolog implements KB_Elevator  {
 		
 					val logging_level : int
 					new (l : int = 0, name : String) {
@@ -222,7 +261,7 @@ Here are the steps to this approach:
 					}
 				
 					def kb_registerCarRequest(floor : int, dir : String) {
-						assertFirst("open_car_request(@I, @A)", floor, dir)
+						assertFirst("open_car_request(?, ?)", floor, dir)
 					}
 
 					def kb_load(file : String) {
@@ -280,7 +319,28 @@ Here are the steps to this approach:
 
 ### 2 - Directly using the capacity and skill in agents.
 
-Here, instead of creating a domain capacity and skill for the common Prolog accesses that the application will do (e.g., common queries), we can make the agents directly use the `KB_Prolog` capacity. This means that the behaviors of the SARL agent will make the Prolog access directly:
+Here, instead of creating a domain capacity and skill for the common Prolog accesses that the application will do (e.g., common queries), we can make the agents directly use the `KB_Prolog` capacity. This means that the behaviors of the SARL agent will make the Prolog access directly.
+
+If you use **SWIJPL_KB_Prolog** Mochalog-based skill:
+
+				setSkill(new SWI_KB_Prolog("agent23"))
+
+				// Load agent knowledge base
+				consult_file("src/main/prolog/sweeper_elevator_agent.pl")
+				reportMessage("I have loaded the SWI KB successfully!")		
+				
+				on CarRequestPercept 
+				{
+					reportPersonRequestedService(occurrence.floor, occurrence.direction)
+
+					// Add car request to our beliefs
+					assertFirst("open_car_request(?, ?)", occurrence.floor, occurrence.direction.name)
+
+                    // This action comes (is inherited) from KB_Prolog directly
+					kb_dump()
+				}
+
+If you use **SWI_KB_Prolog** Mochalog-based skill:
 
 				setSkill(new SWI_KB_Prolog("agent23"))
 
@@ -301,11 +361,41 @@ Here, instead of creating a domain capacity and skill for the common Prolog acce
 
 
 
-### 3 - SWI-Prolog Access via Mochalog
 
-In this approach, we directly use SWI-Prolog via the Mochalog high-level infrastructure, which provides a more abstract and accessible interface than JPL itself. 
+### 3 - SWI-Prolog Access via JPL or Mochalog
 
-Here is some example code of its use (though for another application) in an elevator controller:
+In this approach, we directly use SWI-Prolog via the JPL or Mochalog high-level infrastructure.
+
+Here is some example code of JPL-based use (though for another application) in an elevator controller. Please observe the use of a module name to encapuslate the beliefset of the particular agent:
+
+```
+#!java
+
+		import org.jpl7.Query
+
+		// Set-up Prolog knowledgebase
+		val beliefSpace = String.format("swiplayer")
+		consult(System.format("%s:(%s)", beliefSpace, "src/main/prolog/masssim_coordinator.pl") // newest version
+
+		// Assert percepts in the KB
+		Query.hasSolution(System.format("%s:percepts(?, ?, ?)", beliefSpace), agentName, agents.get(agentName).step, percepts.toString)
+
+		// Querying one solution - Tell the KB to process last percept
+		agents.keySet().forEach([ agentName : String |
+			Query.oneSolution("process_last_percepts(?)", agentName)
+		])
+		
+		// Querying all solutions - Report percepts available in the KB
+		for (solution : allSolutions("percepts(Agent, Step, Percepts)"))
+		{
+			System.out.format("Information for agent %s on step %d\n", solution.get("Agent").toString(),  solution.get("Step").intValue)
+		}
+```
+
+
+And here is some example code for the Mochalog-based ersion:
+
+
 
 ```
 #!java

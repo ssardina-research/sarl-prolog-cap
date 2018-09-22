@@ -185,7 +185,10 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <configuration>
-	                <mainClass>BootTestAgt</mainClass>
+	                <!-- 
+	                 	<mainClass>io.janusproject.Boot</mainClass>
+	                 -->
+	                 	<mainClass>BootTestAgt</mainClass>
                 </configuration>
             </plugin>
 
