@@ -10,7 +10,12 @@ The skills implementing the capacity rely on [Mochalog](https://github.com/ssard
 
 This package can be obtained via Maven using JitPack: <https://jitpack.io/#org.bitbucket.ssardina-research/sarl-prolog-cap>
 
+----------------------------------
+## TABLE OF CONTENTS
 
+[TOC]
+
+----------------------------------
 ## PRE-REQUISITES
 
 The capacity and skills depend on the following two systems/frameworks:
@@ -50,7 +55,8 @@ Also, depending on the system being used:
 	
 
 
-### Develop it  further
+----------------------------------
+## Develop it further
 
 To _develop_ this capacity/skills framework further, one would need:
 
@@ -72,8 +78,8 @@ Both test agents are registered in the `BootTestAgt` class, which if run with no
 
 Check the source of the above two test agents to see the types of queries, from simple to more complex, that one could do.
 
-
-### Include capacity/skills in your SARL application via Maven 
+----------------------------------
+## Include capacity/skills in your SARL application via Maven 
 
 To add the dependency to this capacity/skills in your SARL application, you can use Maven with JitPack, by adding this dependency and repository in to your `pom.xml`:
 
@@ -95,6 +101,7 @@ The JitPack link for this repository is here](https://jitpack.io/#org.bitbucket.
 Replace `-SNAPSHOT` by the specific version (e.g., commit id) you want to use in your application.
 
 
+----------------------------------
 ## WHAT IS PROVIDED:  
 
 ### CAPACITY KB_PROLOG
@@ -121,7 +128,7 @@ This `KB_Prolog` capacity provides the following hooks to Prolog access:
 	* `ask2(queryS : String, params : Object*) : Iterator`: returns an iterator to solution bindings `Map<String,Term>`.
 
 
-### SKILL SWIJPL_KB_Prolog (via JPL) [RECOMENDED]
+### SKILL `SWIJPL_KB_Prolog` (via JPL) [RECOMENDED]
 
 This skill is the recommended one to use and basically relies directly on the [JPL infrastructure](https://jpl7.org/).
 The main tools at disposal to extend this skill are JPL:
@@ -185,8 +192,8 @@ while the Prolog counterpart is:
 
 
 
-
-### SKILL SWI_KB_Prolog (via Mochalog)
+----------------------------------
+### SKILL `SWI_KB_Prolog` (via Mochalog)
 
 The `SWI_KB_Prolog` is built on top of the [Mochalog](https://github.com/ssardina/mochalog) framework for more high-level access to SWI Prolog via the JPL interface. The implementation of the above primitives is, basically, by using the Mochalog API. In turn, Mochalog relies on JPL](https://jpl7.org/) framework.
 
@@ -213,8 +220,7 @@ See how single-quoted was used here to make sure agentName becomes an atom (and 
 
 
 
-
-
+----------------------------------
 ## USING SWI-Prolog IN SARL AGENTS/APPLICATIONS
 
 There are basically three ways one can use SWI-Prolog inside SARL agents, depending on the level of abstraction:
@@ -426,6 +432,7 @@ And here is some example code for the Mochalog-based ersion:
 		}
 ```
 
+----------------------------------
 ## TROUBLESHOOTING
 
 * Did you get something like this?
@@ -444,12 +451,14 @@ And here is some example code for the Mochalog-based ersion:
 	Then you may not have set `LD_PRELOAD` env variable correctly.
 
 
+----------------------------------
 ## CONTACT 
 
 * Sebastian Sardina (ssardina@gmail.com)
 
 
 
+----------------------------------
 ## LICENSE 
 
 This project is using the GPLv3 for open source licensing for information and the license visit GNU website (https://www.gnu.org/licenses/gpl-3.0.en.html).
