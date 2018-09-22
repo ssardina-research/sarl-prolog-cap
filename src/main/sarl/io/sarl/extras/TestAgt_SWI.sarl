@@ -28,9 +28,11 @@ import io.mochalog.bridge.prolog.query.MQuerySolution
 /** 
  * @author ssardina
  * You can test it as follows:
-// * 		java -jar target/sarl-prolog-cap-1.3.0.7.2-jar-with-dependencies.jar io.sarl.extras.TestAgt
+ * 		java -jar target/sarl-prolog-cap-1.3.0.7.2-jar-with-dependencies.jar io.sarl.extras.TestAgt_SWI
+ * 		mvn -o exec:java -Dexec.args=io.sarl.extras.TestAgt_SWI
+ * 
  */
-agent TestAgt {
+agent TestAgt_SWI {
 	uses Logging
 	uses KB_Prolog	
 	uses Lifecycle
@@ -55,6 +57,7 @@ agent TestAgt {
 		test_8()
 		test_9()
 		test_10()
+		
 		
 		
 		test_100()	
@@ -112,12 +115,9 @@ agent TestAgt {
 
 		//	Ask yields a MQuerySolutionIterator (from Mochalog), which is an Iterator<MQuerySolution>
 		val solutionsIter : Iterator<MQuerySolution> = ask(queryText)
-		if (solutionsIter.hasNext) {
-			info("4.1 - {0} has solution iteration as it should:", queryText)
-			while (solutionsIter.hasNext) {
-				val solution : MQuerySolution = solutionsIter.next()
-				info(" \t Solution found for {0}: {1}", queryText, solution.get("X").intValue)
-			}
+		while (solutionsIter.hasNext) {
+			val solution : MQuerySolution = solutionsIter.next()
+			info(" \t Solution found for {0}: {1}", queryText, solution.get("X").intValue)
 		}
 		if (!solutionsIter.hasNext) {
 			info("4.2 - {0} does not have more solutions, all good!", queryText)

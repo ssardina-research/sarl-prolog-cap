@@ -1,0 +1,391 @@
+/** 
+ * 
+ */
+package io.sarl.extras
+
+import io.sarl.core.AgentKilled
+import io.sarl.core.AgentSpawned
+import io.sarl.core.ContextJoined
+import io.sarl.core.ContextLeft
+import io.sarl.core.Destroy
+import io.sarl.core.Initialize
+import io.sarl.core.Logging
+import io.sarl.core.MemberJoined
+import io.sarl.core.MemberLeft
+import io.sarl.core.Lifecycle
+import java.util.NoSuchElementException
+import java.util.Iterator
+import java.util.Map
+import org.jpl7.Term
+import org.jpl7.PrologException
+import org.jpl7.Util
+import org.jpl7.Query
+
+import io.mochalog.bridge.prolog.query.MQuerySolutionIterator
+import io.mochalog.bridge.prolog.query.MQuerySolution
+import org.jpl7.JPLException
+import org.jpl7.JRef
+import org.jpl7.JPL
+
+/** 
+ * @author ssardina
+ * You can test it as follows:
+ * 		java -jar target/sarl-prolog-cap-1.3.0.7.2-jar-with-dependencies.jar io.sarl.extras.TestAgt
+ * 		mvn -o exec:java -Dexec.args=io.sarl.extras.TestAgt_SWIJPL
+ * 		
+ */
+agent TestAgt_SWIJPL {
+	uses Logging
+	uses KB_Prolog	
+	uses Lifecycle
+
+	val testFile = "src/test/resources/testKB.pl"
+	
+	
+	on Initialize {
+		// Event trigger before the agent begin to live or to be used.
+		// You should put all the initialization statements in this block of code.
+		info("The TEST agent was started.")
+
+		setSkill(new SWIJPL_KB_Prolog("test", "my_dump_test"))
+
+		info("################################ START TESTING ################################")
+		if(test_1()) info("Test 1 passed!") else error("Test 1 failed!")
+		if(test_2()) info("Test 2 passed!") else error("Test 2 failed!")
+		if(test_3()) info("Test 3 passed!") else error("Test 3 failed!")
+		if(test_4()) info("Test 4 passed!") else error("Test 4 failed!")
+		if(test_5()) info("Test 5 passed!") else error("Test 5 failed!")
+		if(test_6()) info("Test 6 passed!") else error("Test 6 failed!")
+		if(test_7()) info("Test 7 passed!") else error("Test 7 failed!")
+		if(test_8()) info("Test 8 passed!") else error("Test 8 failed!")
+		if(test_9()) info("Test 9 passed!") else error("Test 9 failed!")
+		if(test_10()) info("Test 10 passed!") else error("Test 10 failed!")
+
+		if(test_100()) info("Test 100 passed!") else debug("Test 100 failed!")
+		info("################################ END TESTING ################################")
+		
+//		test_100()	
+
+		
+		killMe
+	}
+
+	def test_1() : boolean {
+		val no = 1
+		val queryText = testFile
+		info("######### Test {0}: consult file ", no, queryText)
+		
+		if  (!consult(queryText)) return false
+		return true
+	}
+
+	def test_2() : boolean {
+		val no = 2
+		val queryText = "Simple prove, assert, retract."
+		info("######### Test {0}: {1} ", no, queryText)
+
+		if(!prove("test(8)")) return false
+		if(prove("test(3)")) return false
+		
+		assertLast("test(200)")
+		if(!prove("test(200)")) return false
+		retract("test(200)")
+		if(prove("test(200)")) return false
+
+		val solutions = askOnce("test(X)")
+		if(solutions.empty) return false
+		info("\t Variable X = {0}", solutions.get("X").intValue)
+		
+		return true
+	}
+
+	def test_3() : boolean {
+		val no = 3
+		val queryText = "Ask once and retrieve answer"
+		info("######### Test {0}: {1} ", no, queryText)
+
+		val solutions = askOnce("test(X)")
+		if(solutions.empty) return false
+		info("\t Variable X = {0}", solutions.get("X").intValue)
+
+		return true
+	}
+
+	
+	def test_4() : boolean {
+		val no = 4
+		val queryText = "Ask for all solutions"
+		info("######### Test {0}: {1} ", no, queryText)
+
+		val expectedSolutions : int[] = #[80, 2, 4, 6, 8]
+
+	
+		val solutions = askForAllSolutions("test(X)")
+		if (solutions.empty || solutions.size !== expectedSolutions.size) return false
+		for (var i : int; i < solutions.size; i++) {
+			info("\t Variable X = {0}", solutions.get(i).get("X").intValue)
+			if (solutions.get(i).get("X").intValue !== expectedSolutions.get(i)) return false
+		}
+		return true
+	}
+
+	// Iteration
+	def test_5() : boolean {
+		val no = 5
+		val queryText = "Ask for all solutions incrementally with iteration"
+		info("######### Test {0}: {1} ", no, queryText)
+
+		//	Ask yields a MQuerySolutionIterator (from Mochalog), which is an Iterator<MQuerySolution>
+		val solutionsIter : Iterator<Map<String,Term>> = ask("test_slow(X)")
+		while (solutionsIter.hasNext) {
+			val solution : Map<String, Term> = solutionsIter.next()
+			info("\t Value of X: {0}", solution.get("X").intValue)
+		}
+		info("Will check hasNext again and it will re-open the query... not so nice implementation from JPL...")
+		// https://github.com/SWI-Prolog/packages-jpl/issues/12
+		while (solutionsIter.hasNext) {
+			val solution : Map<String, Term> = solutionsIter.next()
+			info("\t Value of X: {0}", solution.get("X").intValue)
+		}
+		return true
+	}
+
+	def test_6() : boolean {
+		val no = 6
+		val queryText = "Ask for all solutions incrementally with three variables on it"
+		info("######### Test {0}: {1} ", no, queryText)
+		
+		//	Ask yields a MQuerySolutionIterator (from Mochalog), which is an Iterator<MQuerySolution>
+		val solutionsIter : Iterator<Map<String, Term>> = ask("person(X, Y, Z)")
+		while (solutionsIter.hasNext) {
+			info("\t Solution found: {0}", solutionsIter.next.toString)
+		}
+		try {
+			info("\t Solution found: {0}", solutionsIter.next.toString)
+		} catch (e : JPLException) {
+			info("\t EXCEPTION CAUGHT! - No more solutions available: {0}", e.message)
+		}
+		return true
+	}
+
+	
+	//	Test when a query has no solution or predicate does not even exist!
+	def test_7() : boolean {
+		val no = 7
+		val queryText = "Predicate does not exist test."
+		info("######### Test {0}: {1} ", no, queryText)
+
+		// this predicate does not work as current_job2/3 does not exist at all
+		try {
+			val solution = askOnce("current_job2(2, Floor, Dir)")
+			warning(" \t Problem: predicate current_job2/3 does not exist at all but no exception generated by SWI")
+			return false
+		} catch (e : PrologException) {
+			info(" \t PrologException caught well! Predicate current_job2/3 does not exist at all. Exception: {0}", e.message)
+		}
+		return true
+	}
+	
+	def test_8() : boolean {
+		val no = 8
+		val queryText = "Iterator with different answer types: integer, float, atom, compound."
+		info("######### Test {0}: {1} ", no, queryText)
+
+		//	Ask yields a MQuerySolutionIterator (from Mochalog), which is an Iterator<MQuerySolution>
+		val solutionsIter : Iterator<Map<String,Term>> = ask("data(X)")
+		while (solutionsIter.hasNext) {
+			val solution : Map<String, Term> = solutionsIter.next()
+			info(" \t Solution found of type {0}", solution.get("X").typeName.toUpperCase)
+
+			if (solution.get("X").integer) {
+				info(" \t\t Value as INTEGER: {0}", solution.get("X").intValue)
+			}
+			if (solution.get("X").float) {
+				info(" \t\t Value as FLOAT: {0}", solution.get("X").floatValue)
+				info(" \t\t Value as DOUBLE: {0}", solution.get("X").doubleValue)
+			}
+			if (solution.get("X").atom) {
+				info(" \t\t Value of type {0} as String: {1}", solution.get("X").atomType, solution.get("X").toString)
+			}
+			if (solution.get("X").compound && !solution.get("X").listNil && !solution.get("X").listPair) {
+				info(" \t\t Value as COMPOUND TERM of arity {0}: {1}", solution.get("X").arity, solution.get("X").toString)
+				for (var i = 0; i < solution.get("X").arity; i++) {
+					info(" \t\t\t Term {0} of type {1}: {2}", i,
+						solution.get("X").args.get(i).typeName, solution.get("X").args.get(i).toString)
+				}
+			}
+			if (solution.get("X").listNil) {
+				info(" \t\t Value as EMPTY LIST: {0}", solution.get("X").toString)
+			}
+			if (solution.get("X").listPair) {
+				val listSolution = solution.get("X").toTermArray.toArray
+				info(" \t\t Value as PAIR LIST of length {0}: {1}", Util.listToLength(solution.get("X")), listSolution.toString)
+				for (item : listSolution) {
+					info(" \t\t\t One member: {0}", item.toString)	
+				}
+			}
+			if (solution.get("X").variable) {
+				info(" \t\t Value as VARIABLE: {0}", solution.get("X").toString)
+			}
+		}
+		return true
+	}
+
+	def test_9() : boolean {
+		val no = 9
+		val queryText = "Membership query on a list: member(X, [1,2,3,4])"
+		info("######### Test {0}: {1} ", no, queryText)
+	
+		//	Ask yields a MQuerySolutionIterator (from Mochalog), which is an Iterator<MQuerySolution>
+		val solutionsIter : Iterator<Map<String,Term>> = ask("member(X, ?)", "[1,2,3,4]")
+		while (solutionsIter.hasNext) {
+			val solution : Map<String, Term> = solutionsIter.next()
+			info(" \t Value of X (type: {0}): {1}", solution.get("X").typeName.toUpperCase,
+				solution.get("X").toString)
+		}
+		return true
+	}
+
+	def test_10() {
+		val no = 10
+		val queryText = "Query formatting of various types"
+		info("######### Test {0}: {1} ", no, queryText)
+		var solution : Map<String, Term>
+		// Using KB fact: data_all(23, 12.21, sebastian, mother(maria,father(john)), I, [1,2,3,4], ok)
+
+		// integer
+		solution = askOnce("data_all(?, 12.21, sebastian, mother(maria,father(john)), V, [1,2,3,4], R)", 23)
+		if (solution === null) return false
+		info("Solution for integer placeholder: {0}", solution.toString)
+
+		// float test
+		solution = askOnce("data_all(23, ?, sebastian, mother(maria,father(john)), V, [1,2,3,4], R)", 12.21)
+		if(solution === null) return false
+		info("Solution for float placeholder: {0}", solution.toString)
+
+		// atom and compound test
+		solution = askOnce("data_all(23, 12.21, ?, ?, I, [1,2,3,4], R)", "sebastian", "mother(maria, father(john))")
+		if(solution === null) return false
+		info("Solution for atom and compound placeholders: {0}", solution.toString)
+
+		// Variables test
+		solution = askOnce("data_all(?, ?, ?, ?, ?, ?, R)", "I", "F", "A", "C", "V", "L")
+		if(solution === null) return false
+		info("Solution for variables placeholders: {0}", solution.toString)
+
+		// lists test
+		solution = askOnce("data_all(23, 12.21, sebastian, mother(maria,father(john)), _, ?, R)", "[1,2,3,4]")
+		if(solution === null) return false
+		info("Solution for list placeholder: {0}", solution.toString)
+
+		// variable bound to a list
+		solution = askOnce("data_list([?])", "X")
+		if(solution === null) return false
+		info("Solution for variable bound to a list: {0}", solution.toString)
+
+		// variable bound to a list
+		solution = askOnce("data_list([?])", "[X]")
+		if(solution === null) return false
+		info("Solution for variable bound to a list in a list: {0}", solution.toString)
+
+		// expression simple
+		solution = askOnce("data_exp(X, Y, Z, Z is X+Y)")
+		if(solution === null) return false
+		info("Solution for simple expression: {0}", solution.toString)
+
+		// expression simple II
+		solution = askOnce("data_exp(X, Y, Z, Exp)")
+		if(solution === null) return false
+		info("Solution for simple expression II: {0}", solution.toString)
+
+		// expression simple III
+		solution = askOnce("data_exp(X, Y, Z, ?)", "Exp")
+		if(solution === null) return false
+		info("Solution for simple expression III: {0}", solution.toString)
+
+		// expression simple IV
+		solution = askOnce("data_exp(2, 10, Z, Exp), Exp")
+		if(solution === null) return false
+		info("Solution for simple expression IV: {0}", solution.toString)
+
+
+		// JREF
+		val int_obj : Integer = new Integer(232)
+		solution = askOnce("print_integer(?, ?)", JPL.newJRef(int_obj), "N")
+		if(solution === null) return false
+		info("Solution for query print_integer(<int-objcet>, N): {0}", solution.toString)
+
+
+//
+//		solution = askOnce("data([peter, mother(maria), ?, ?)", "X", "[1,2,3,4]")
+//		if (solution === null) return false
+//		info("Solution for query person(X,11,city(perth)): {0}", solution.toString)
+
+
+
+		return true
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+				
+
+	def test_100() : boolean {
+		val no = 100
+		val queryText = "listing the database"
+		info("######### Test {0}: {1}", no, queryText)
+
+		dump_kb("test")
+		info("\t KB dumped!")
+		dump_kb("again")
+		info("\t KB dumped again!!")
+		return true
+	}
+
+
+
+	
+	on Destroy {
+		// Event trigger when the agent is destroyed from the system.
+		// You should put all the resource releasing statements in this block of code.
+		info("The TEST agent was stopped -- ALL TESTS DONE.")
+	}
+
+	on AgentSpawned {
+		// A new agent has been spawned in our context.
+	}
+
+	on AgentKilled {
+		// A new agent has been killed in our context.
+	}
+
+	on ContextJoined {
+		// Event trigger when an agent of the level joins a shared context.
+		// Sent to a agent of the same level.
+	}
+
+	on ContextLeft {
+		// Event trigger when an agent of the level jleaves a shared context.
+		// Sent to a agent of the same level.
+	}
+
+	on MemberJoined {
+		// Event trigger when an agent joins one of our shared super-holons.
+		// Sent to all members of the considered super-holon.
+	}
+
+	on MemberLeft {
+		// Event trigger when an agent leaves one of our shared super-holons.
+		// Sent to all members of the considered super-holon.
+	}
+}
