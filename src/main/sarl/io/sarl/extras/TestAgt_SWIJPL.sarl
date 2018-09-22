@@ -63,10 +63,14 @@ agent TestAgt_SWIJPL {
 
 		if(test_100()) info("Test 100 passed!") else debug("Test 100 failed!")
 		info("################################ END TESTING ################################")
-		
-//		test_100()	
+		info("My KB module is: {0}", get_prolog_engine)
 
-		
+		info("Now spawning some slave test agents with their KB")
+		val agent_UUID = spawn(TestAgt_Slave, 200)
+		System.out.println(String.format("I have spawned my child %s", agent_UUID.toString))
+
+		val agent_UUID2 = spawn(TestAgt_Slave, 100)
+		System.out.println(String.format("I have spawned my child %s", agent_UUID2.toString))
 		killMe
 	}
 
@@ -388,4 +392,44 @@ agent TestAgt_SWIJPL {
 		// Event trigger when an agent leaves one of our shared super-holons.
 		// Sent to all members of the considered super-holon.
 	}
+}
+
+agent TestAgt_Slave {
+	uses Logging
+	uses KB_Prolog
+	uses Lifecycle
+	
+	val testFile = "src/test/resources/testKB.pl"
+
+	on Initialize {
+		// Event trigger before the agent begin to live or to be used.
+		// You should put all the initialization statements in this block of code.
+		val n = occurrence.parameters.get(0)
+		
+		info("The SLAVE agent was started with number: {0}", n)
+		setSkill(new SWIJPL_KB_Prolog("slave", "my_dump_test"))
+		info("JPL-based KB installed with module name: {0}", get_prolog_engine)
+
+		assertLast("slave_test(?)", n)
+		info("stave_test({0}) asserted!", n)
+		
+		if (prove("slave_test(?)", n)) 
+			info("SLAVE has proven test({0})  CORRECTLY!", n)
+		if (prove("Y = ?, X is Y+1, slave_test(X)", n))
+			info("SLAVE has proven test({0})  CORRECTLY!", n)
+
+		prove("write(\"KB for the module agent: \"), 
+				writeln(?), 
+				writeln(\"-------------\"), listing, writeln(\"-------------\")", get_prolog_engine)
+		
+		try {
+			if (prove("test(?)", n))
+			info("SLAVE has proven test({0})  WRONGLY because test/1 does not exist!!", n)
+		} catch (e : PrologException) {
+			error("SLAVE gotten a correct exception because test/1 does not exist in its KB: {0}", e.message)
+		}
+		
+		info("Done, SLAVE {0} dying...", n)
+		killMe
+		}
 }

@@ -58,20 +58,26 @@ skill SWIJPL_KB_Prolog implements KB_Prolog {
 	var kb_directory_path_posix : String
 	var kb_dump_dir : File
 
-	val module_name : String
+	var module_name : String
 
 	new(name : String, dump_dir : String = "kb_jpl_dump") {
 		super() // Call the super's constructor
 		kb_name = name
+		// module_name = String.format("agt%d", new Random().nextInt(10000))
 
+		// here this.owner is not yet set, it will be done at install()
 
-		if (this.owner === null) {
-			System.out.println("Agent owner not yet at Initialize, only after skill has been installed!")
-		}
-
-		module_name = String.format("agt%d", new Random().nextInt(10000))
 
 		set_dump_root(dump_dir)
+	}
+	
+	
+	def install() {
+		info("I am installing the SWIJPL skill for Prolog")
+		module_name = String.format("'%s'", this.owner.ID.toString)
+		
+//		module_name = String.format("agt%d", new Random().nextInt(10000))
+//		set_dump_root(dump_dir)
 	}
 
 	private def add_module(query : String) : String {
