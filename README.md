@@ -4,11 +4,11 @@ This project provides a Prolog knowledge-base capacity for SARL agents and TWO s
 
 The capacity provided is **KB_Prolog** (under package `io.sarl.extras`). The skills are **SWI_KB_Prolog** and **SWIJPL_KB_Prolog**.
 
-
 The skills implementing the capacity rely on [Mochalog](https://github.com/ssardina/mochalog) and [JPL](https://jpl7.org) frameworks, which provide a high-level view and API of SWI Prolog in Java.
 
-
 This package can be obtained via Maven using JitPack: <https://jitpack.io/#org.bitbucket.ssardina-research/sarl-prolog-cap>
+
+Version convention: Major.Minor.<SARL Version>. For example, 1.3.0.7.2 is version 1.3 for SARL 0.7.2.
 
 ----------------------------------
 ## TABLE OF CONTENTS
