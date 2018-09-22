@@ -26,8 +26,7 @@ pipelines:
             - maven
           script: # Modify the commands below to build your repository.
             - export SARL_VERSION=0.7.2
-            - SARL_VERSION=0.7.2 mvn clean package # -B batch mode makes Maven less verbose
+            - SARL_VERSION=0.7.2 mvn -B clean install # -B batch mode makes Maven less verbose
             - echo $BITBUCKET_REPO_OWNER
             - echo $BITBUCKET_REPO_SLUG
-            - curl -X POST --user "${BB_AUTH_STRING}" "https://api.bitbucket.org/2.0/repositories/ssardina-research/sarl-prolog-cap/downloads" --form files=@"/opt/atlassian/pipelines/agent/build/target/sarl-prolog-cap-1.6.0.7.2-devel.jar"
-            #- curl -X POST --user "${BB_AUTH_STRING}" "https://api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"/opt/atlassian/pipelines/agent/build/target/sarl-prolog-cap-1.6.0.7.2-devel.jar"
+            - curl -X POST --user "${BB_AUTH_STRING}" "https://api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"/opt/atlassian/pipelines/agent/build/target/sarl-prolog-cap-1.6.0.7.2-devel.jar"
