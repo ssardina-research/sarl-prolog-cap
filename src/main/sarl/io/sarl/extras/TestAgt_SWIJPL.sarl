@@ -50,16 +50,16 @@ agent TestAgt_SWIJPL {
 		setSkill(new SWIJPL_KB_Prolog("test", "my_dump_test"))
 
 		info("################################ START TESTING ################################")
-		if(test_1()) info("Test 1 passed!") else debug("Test 1 failed!")
-		if(test_2()) info("Test 2 passed!") else debug("Test 2 failed!")
-		if(test_3()) info("Test 3 passed!") else debug("Test 3 failed!")
-		if(test_4()) info("Test 4 passed!") else debug("Test 4 failed!")
-		if(test_5()) info("Test 5 passed!") else debug("Test 5 failed!")
-		if(test_6()) info("Test 6 passed!") else debug("Test 6 failed!")
-		if(test_7()) info("Test 7 passed!") else debug("Test 7 failed!")
-		if(test_8()) info("Test 8 passed!") else debug("Test 8 failed!")
-		if(test_9()) info("Test 9 passed!") else debug("Test 9 failed!")
-		if(test_10()) info("Test 10 passed!") else debug("Test 10 failed!")
+		if(test_1()) info("Test 1 passed!") else error("Test 1 failed!")
+		if(test_2()) info("Test 2 passed!") else error("Test 2 failed!")
+		if(test_3()) info("Test 3 passed!") else error("Test 3 failed!")
+		if(test_4()) info("Test 4 passed!") else error("Test 4 failed!")
+		if(test_5()) info("Test 5 passed!") else error("Test 5 failed!")
+		if(test_6()) info("Test 6 passed!") else error("Test 6 failed!")
+		if(test_7()) info("Test 7 passed!") else error("Test 7 failed!")
+		if(test_8()) info("Test 8 passed!") else error("Test 8 failed!")
+		if(test_9()) info("Test 9 passed!") else error("Test 9 failed!")
+		if(test_10()) info("Test 10 passed!") else error("Test 10 failed!")
 
 		if(test_100()) info("Test 100 passed!") else debug("Test 100 failed!")
 		info("################################ END TESTING ################################")
@@ -251,16 +251,75 @@ agent TestAgt_SWIJPL {
 		val queryText = "Query formatting of various types"
 		info("######### Test {0}: {1} ", no, queryText)
 		var solution : Map<String, Term>
+		// Using KB fact: data_all(23, 12.21, sebastian, mother(maria,father(john)), I, [1,2,3,4], ok)
 
-		solution = askOnce("person(?, ?, city(?))", "X", 11, "perth")
+		// integer
+		solution = askOnce("data_all(?, 12.21, sebastian, mother(maria,father(john)), V, [1,2,3,4], R)", 23)
 		if (solution === null) return false
-		info("Solution for query person(X,11,city(perth)): {0}", solution.toString)
+		info("Solution for integer placeholder: {0}", solution.toString)
 
-		
-		val int_obj : Integer = new Integer(232)
-		solution = askOnce("print_integer(?, ?)", JPL.newJRef(int_obj), "Minumero")
+		// float test
+		solution = askOnce("data_all(23, ?, sebastian, mother(maria,father(john)), V, [1,2,3,4], R)", 12.21)
 		if(solution === null) return false
-		info("Solution for query print_integer(<int-objcet>, Minumero): {0}", solution.toString)
+		info("Solution for float placeholder: {0}", solution.toString)
+
+		// atom and compound test
+		solution = askOnce("data_all(23, 12.21, ?, ?, I, [1,2,3,4], R)", "sebastian", "mother(maria, father(john))")
+		if(solution === null) return false
+		info("Solution for atom and compound placeholders: {0}", solution.toString)
+
+		// Variables test
+		solution = askOnce("data_all(?, ?, ?, ?, ?, ?, R)", "I", "F", "A", "C", "V", "L")
+		if(solution === null) return false
+		info("Solution for variables placeholders: {0}", solution.toString)
+
+		// lists test
+		solution = askOnce("data_all(23, 12.21, sebastian, mother(maria,father(john)), _, ?, R)", "[1,2,3,4]")
+		if(solution === null) return false
+		info("Solution for list placeholder: {0}", solution.toString)
+
+		// variable bound to a list
+		solution = askOnce("data_list([?])", "X")
+		if(solution === null) return false
+		info("Solution for variable bound to a list: {0}", solution.toString)
+
+		// variable bound to a list
+		solution = askOnce("data_list([?])", "[X]")
+		if(solution === null) return false
+		info("Solution for variable bound to a list in a list: {0}", solution.toString)
+
+		// expression simple
+		solution = askOnce("data_exp(X, Y, Z, Z is X+Y)")
+		if(solution === null) return false
+		info("Solution for simple expression: {0}", solution.toString)
+
+		// expression simple II
+		solution = askOnce("data_exp(X, Y, Z, Exp)")
+		if(solution === null) return false
+		info("Solution for simple expression II: {0}", solution.toString)
+
+		// expression simple III
+		solution = askOnce("data_exp(X, Y, Z, ?)", "Exp")
+		if(solution === null) return false
+		info("Solution for simple expression III: {0}", solution.toString)
+
+		// expression simple IV
+		solution = askOnce("data_exp(2, 10, Z, Exp), Exp")
+		if(solution === null) return false
+		info("Solution for simple expression IV: {0}", solution.toString)
+
+
+		// JREF
+		val int_obj : Integer = new Integer(232)
+		solution = askOnce("print_integer(?, ?)", JPL.newJRef(int_obj), "N")
+		if(solution === null) return false
+		info("Solution for query print_integer(<int-objcet>, N): {0}", solution.toString)
+
+
+//
+//		solution = askOnce("data([peter, mother(maria), ?, ?)", "X", "[1,2,3,4]")
+//		if (solution === null) return false
+//		info("Solution for query person(X,11,city(perth)): {0}", solution.toString)
 
 
 

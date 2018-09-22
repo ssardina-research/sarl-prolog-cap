@@ -137,21 +137,23 @@ skill SWIJPL_KB_Prolog implements KB_Prolog {
 		val paramsTerms : List<Term> = new ArrayList<Term>(params.size)
 
 		params.forEach [ param : Object |
-			if (param instanceof Integer) {
-				paramsTerms.add(new org.jpl7.Integer(param.intValue))
-			} else if (param instanceof Float) {
-				paramsTerms.add(new org.jpl7.Float(param.floatValue))
+			if (param instanceof Number) {
+				if (param instanceof Integer) {
+					paramsTerms.add(new org.jpl7.Integer(param.intValue))
+				} else // Float or Double
+					paramsTerms.add(new org.jpl7.Float(param.doubleValue))
 			} else if (param instanceof String) {
 				if (Character.isUpperCase(param.charAt(0))) {	
 					paramsTerms.add(new org.jpl7.Variable(param))
 				} else if (param.startsWith("'")) {
 					val prolog_atom : String = StringUtils.substringBetween(param, "'", "'")
 					paramsTerms.add(new org.jpl7.Atom(prolog_atom))
-				} else if (param.contains("(")) {
-					val prolog_term = Util.textToTerm(param)
-					paramsTerms.add(prolog_term)
-				} else {
+				} else if (!param.contains("(") && !param.contains("[") && !param.contains(" is ")) {
 					paramsTerms.add(new org.jpl7.Atom(param))
+				} else {
+					val prolog_term = Util.textToTerm(param)
+//					debug("The converted prolog term is: {0}", prolog_term)
+					paramsTerms.add(prolog_term)
 				}
 			} else if (param instanceof JRef || param instanceof Atom || param instanceof Compound ||
 				param instanceof org.jpl7.Integer || param instanceof org.jpl7.Float) {
