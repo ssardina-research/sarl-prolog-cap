@@ -191,6 +191,9 @@ while the Prolog counterpart is:
 		    writeln(Text).	
 
 
+To see what you can do from Prolog in terms of Java objects, refer to the [Prolog API](https://jpl7.org/PrologApiOverview.jsp) section in the JPL home page.
+
+
 
 ----------------------------------
 ### SKILL `SWI_KB_Prolog` (via Mochalog)
