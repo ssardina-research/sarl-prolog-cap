@@ -1,12 +1,11 @@
 /** 
- * A skill implementing KB_Prolog via Mochalog framework https://github.com/ssardina/mochalog
+ * A skill implementing KB_Prolog via Mochalog framework https://github.com/ssardina-research/mochalog
+ * 
+ * ATTENTION: This skill is superseded by simpler and JPL-direct SWIJPL_KB_Prolog, no Mochalog involved
  * 
  * @author Sebastian Sardina (ssardina@gmail.com)
  */
 package io.sarl.extras
-
-import io.sarl.core.Logging
-import io.sarl.lang.core.Capacity
 
 import io.mochalog.bridge.prolog.PrologContext
 import io.mochalog.bridge.prolog.SandboxedPrologContext
@@ -32,11 +31,11 @@ import java.nio.file.Paths
 
 // /////////////////////////////////////////////////////////////////////////////////////////
 // /////////////////////////////////////////////////////////////////////////////////////////
+@Deprecated
 skill SWI_KB_Prolog implements KB_Prolog {
 	protected val kb_name : String
 
 	val prolog : PrologContext // Interface to SWI-Prolog interpreter
-	var swi_file : String
 
 	// All data for the directory where KB will be dump
 	val formatter = new SimpleDateFormat("yyyy-MM-dd--HH-mm-ss")
@@ -64,8 +63,6 @@ skill SWI_KB_Prolog implements KB_Prolog {
 
 	@Deprecated
 	def consult_file(file : String) {
-		this.swi_file = file
-
 		// Load agent knowledge base
 		prolog.importFile(Paths.get(file))
 	}
@@ -114,34 +111,41 @@ skill SWI_KB_Prolog implements KB_Prolog {
 		return prolog
 	}
 
-	def assertFirst(queryS : String, params : Object*) {
-		prolog.assertFirst(queryS, params)
+	def assertFirst(query : String, params : Object*) {
+		prolog.assertFirst(query, params)
 	}
 
-	def assertLast(queryS : String, params : Object*) {
-		prolog.assertLast(queryS, params)
+	def assertLast(query : String, params : Object*) {
+		prolog.assertLast(query, params)
 	}
 
-	def retract(queryS : String, params : Object*) {
-		prolog.retract(queryS, params)
+	def retract(query : String, params : Object*) {
+		prolog.retract(query, params)
 	}
 
-	def retractAll(queryS : String, params : Object*) {
-		prolog.retract(queryS, params)
+	def retractAll(query : String, params : Object*) {
+		prolog.retract(query, params)
 	}
 
 	//	Prove a query: just return true or false (no variable bindings!)
-	// Example:
-	def prove(queryS : String, params : Object*) : boolean {
-		return prolog.prove(queryS, params)
+	def prove(query : String, params : Object*) : boolean {
+		return proveIn(query, prolog, params)
+	}
+	def proveIn(query : String, module : Object, params : Object*) : boolean {
+		return (module as PrologContext).prove(query, params)
 	}
 
 	// Prove a query just once, but return mapping from variables to terms
 	// (Returns null object if no solution is found)
-	def askOnce(queryS : String, params : Object*) : Map<String, Term> {
-		val query = MQuery.format(queryS, params)
+	def askOnce(query : String, params : Object*) : Map<String, Term> {
+		askOnceIn(query, prolog, params)
+	}
+
+	def askOnceIn(query : String, module : Object, params : Object*) : Map<String, Term> {
+		askOnce(query, params) // no notion of module here
+		val mquery = MQuery.format(query, params)
 		try {
-			val solution = prolog.askForSolution(query)
+			val solution = (module as PrologContext).askForSolution(mquery)
 			return solution.bindings
 		} catch (e : NoSuchSolutionException) {
 			return null
@@ -150,8 +154,8 @@ skill SWI_KB_Prolog implements KB_Prolog {
 
 	// Prove a query and get ALL solutions in a collection of mappings from variables to terms
 	// (Returns empty collection if no solution is found)
-	def askForAllSolutions(queryS : String, params : Object*) : Collection<Map<String, Term>> {
-		val allSolutions : MQuerySolutionList = prolog.askForAllSolutions(queryS, params)
+	def askForAllSolutions(query : String, params : Object*) : Collection<Map<String, Term>> {
+		val allSolutions : MQuerySolutionList = prolog.askForAllSolutions(query, params)
 
 		val colSolutions : Collection<Map<String, Term>> = new ArrayList()
 		for (solution : allSolutions) {
@@ -162,18 +166,18 @@ skill SWI_KB_Prolog implements KB_Prolog {
 	}
 	// Prove a query incrementally, by returning an iterator solution object (with a .next method for next solution, if any)
 	// (Returns empty collection if no solution is found)
-	def ask(queryS : String, params : Object*) : Iterator<MQuerySolution> {
-		val query = MQuery.format(queryS, params)
-		val solutionIter : Iterator<MQuerySolution> = prolog.askIter(query)
-		// val solutionIter : Iterator<MQuerySolution> = new MQuerySolutionIterator(prolog.ask(query))	// manual way of creating an iterator
-		return solutionIter
-	}
+//	def ask(query : String, params : Object*) : Iterator<MQuerySolution> {
+//		val mquery = MQuery.format(query, params)
+//		val solutionIter : Iterator<MQuerySolution> = prolog.askIter(mquery)
+//		// val solutionIter : Iterator<MQuerySolution> = new MQuerySolutionIterator(prolog.ask(query))	// manual way of creating an iterator
+//		return solutionIter
+//	}
 
 	// Prove a query incrementally, by returning an iterator solution object (with a .next method for next solution, if any)
 	// (Returns empty collection if no solution is found)
-	def ask2(queryS : String, params : Object*) : Iterator<Map<String, Term>> {
-		val query = MQuery.format(queryS, params)
-		return new SWI_KB_Prolog_Solution_Iter(prolog.ask(query))
+	def ask(query : String, params : Object*) : Iterator<Map<String, Term>> {
+		val mquery = MQuery.format(query, params)
+		return new SWI_KB_Prolog_Solution_Iter(prolog.ask(mquery))
 	}
 
 }

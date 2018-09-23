@@ -13,18 +13,13 @@ import io.sarl.core.Logging
 import io.sarl.core.MemberJoined
 import io.sarl.core.MemberLeft
 import io.sarl.core.Lifecycle
-import java.util.NoSuchElementException
 import java.util.Iterator
 import java.util.Map
 import org.jpl7.Term
 import org.jpl7.PrologException
 import org.jpl7.Util
-import org.jpl7.Query
 
-import io.mochalog.bridge.prolog.query.MQuerySolutionIterator
-import io.mochalog.bridge.prolog.query.MQuerySolution
 import org.jpl7.JPLException
-import org.jpl7.JRef
 import org.jpl7.JPL
 
 /** 
@@ -71,6 +66,13 @@ agent TestAgt_SWIJPL {
 
 		val agent_UUID2 = spawn(TestAgt_Slave, 100)
 		System.out.println(String.format("I have spawned my child %s", agent_UUID2.toString))
+		
+		
+		if (proveIn("slave_test(200)", String.format("'%s'", agent_UUID.toString))) {
+			System.out.println("I am happy, have proven something on another agent....")
+			proveIn("listing", String.format("'%s'", agent_UUID.toString))
+		}
+		
 		killMe
 	}
 
@@ -426,7 +428,7 @@ agent TestAgt_Slave {
 			if (prove("test(?)", n))
 			info("SLAVE has proven test({0})  WRONGLY because test/1 does not exist!!", n)
 		} catch (e : PrologException) {
-			error("SLAVE gotten a correct exception because test/1 does not exist in its KB: {0}", e.message)
+			info("SLAVE gotten a correct exception because test/1 does not exist in its KB: {0}", e.message)
 		}
 		
 		info("Done, SLAVE {0} dying...", n)

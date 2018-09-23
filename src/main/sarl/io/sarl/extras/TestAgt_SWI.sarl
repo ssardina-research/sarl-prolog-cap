@@ -135,15 +135,15 @@ agent TestAgt_SWI {
 		val queryText = "person(X, Y, Z)"
 		info("######### Test {0}: query {1} ", no, queryText)
 		
-		//	Ask yields a MQuerySolutionIterator (from Mochalog), which is an Iterator<MQuerySolution>
-		val solutionsIter : Iterator<MQuerySolution> = ask(queryText)
-		if (solutionsIter.hasNext) {
-			info("5.1 - {0} has solution iteration as it should:", queryText)
-			while (solutionsIter.hasNext) {
-				val solution : MQuerySolution = solutionsIter.next()
-				info(" \t Solution found for {0}: {1}", queryText, solution.bindings.toString)
-			}
-		}
+//		//	Ask yields a MQuerySolutionIterator (from Mochalog), which is an Iterator<MQuerySolution>
+//		val solutionsIter : Iterator<MQuerySolution> = ask(queryText)
+//		if (solutionsIter.hasNext) {
+//			info("5.1 - {0} has solution iteration as it should:", queryText)
+//			while (solutionsIter.hasNext) {
+//				val solution : MQuerySolution = solutionsIter.next()
+//				info(" \t Solution found for {0}: {1}", queryText, solution.bindings.toString)
+//			}
+//		}
 	}
 
 	def test_6() {
@@ -152,7 +152,7 @@ agent TestAgt_SWI {
 		info("######### Test {0}: query {1} - just extract Y and Z only", no, queryText)
 
 		//	Ask yields a MQuerySolutionIterator (from Mochalog), which is an Iterator<MQuerySolution>
-		val solutionsIter : Iterator<Map<String,Term>> = ask2(queryText)
+		val solutionsIter : Iterator<Map<String,Term>> = ask(queryText)
 		if (solutionsIter.hasNext) {
 			info("{0}.1 - {1} has solution iteration as it should:", no, queryText)
 			while (solutionsIter.hasNext) {
