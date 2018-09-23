@@ -1,14 +1,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.github.ssardina-research</groupId>
+	<!-- NOT RELIABLE WITH JITPACK - USING GITHUB CLONE INSTEAD 
 	<groupId>org.bitbucket.ssardina-research</groupId>
+	-->
 	<artifactId>sarl-prolog-cap</artifactId>
-	<version>2.1.${env.SARL_VERSION}</version>
+	<version>2.2.${env.SARL_VERSION}-devel</version>
 
     <name>SARL Capacity for SWI Prolog Connectivity</name>
     <url>https://bitbucket.org/ssardina-research/sarl-prolog-cap</url>
     <description>
     	Capacities and Skills for SARL to connect to SWI Prolog system.
-		Relies on Mochalog (https://github.com/ssardina/mochalog)
+		Relies on JPL (https://jpl7.org/) and Mochalog (https://github.com/ssardina/mochalog)
 	</description>
 
   	<developers>

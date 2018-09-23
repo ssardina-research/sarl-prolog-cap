@@ -63,21 +63,14 @@ skill SWIJPL_KB_Prolog implements KB_Prolog {
 	new(name : String, dump_dir : String = "kb_jpl_dump") {
 		super() // Call the super's constructor
 		kb_name = name
-		// module_name = String.format("agt%d", new Random().nextInt(10000))
-
-		// here this.owner is not yet set, it will be done at install()
-
 
 		set_dump_root(dump_dir)
 	}
 	
 	
 	def install() {
-		info("I am installing the SWIJPL skill for Prolog")
 		module_name = String.format("'%s'", this.owner.ID.toString)
-		
 //		module_name = String.format("agt%d", new Random().nextInt(10000))
-//		set_dump_root(dump_dir)
 	}
 
 	private def add_module(query : String) : String {
