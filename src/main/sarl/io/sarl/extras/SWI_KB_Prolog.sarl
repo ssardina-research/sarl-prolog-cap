@@ -142,7 +142,6 @@ skill SWI_KB_Prolog implements KB_Prolog {
 	}
 
 	def askOnceIn(query : String, module : Object, params : Object*) : Map<String, Term> {
-		askOnce(query, params) // no notion of module here
 		val mquery = MQuery.format(query, params)
 		try {
 			val solution = (module as PrologContext).askForSolution(mquery)
@@ -155,7 +154,13 @@ skill SWI_KB_Prolog implements KB_Prolog {
 	// Prove a query and get ALL solutions in a collection of mappings from variables to terms
 	// (Returns empty collection if no solution is found)
 	def askForAllSolutions(query : String, params : Object*) : Collection<Map<String, Term>> {
-		val allSolutions : MQuerySolutionList = prolog.askForAllSolutions(query, params)
+		return askForAllSolutionsIn(query, prolog, params)
+	}
+
+	// Prove a query and get ALL solutions in a collection of mappings from variables to terms
+	// (Returns empty collection if no solution is found)
+	def askForAllSolutionsIn(query : String, module : Object, params : Object*) : Collection<Map<String, Term>> {
+		val allSolutions : MQuerySolutionList = (module as PrologContext).askForAllSolutions(query, params)
 
 		val colSolutions : Collection<Map<String, Term>> = new ArrayList()
 		for (solution : allSolutions) {
@@ -176,8 +181,11 @@ skill SWI_KB_Prolog implements KB_Prolog {
 	// Prove a query incrementally, by returning an iterator solution object (with a .next method for next solution, if any)
 	// (Returns empty collection if no solution is found)
 	def ask(query : String, params : Object*) : Iterator<Map<String, Term>> {
+		return askIn(query, prolog, params)
+	}
+	def askIn(query : String, module : Object, params : Object*) : Iterator<Map<String, Term>> {
 		val mquery = MQuery.format(query, params)
-		return new SWI_KB_Prolog_Solution_Iter(prolog.ask(mquery))
+		return new SWI_KB_Prolog_Solution_Iter((module as PrologContext).ask(mquery))
 	}
 
 }

@@ -114,9 +114,9 @@ agent TestAgt_SWI {
 		info("######### Test {0}: query {1} ", no, queryText)
 
 		//	Ask yields a MQuerySolutionIterator (from Mochalog), which is an Iterator<MQuerySolution>
-		val solutionsIter : Iterator<MQuerySolution> = ask(queryText)
+		val solutionsIter : Iterator<Map<String, Term>> = ask(queryText)
 		while (solutionsIter.hasNext) {
-			val solution : MQuerySolution = solutionsIter.next()
+			val solution : Map<String, Term> = solutionsIter.next()
 			info(" \t Solution found for {0}: {1}", queryText, solution.get("X").intValue)
 		}
 		if (!solutionsIter.hasNext) {
@@ -192,11 +192,11 @@ agent TestAgt_SWI {
 		info("######### Test {0}: MQuery iterator with different answer types: integer, float, atom, compound", no, queryText)
 
 		//	Ask yields a MQuerySolutionIterator (from Mochalog), which is an Iterator<MQuerySolution>
-		val solutionsIter : Iterator<MQuerySolution> = ask(queryText)
+		val solutionsIter : Iterator<Map<String,Term>> = ask(queryText)
 		if (solutionsIter.hasNext) {
 			info("8.1 - {0} has solution iteration as it should:", queryText)
 			while (solutionsIter.hasNext) {
-				val solution : MQuerySolution = solutionsIter.next()
+				val solution : Map<String, Term> = solutionsIter.next()
 				info(" \t Solution found of type {0}", solution.get("X").typeName.toUpperCase)
 
 				if (solution.get("X").integer) {
@@ -240,11 +240,11 @@ agent TestAgt_SWI {
 	
 		//	Ask yields a MQuerySolutionIterator (from Mochalog), which is an Iterator<MQuerySolution>
 //		val solutionsIter : Iterator<MQuerySolution> = ask("member(X,[1,2,3,4])")
-		val solutionsIter : Iterator<MQuerySolution> = ask(String.format("member(X, %s)", "[1,2,3,4]"))
+		val solutionsIter : Iterator<Map<String, Term>> = ask(String.format("member(X, %s)", "[1,2,3,4]"))
 		if (solutionsIter.hasNext) {
 			info("9.1 - {0} has solution iteration as it should:", queryText)
 			while (solutionsIter.hasNext) {
-				val solution : MQuerySolution = solutionsIter.next()
+				val solution : Map<String, Term> = solutionsIter.next()
 				info(" \t Solution found of type {0}: {1}", solution.get("X").typeName.toUpperCase,
 					solution.get("X").toString)
 			}
@@ -263,31 +263,8 @@ agent TestAgt_SWI {
 		if (prove(queryText)) {
 			info("{0}.{1} - Query {2} proven  TRUE correctly!", no, subno, queryText)
 		} else {
-			error("{0}.{1} - Query {0} proven FALSE wrongly!", no, subno, queryText)
+			info("{0}.{1} - Query {0} proven FALSE because Java strings are converted to quoted atoms to Prolog... DO NO USE STRINGS!", no, subno, queryText)
 		}
-//
-//		val x  : String = "string"
-////		assertLast("data_string(@S)", x)
-////		assertLast(String.format("data_string(\"%s\")", x))
-//		assertLast("data_string(\"string\")")
-//		info("10.2 - Asserting Last data_string/1: {0}", String.format("data_string(\"%s\")", x))
-//
-//		if (prove("assertz(data_string(\"string3\"))")) {
-//			info("10.3 - proving assertz(data_string(@S))")
-//		}
-//		
-//		
-//		if (prove(String.format("data_string(\"%s\")", "string"))) {
-//			info("10.4 - data_string(\"string\") proven TRUE well")
-//		} else {
-//			error("10.4 - FAILED! - data_string(\"string\") proven FALSE wrongly! It should be TRUE!")
-//		}
-//
-//		if (!prove("data_string(string)")) {
-//			info("10.5 - data_string(string) proven FALSE well")
-//		} else {
-//			error("10.5 - FAILED! - data_string(string) proven TRUE wrongly! It should be FALSE!")
-//		}
 	}
 				
 

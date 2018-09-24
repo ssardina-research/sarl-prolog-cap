@@ -29,34 +29,51 @@ import java.text.SimpleDateFormat
 import java.util.List
 
 import org.apache.commons.lang3.StringUtils
+import java.util.Random
+import java.nio.file.Paths
 
 skill SWIJPL_KB_Prolog implements KB_Prolog {
 	requires Logging
 	uses Logging
 	
-	
+	// The name given to the kowledgebase (this may not be unique, it is given by the agent owner)	
 	protected val kb_name : String
 
-	// All data for the directory where KB will be dump
+	// Runtime of object creation - used to timestamp a directory to dump the KB
 	val formatter = new SimpleDateFormat("yyyy-MM-dd--HH-mm-ss")
 	val runtime_timestamp = formatter.format(new Date()) // store runtime date time as a string
-	var kb_dump_root_dir : String
-	var kb_directory_path_posix : String
-	var kb_dump_dir : File
+
+
+//	var kb_dump_root_dir : String
+//	var kb_directory_path_posix : String
+	var kb_dump_dir : String
 
 	var module_name : String
 
-	new(name : String, dump_dir : String = "kb_jpl_dump") {
+	/**
+	 * CONSTRUCTORS AND INSTALL
+	 */
+	new(name : String, kb_dump_dir : String) {
 		super() // Call the super's constructor
 		kb_name = name
-
-		set_dump_root(dump_dir)
-	}
 	
+		if (kb_dump_dir !== null) set_dump_root(kb_dump_dir)
+	}
+	new(name : String) {
+		this(name, null)
+		set_dump_root(Paths.get("kb_dump", formatter.format(new Date())).toString)
+	}
+
 	
 	def install() {
-		module_name = String.format("'%s'", this.owner.ID.toString)
+//		module_name = String.format("'%s'", this.owner.ID.toString)
 //		module_name = String.format("agt%d", new Random().nextInt(10000))
+		
+		// This will be: agt_<first letters of SARL agent UUID>_random int
+		module_name = String.
+			format("agt_%s_%d", StringUtils.substringBefore(this.owner.ID.toString, "-"), new Random().nextInt(100000))
+		
+		debug("Prolog skill SWI-JPL for Prolog capacity INSTALLED with module name: {0}", module_name)
 	}
 
 	private def add_module(query : String) : String {
@@ -64,9 +81,15 @@ skill SWIJPL_KB_Prolog implements KB_Prolog {
 	}
 
 	private def add_module(module : String, query : String) : String {
-		return String.format("%s:(%s)", module, query)
+		return String.format("'%s':(%s)", module, query)
 	}
 
+
+
+
+	/**
+	 * MAIN API FRAMEWORK implementing the Prolog KB Capacity
+	 */
 	@Deprecated
 	def consult_file(file : String) {
 		consult(file)
@@ -77,15 +100,15 @@ skill SWIJPL_KB_Prolog implements KB_Prolog {
 	}
 
 	def set_dump_root(dir : String) {
-		kb_dump_root_dir = dir
+		kb_dump_dir = dir
+		val x = new File(kb_dump_dir) 
+		if (!x.exists()) x.mkdirs()
 
-		// Create if necessary the directory where the KB will be dump for this exec: kb_dump_root_dir/runtime_timestamp/
-		kb_dump_dir = new File(kb_dump_root_dir.concat(File.separator).concat(runtime_timestamp))
-		if (!kb_dump_dir.exists())
-			kb_dump_dir.mkdirs()
+//		kb_directory_path_posix = dir
 
-		kb_directory_path_posix = String.format("%s/%s", kb_dump_root_dir, runtime_timestamp)
 	}
+
+
 
 	def dump_kb() {
 		dump_kb(kb_name)
@@ -100,7 +123,7 @@ skill SWIJPL_KB_Prolog implements KB_Prolog {
 		// Format of file to dump: kb_directory_path/
 		val query = String.format("
 					prolog_to_os_filename(\"%s/kb-%s-%s.pl\", _FileName),
-					open(_FileName, write, _F), set_output(_F), listing, close(_F)", kb_directory_path_posix, id,
+					open(_FileName, write, _F), set_output(_F), listing, close(_F)", kb_dump_dir, id,
 			formatter.format(new Date()))
 
 		// When we prove query, we basically execute a listing/0 sending the output to a file with timestamp and id
@@ -170,6 +193,12 @@ skill SWIJPL_KB_Prolog implements KB_Prolog {
 		Query.hasSolution(String.format(add_module("retractall(%s)"), queryString), paramsToTerms(params))
 	}
 
+
+	/**
+	 * API for Performing various types of queries: boolean proof, one solution, all solutions, solution iterator
+	 */
+
+
 	//	Prove a query: just return true or false (no variable bindings!)
 	def prove(queryString : String, params : Object*) : boolean {
 		return proveIn(queryString, module_name, params)
@@ -183,7 +212,6 @@ skill SWIJPL_KB_Prolog implements KB_Prolog {
 	def askOnce(queryString : String, params : Object*) : Map<String, Term> {
 		return askOnceIn(queryString, module_name, params)
 	}
-
 	def askOnceIn(queryString : String, module : Object, params : Object*) : Map<String, Term> {
 		return Query.oneSolution(add_module((module as String), queryString), paramsToTerms(params))
 	}
@@ -192,12 +220,19 @@ skill SWIJPL_KB_Prolog implements KB_Prolog {
 	// Prove a query and get ALL solutions in a collection of mappings from variables to terms
 	// (Returns empty collection if no solution is found)
 	def askForAllSolutions(queryString : String, params : Object*) : Collection<Map<String, Term>> {
-		return Query.allSolutions(add_module(queryString), paramsToTerms(params))
+		return askForAllSolutionsIn(queryString, module_name, params)
 	}
+	def askForAllSolutionsIn(queryString : String, module : Object, params : Object*) : Collection<Map<String, Term>> {
+		return Query.allSolutions(add_module((module as String), queryString), paramsToTerms(params))
+	}
+
 
 	// Prove a query incrementally, by returning an iterator solution object (with a .next method for next solution, if any)
 	// (Returns empty collection if no solution is found)
 	def ask(queryString : String, params : Object*) : Iterator<Map<String, Term>> {
-		return new Query(add_module(queryString), paramsToTerms(params))
+		return askIn(queryString, module_name, params)
+	}
+	def askIn(queryString : String, module : Object, params : Object*) : Iterator<Map<String, Term>> {
+		return new Query(add_module((module as String), queryString), paramsToTerms(params))
 	}
 }
