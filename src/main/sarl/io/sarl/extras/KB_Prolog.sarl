@@ -67,13 +67,21 @@ capacity KB_Prolog {
 	 */
 	def get_kb_name() : String
 
-	/*
+	/** 
+	 * B - API for updating the KB
+	 */
+
+	/* 
 	 * Assert/retract an unformatted query
 	 */
 	def assertFirst(query : String, params : Object*)
 	def assertLast(query : String, params : Object*)
 	def retract(query : String, params : Object*)
 	def retractAll(query : String, params : Object*)
+
+	/** 
+	 * C - API for Performing various types of queries: boolean proof, one solution, all solutions, solution iterator
+	 */
 
 	/* 
 	 * Prove an unformatted query
@@ -90,17 +98,14 @@ capacity KB_Prolog {
 	/*
 	 * Get all the answers for an unformatted query as a COllection of mappings vars --> terms
 	 */
-	def askForAllSolutions(QueryS : String, params : Object*) : Collection<Map<String, Term>>
+	def askForAllSolutions(query : String, params : Object*) : Collection<Map<String, Term>>
+	def askForAllSolutionsIn(query : String, module : Object, params : Object*) : Collection<Map<String, Term>>
+
 
 	/*
 	 * Open a new query session in Prolog and returns an object with an iterable 
-	 * TODO: this what we would like to have, very generic
-	 */
-	// def ask(query : String, outVars : String[], params : Object*) : Iterator<Map<String, Term>>
-	
-	/* 
-	 * Open a new query session in Prolog and returns an object with an iterable 
 	 */
 	def ask(query : String, params : Object*) : Iterator
+	def askIn(query : String, module : Object, params : Object*) : Iterator
 }
 
