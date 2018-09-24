@@ -22,6 +22,7 @@ import org.jpl7.Util
 import org.jpl7.JPLException
 import org.jpl7.JPL
 import io.sarl.core.DefaultContextInteractions
+import io.sarl.core.Schedules
 
 /** 
  * @author ssardina
@@ -44,6 +45,7 @@ agent TestAgt_SWIJPL {
 	uses Logging
 	uses KB_Prolog	
 	uses Lifecycle
+	uses Schedules
 
 	val testFile = "src/test/resources/testKB.pl"
 	
@@ -86,7 +88,7 @@ agent TestAgt_SWIJPL {
 //			proveIn("listing", String.format("'%s'", agent_UUID.toString))
 //		}
 //		
-//		killMe
+		in(5000)[killMe]
 	}
 
 	def test_1() : boolean {
@@ -409,6 +411,10 @@ agent TestAgt_Slave {
 		// SET THE SKILL TO JPL-based PROLOG!!!!!!!!!!!!!
 		setSkill(new SWIJPL_KB_Prolog("slave", "my_dump_test_slave"))
 		info("JPL-based KB installed with module name: {0}", get_prolog_engine)
+
+		// Consult the same file as master
+		consult(testFile)
+
 
 		assertLast("slave_test(?)", n)
 		info("stave_test({0}) asserted!", n)

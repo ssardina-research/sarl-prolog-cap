@@ -90,7 +90,18 @@ skill SWIJPL_KB_Prolog implements KB_Prolog {
 	}
 
 	def consult(file : String) : boolean {
-		return Query.hasSolution(add_module(String.format("load_files('%s',[])", file)))
+
+		// This does not allow re-loading the same file in different modules (for different agents, same KB)
+		//	val query = add_module(String.format("load_files('%s',[])", file))
+		
+		// Workaround to avoid the restriction that each file must be loaded/consulted into one module only.
+		// We make the file appear as a stream and we givem them a different id for loading: <module_name>_<file name> 
+		// TODO: maybe we want to assert this at the start once in the user module and then use it?
+		val query = String.format("
+					open('%s', read, _FS), 
+					load_files('%s_%s',[stream(_FS)]),
+					close(_FS)", file, module_name, file)
+		return Query.hasSolution(add_module(query))
 	}
 
 	def set_dump_root(dir : String) {
