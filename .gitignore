@@ -140,8 +140,7 @@ jackagt.jar
 
 # SARL Compilation Files
 target/
-src/main/generated-sources
-src/test
+generated-sources
 .metadata/
 wiki
 kb_dump*
