@@ -67,42 +67,45 @@ capacity KB_Prolog {
 	 */
 	def get_kb_name() : String
 
-	/*
+	/** 
+	 * B - API for updating the KB
+	 */
+
+	/* 
 	 * Assert/retract an unformatted query
 	 */
-	def assertFirst(queryS : String, params : Object*)
-	def assertLast(queryS : String, params : Object*)
-	def retract(queryS : String, params : Object*)
-	def retractAll(queryS : String, params : Object*)
+	def assertFirst(query : String, params : Object*)
+	def assertLast(query : String, params : Object*)
+	def retract(query : String, params : Object*)
+	def retractAll(query : String, params : Object*)
+
+	/** 
+	 * C - API for Performing various types of queries: boolean proof, one solution, all solutions, solution iterator
+	 */
 
 	/* 
 	 * Prove an unformatted query
 	 */
-	def prove(queryS : String, params : Object*) : boolean
-	/*
+	def prove(query : String, params : Object*) : boolean
+	def proveIn(query : String, module : Object, params : Object*) : boolean
+
+	/* 
 	 * Get the first result of an unformatted query as a Map from variable names to terms
 	 */
-	def askOnce(queryS : String, params : Object*) : Map<String, Term>
+	def askOnce(query : String, params : Object*) : Map<String, Term>
+	def askOnceIn(query : String, module : Object, params : Object*) : Map<String, Term>
 
 	/*
 	 * Get all the answers for an unformatted query as a COllection of mappings vars --> terms
 	 */
-	def askForAllSolutions(QueryS : String, params : Object*) : Collection<Map<String, Term>>
+	def askForAllSolutions(query : String, params : Object*) : Collection<Map<String, Term>>
+	def askForAllSolutionsIn(query : String, module : Object, params : Object*) : Collection<Map<String, Term>>
+
 
 	/*
 	 * Open a new query session in Prolog and returns an object with an iterable 
-	 * TODO: this what we would like to have, very generic
 	 */
-	// def ask(queryS : String, outVars : String[], params : Object*) : Iterator<Map<String, Term>>
-	
-	/* 
-	 * Open a new query session in Prolog and returns an object with an iterable 
-	 */
-	def ask(queryS : String, params : Object*) : Iterator
-
-	/* 
-	 * Open a new query session in Prolog and returns an in-house object with an iterable 
-	 */
-	def ask2(queryS : String, params : Object*) : Iterator
+	def ask(query : String, params : Object*) : Iterator
+	def askIn(query : String, module : Object, params : Object*) : Iterator
 }
 

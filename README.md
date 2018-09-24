@@ -143,6 +143,7 @@ The main tools at disposal to extend this skill are JPL:
 So what does the skill provide beyond JPL itself? In a nutshell, two things:
 
 1. Automatic handling of local agent KB, so that each agent can keep its own KB. This is done by using [SWI modules](http://www.swi-prolog.org/pldoc/man?section=modules), because the Prolog engine itself is the same for everyone.
+	* Read this [detailed tutorial on SWI Prolog modules](http://chiselapp.com/user/ttmrichter/repository/gng/doc/trunk/output/tutorials/swiplmodtut.html).
 2. A higher abstraction in queries when using placeholders `?`. To fill the placeholders, we do not need to create specific JPL terms (such as JPL `Atom`, `Integer`, `Float`, `Compound`, `JRef`, or `Variable`), but we can just write the content and the skill will figure out its type:
 	* If it is a string starting with a capital letter, then it is a variable term, e.g., `X` or `Numero`.
 	* If it is a number without decimals, it is an integer term, e.g., `23` or `123`.

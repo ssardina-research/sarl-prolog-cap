@@ -1,76 +1,73 @@
 /** 
- * A skill implementing KB_Prolog via JPL framework https://jpl7.org/
+ * A skill implementing KB_Prolog capacity via JPL framework https://jpl7.org/
+ * 
+ * The main feature on top of JPL are:
+ * 	1. Module/sandboxing: the skill will create a specific module so that the agent owner has its own KB
+ *  2. Much more direct use of JPL placeholders ?: no need to create new object terms for the arguments: skill will guess them!
  * 
  * @author Sebastian Sardina (ssardina@gmail.com)
  */
 package io.sarl.extras
 
 import io.sarl.core.Logging
-import io.sarl.lang.core.Capacity
 
-import io.mochalog.bridge.prolog.PrologContext
-import io.mochalog.bridge.prolog.SandboxedPrologContext
-import io.mochalog.bridge.prolog.query.MQuery
-import io.mochalog.bridge.prolog.query.exception.NoSuchSolutionException;
-import io.mochalog.bridge.prolog.query.collectors.MQuerySolutionCollector
-import io.mochalog.bridge.prolog.query.MQuerySolution
-import io.mochalog.bridge.prolog.query.MQuerySolutionIterator
-import io.mochalog.bridge.prolog.query.MQuerySolutionList
 
 import org.jpl7.Term
-
-import java.util.Collection
-import java.util.Map
-import java.util.HashMap
-import java.util.ArrayList
-import java.util.Iterator
-import java.util.Date
-
-import java.io.File
-import java.text.SimpleDateFormat
-import java.nio.file.Paths
-import org.jpl7.Query
-import org.jpl7.Util
-
-
-import java.util.List
-import java.util.UUID
-import java.util.Random
-import java.util.regex.Pattern
-import java.util.regex.Matcher
-import org.apache.commons.lang3.StringUtils
 import org.jpl7.JRef
 import org.jpl7.Compound
 import org.jpl7.Atom
+import org.jpl7.Query
+import org.jpl7.Util
+
+import java.util.Collection
+import java.util.Map
+import java.util.ArrayList
+import java.util.Iterator
+import java.util.Date
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.List
+
+import org.apache.commons.lang3.StringUtils
+import java.util.Random
+import java.nio.file.Paths
 
 skill SWIJPL_KB_Prolog implements KB_Prolog {
 	requires Logging
 	uses Logging
 	
-	
-	protected val kb_name : String
-	var swi_file : String
-
-	// All data for the directory where KB will be dump
+	// Runtime of object creation - used to timestamp a directory to dump the KB
 	val formatter = new SimpleDateFormat("yyyy-MM-dd--HH-mm-ss")
 	val runtime_timestamp = formatter.format(new Date()) // store runtime date time as a string
-	var kb_dump_root_dir : String
-	var kb_directory_path_posix : String
-	var kb_dump_dir : File
 
-	var module_name : String
+	protected val kb_name : String // Informal name given to the KB by the agent owner (may not be unique!)
+	var module_name : String // name of the SWI Prolog module to be used for this skill instance (will be unique!)
+	var kb_dump_dir : String // directory where the current KB is to be dumped
 
-	new(name : String, dump_dir : String = "kb_jpl_dump") {
+	/**
+	 * CONSTRUCTORS AND INSTALL
+	 */
+	new(name : String, kb_dump_dir : String) {
 		super() // Call the super's constructor
 		kb_name = name
-
-		set_dump_root(dump_dir)
-	}
 	
+		if (kb_dump_dir !== null) set_dump_root(kb_dump_dir)
+	}
+	new(name : String) {
+		this(name, null)
+		set_dump_root(Paths.get("kb_dump", formatter.format(new Date())).toString)
+	}
+
 	
 	def install() {
-		module_name = String.format("'%s'", this.owner.ID.toString)
+//		module_name = String.format("'%s'", this.owner.ID.toString)
 //		module_name = String.format("agt%d", new Random().nextInt(10000))
+		
+		// This will be: agt_<first letters of SARL agent UUID>_random int
+		module_name = String.
+			format("agt_%s_%d", StringUtils.substringBefore(this.owner.ID.toString, "-"), new Random().nextInt(100000))
+		
+		debug("Prolog skill SWI-JPL for Prolog capacity INSTALLED with module name: {0}", module_name)
 	}
 
 	private def add_module(query : String) : String {
@@ -78,30 +75,30 @@ skill SWIJPL_KB_Prolog implements KB_Prolog {
 	}
 
 	private def add_module(module : String, query : String) : String {
-		return String.format("%s:(%s)", module, query)
+		return String.format("'%s':(%s)", module, query)
 	}
 
+
+
+
+	/**
+	 * MAIN API FRAMEWORK implementing the Prolog KB Capacity
+	 */
 	@Deprecated
 	def consult_file(file : String) {
-		val result  = consult(file)
+		consult(file)
 	}
 
 	def consult(file : String) : boolean {
-		this.swi_file = file
-		
 		return Query.hasSolution(add_module(String.format("load_files('%s',[])", file)))
 	}
 
 	def set_dump_root(dir : String) {
-		kb_dump_root_dir = dir
-
-		// Create if necessary the directory where the KB will be dump for this exec: kb_dump_root_dir/runtime_timestamp/
-		kb_dump_dir = new File(kb_dump_root_dir.concat(File.separator).concat(runtime_timestamp))
-		if (!kb_dump_dir.exists())
-			kb_dump_dir.mkdirs()
-
-		kb_directory_path_posix = String.format("%s/%s", kb_dump_root_dir, runtime_timestamp)
+		kb_dump_dir = dir
+		val x = new File(kb_dump_dir) 
+		if (!x.exists()) x.mkdirs()
 	}
+
 
 	def dump_kb() {
 		dump_kb(kb_name)
@@ -116,7 +113,7 @@ skill SWIJPL_KB_Prolog implements KB_Prolog {
 		// Format of file to dump: kb_directory_path/
 		val query = String.format("
 					prolog_to_os_filename(\"%s/kb-%s-%s.pl\", _FileName),
-					open(_FileName, write, _F), set_output(_F), listing, close(_F)", kb_directory_path_posix, id,
+					open(_FileName, write, _F), set_output(_F), listing, close(_F)", kb_dump_dir, id,
 			formatter.format(new Date()))
 
 		// When we prove query, we basically execute a listing/0 sending the output to a file with timestamp and id
@@ -186,33 +183,46 @@ skill SWIJPL_KB_Prolog implements KB_Prolog {
 		Query.hasSolution(String.format(add_module("retractall(%s)"), queryString), paramsToTerms(params))
 	}
 
+
+	/**
+	 * API for Performing various types of queries: boolean proof, one solution, all solutions, solution iterator
+	 */
+
+
 	//	Prove a query: just return true or false (no variable bindings!)
-	// Example:
 	def prove(queryString : String, params : Object*) : boolean {
-		return Query.hasSolution(add_module(queryString), paramsToTerms(params))
+		return proveIn(queryString, module_name, params)
+	}
+	def proveIn(queryString : String, module : Object, params : Object*) : boolean {
+		return Query.hasSolution(add_module((module as String), queryString), paramsToTerms(params))
 	}
 
 	// Prove a query just once, but return mapping from variables to terms
 	// (Returns null object if no solution is found)
 	def askOnce(queryString : String, params : Object*) : Map<String, Term> {
-		return Query.oneSolution(add_module(queryString), paramsToTerms(params))
+		return askOnceIn(queryString, module_name, params)
 	}
+	def askOnceIn(queryString : String, module : Object, params : Object*) : Map<String, Term> {
+		return Query.oneSolution(add_module((module as String), queryString), paramsToTerms(params))
+	}
+	
 
 	// Prove a query and get ALL solutions in a collection of mappings from variables to terms
 	// (Returns empty collection if no solution is found)
 	def askForAllSolutions(queryString : String, params : Object*) : Collection<Map<String, Term>> {
-		return Query.allSolutions(add_module(queryString), paramsToTerms(params))
+		return askForAllSolutionsIn(queryString, module_name, params)
 	}
+	def askForAllSolutionsIn(queryString : String, module : Object, params : Object*) : Collection<Map<String, Term>> {
+		return Query.allSolutions(add_module((module as String), queryString), paramsToTerms(params))
+	}
+
 
 	// Prove a query incrementally, by returning an iterator solution object (with a .next method for next solution, if any)
 	// (Returns empty collection if no solution is found)
 	def ask(queryString : String, params : Object*) : Iterator<Map<String, Term>> {
-		return new Query(add_module(queryString), paramsToTerms(params))
+		return askIn(queryString, module_name, params)
 	}
-
-	// Prove a query incrementally, by returning an iterator solution object (with a .next method for next solution, if any)
-	// (Returns empty collection if no solution is found)
-	def ask2(queryString : String, params : Object*) : Iterator<Map<String, Term>> {
-		return new Query(add_module(queryString), paramsToTerms(params))
+	def askIn(queryString : String, module : Object, params : Object*) : Iterator<Map<String, Term>> {
+		return new Query(add_module((module as String), queryString), paramsToTerms(params))
 	}
 }

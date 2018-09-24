@@ -13,19 +13,15 @@ import io.sarl.core.Logging
 import io.sarl.core.MemberJoined
 import io.sarl.core.MemberLeft
 import io.sarl.core.Lifecycle
-import java.util.NoSuchElementException
 import java.util.Iterator
 import java.util.Map
 import org.jpl7.Term
 import org.jpl7.PrologException
 import org.jpl7.Util
-import org.jpl7.Query
 
-import io.mochalog.bridge.prolog.query.MQuerySolutionIterator
-import io.mochalog.bridge.prolog.query.MQuerySolution
 import org.jpl7.JPLException
-import org.jpl7.JRef
 import org.jpl7.JPL
+import io.sarl.core.DefaultContextInteractions
 
 /** 
  * @author ssardina
@@ -34,6 +30,16 @@ import org.jpl7.JPL
  * 		mvn -o exec:java -Dexec.args=io.sarl.extras.TestAgt_SWIJPL
  * 		
  */
+ 
+event TellModule {
+	val module : String
+	
+	new(module : String) {
+		this.module = module
+	}
+}
+
+
 agent TestAgt_SWIJPL {
 	uses Logging
 	uses KB_Prolog	
@@ -46,7 +52,9 @@ agent TestAgt_SWIJPL {
 		// Event trigger before the agent begin to live or to be used.
 		// You should put all the initialization statements in this block of code.
 		info("The TEST agent was started.")
+		logLevel = 4
 
+		// SET THE SKILL TO JPL-based PROLOG!!!!!!!!!!!!!
 		setSkill(new SWIJPL_KB_Prolog("test", "my_dump_test"))
 
 		info("################################ START TESTING ################################")
@@ -67,11 +75,18 @@ agent TestAgt_SWIJPL {
 
 		info("Now spawning some slave test agents with their KB")
 		val agent_UUID = spawn(TestAgt_Slave, 200)
-		System.out.println(String.format("I have spawned my child %s", agent_UUID.toString))
+		info("I have spawned my child {0}", agent_UUID.toString)
 
 		val agent_UUID2 = spawn(TestAgt_Slave, 100)
-		System.out.println(String.format("I have spawned my child %s", agent_UUID2.toString))
-		killMe
+		info("I have spawned my child {0}", agent_UUID2.toString)
+		
+		
+//		if (proveIn("slave_test(200)", String.format("'%s'", agent_UUID.toString))) {
+//			info("I am happy, have proven something on another agent....")
+//			proveIn("listing", String.format("'%s'", agent_UUID.toString))
+//		}
+//		
+//		killMe
 	}
 
 	def test_1() : boolean {
@@ -332,16 +347,6 @@ agent TestAgt_SWIJPL {
 	
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 				
 
 	def test_100() : boolean {
@@ -358,47 +363,40 @@ agent TestAgt_SWIJPL {
 
 
 
-	
-	on Destroy {
-		// Event trigger when the agent is destroyed from the system.
-		// You should put all the resource releasing statements in this block of code.
-		info("The TEST agent was stopped -- ALL TESTS DONE.")
-	}
-
-	on AgentSpawned {
-		// A new agent has been spawned in our context.
-	}
-
-	on AgentKilled {
-		// A new agent has been killed in our context.
-	}
-
-	on ContextJoined {
-		// Event trigger when an agent of the level joins a shared context.
-		// Sent to a agent of the same level.
-	}
-
-	on ContextLeft {
-		// Event trigger when an agent of the level jleaves a shared context.
-		// Sent to a agent of the same level.
-	}
-
-	on MemberJoined {
-		// Event trigger when an agent joins one of our shared super-holons.
-		// Sent to all members of the considered super-holon.
-	}
-
-	on MemberLeft {
-		// Event trigger when an agent leaves one of our shared super-holons.
-		// Sent to all members of the considered super-holon.
+	on TellModule {
+		val module_of_another_agent = occurrence.module
+		
+		info("Let us list the KB of another agent with KB module {0}:", module_of_another_agent)
+		
+		proveIn("listing", module_of_another_agent)
+		
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 agent TestAgt_Slave {
 	uses Logging
 	uses KB_Prolog
 	uses Lifecycle
-	
+	uses DefaultContextInteractions
+	 
 	val testFile = "src/test/resources/testKB.pl"
 
 	on Initialize {
@@ -407,7 +405,9 @@ agent TestAgt_Slave {
 		val n = occurrence.parameters.get(0)
 		
 		info("The SLAVE agent was started with number: {0}", n)
-		setSkill(new SWIJPL_KB_Prolog("slave", "my_dump_test"))
+
+		// SET THE SKILL TO JPL-based PROLOG!!!!!!!!!!!!!
+		setSkill(new SWIJPL_KB_Prolog("slave", "my_dump_test_slave"))
 		info("JPL-based KB installed with module name: {0}", get_prolog_engine)
 
 		assertLast("slave_test(?)", n)
@@ -418,7 +418,7 @@ agent TestAgt_Slave {
 		if (prove("Y = ?, X is Y+1, slave_test(X)", n))
 			info("SLAVE has proven test({0})  CORRECTLY!", n)
 
-		prove("write(\"KB for the module agent: \"), 
+		prove("write(\"FROM PROLOG: KB for the module agent: \"), 
 				writeln(?), 
 				writeln(\"-------------\"), listing, writeln(\"-------------\")", get_prolog_engine)
 		
@@ -426,10 +426,12 @@ agent TestAgt_Slave {
 			if (prove("test(?)", n))
 			info("SLAVE has proven test({0})  WRONGLY because test/1 does not exist!!", n)
 		} catch (e : PrologException) {
-			error("SLAVE gotten a correct exception because test/1 does not exist in its KB: {0}", e.message)
+			info("SLAVE gotten a correct exception because test/1 does not exist in its KB: {0}", e.message)
 		}
 		
-		info("Done, SLAVE {0} dying...", n)
+		emit(new TellModule(get_prolog_engine as String))
+
+		info("Done, SLAVE {0} dying and told everyone its KB is module {1}", n, get_prolog_engine)
 		killMe
 		}
 }
