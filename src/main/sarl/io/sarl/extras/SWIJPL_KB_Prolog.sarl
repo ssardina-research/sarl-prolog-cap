@@ -36,19 +36,13 @@ skill SWIJPL_KB_Prolog implements KB_Prolog {
 	requires Logging
 	uses Logging
 	
-	// The name given to the kowledgebase (this may not be unique, it is given by the agent owner)	
-	protected val kb_name : String
-
 	// Runtime of object creation - used to timestamp a directory to dump the KB
 	val formatter = new SimpleDateFormat("yyyy-MM-dd--HH-mm-ss")
 	val runtime_timestamp = formatter.format(new Date()) // store runtime date time as a string
 
-
-//	var kb_dump_root_dir : String
-//	var kb_directory_path_posix : String
-	var kb_dump_dir : String
-
-	var module_name : String
+	protected val kb_name : String // Informal name given to the KB by the agent owner (may not be unique!)
+	var module_name : String // name of the SWI Prolog module to be used for this skill instance (will be unique!)
+	var kb_dump_dir : String // directory where the current KB is to be dumped
 
 	/**
 	 * CONSTRUCTORS AND INSTALL
@@ -103,11 +97,7 @@ skill SWIJPL_KB_Prolog implements KB_Prolog {
 		kb_dump_dir = dir
 		val x = new File(kb_dump_dir) 
 		if (!x.exists()) x.mkdirs()
-
-//		kb_directory_path_posix = dir
-
 	}
-
 
 
 	def dump_kb() {
