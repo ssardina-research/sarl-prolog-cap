@@ -105,7 +105,7 @@ capacity KB_Prolog {
 	/*
 	 * Open a new query session in Prolog and returns an object with an iterable 
 	 */
-	def ask(query : String, params : Object*) : Iterator
-	def askIn(query : String, module : Object, params : Object*) : Iterator
+	def ask(query : String, params : Object*) : Iterator<Map<String,Term>>
+	def askIn(query : String, module : Object, params : Object*) : Iterator<Map<String, Term>>
 }
 
