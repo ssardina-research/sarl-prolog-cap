@@ -15,7 +15,7 @@ class BootTestAgt {
 		Boot.offline = true
 		Boot.verboseLevel = 7 // ALL
 		val basePackage = "io.sarl.extras"
-		val AGENTS_AVAILABLE : String[] = #["default", "TestAgt_SWIJPL", "TestAgt_SWIMochalog"]
+		val AGENTS_AVAILABLE : String[] = #["default", "TestAgt_SWIJPL"]
 
 		// Boot a specific one and that' s it
 		// Boot.startJanus(typeof(DummyMultiCarController))
@@ -33,8 +33,6 @@ class BootTestAgt {
 				fullyQualifiedAgent = String.format("%s.%s", basePackage, "TestAgt_SWIJPL")
 			case 'TestAgt_SWIJPL':
 				fullyQualifiedAgent = String.format("%s.%s", basePackage, "TestAgt_SWIJPL")
-			case 'TestAgt_SWIMochalog':
-				fullyQualifiedAgent = String.format("%s.%s", basePackage, "TestAgt_SWI")
 			default:
 				throw new IllegalArgumentException("Invalid agent to start: " + agentToLaunch)
 		}
