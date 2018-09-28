@@ -5,7 +5,7 @@
 	<groupId>org.bitbucket.ssardina-research</groupId>
 	-->
 	<artifactId>sarl-prolog-cap</artifactId>
-	<version>2.2.${env.SARL_VERSION}-devel</version>
+	<version>2.5.${env.SARL_VERSION}-devel</version>
 
     <name>SARL Capacity for SWI Prolog Connectivity</name>
     <url>https://bitbucket.org/ssardina-research/sarl-prolog-cap</url>
@@ -44,7 +44,7 @@
     
 
     <dependencies>
-        <!-- Janus Project kernel (contains SARL language core) -->
+        <!-- JANUS Project kernel (contains SARL language core) -->
         <dependency>
             <groupId>io.janusproject</groupId>
             <artifactId>io.janusproject.kernel</artifactId>

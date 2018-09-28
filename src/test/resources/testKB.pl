@@ -61,4 +61,6 @@ print_integer(JRef, X2) :-
 
 
 
-
+bad(X) :-
+	data(X),
+	no_clause(X).

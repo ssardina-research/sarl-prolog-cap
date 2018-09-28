@@ -70,6 +70,7 @@ agent TestAgt_SWIJPL {
 		if(test_8()) info("Test 8 passed!") else error("Test 8 failed!")
 		if(test_9()) info("Test 9 passed!") else error("Test 9 failed!")
 		if(test_10()) info("Test 10 passed!") else error("Test 10 failed!")
+		if(test_11()) info("Test 11 passed!") else error("Test 11 failed!")
 
 		if(test_100()) info("Test 100 passed!") else debug("Test 100 failed!")
 		info("################################ END TESTING ################################")
@@ -346,8 +347,20 @@ agent TestAgt_SWIJPL {
 
 		return true
 	}
-	
-	
+
+	def test_11() : boolean {
+		val no = 11
+		val queryText = "Query on an non existent predicate: exception excepted!"
+		info("######### Test {0}: {1} ", no, queryText)
+		
+		try {
+			val res = prove("bad(X)")
+			return false
+		} catch (e : PrologException) {
+			info("\t Correct, PrologException caught well: {0}", e.message)
+		}
+		return true
+	}
 	
 				
 
