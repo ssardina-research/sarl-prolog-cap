@@ -21,12 +21,8 @@ package io.sarl.extras
 import java.nio.file.Paths
 import java.util.Map
 import java.util.Collection
-import java.util.Iterator
 import org.jpl7.Term
 import org.jpl7.Query
-
-// MOCHALOG
-// Check https://github.com/ssardina/mochalog/blob/master/subprojects/mochalog-bridge/java-api/src/main/java/io/mochalog/bridge/prolog/PrologContext.java
 
 
 /** 
@@ -35,35 +31,44 @@ import org.jpl7.Query
  */
 capacity KB_Prolog {
 	
-	/*
+	/**
 	 * Consult a into the Prolog engine
 	 * 
 	 * @param file the file to be consulted
-		 */
+	 */
 	@Deprecated
 	def consult_file(file : String)
-	
+
+	/** 
+	 * Consult a into the Prolog engine
+	 * 
+	 * @param file the file to be consulted
+	 */
 	def consult(file : String) : boolean
 
-	/* 
+	/**
 	 * Set the root dir for dumping knowledge bases
 	 */
 	def set_dump_root(kb_dump_dir : String)
-	/*
+
+	/**
 	 * Dump the current KB to file
 	 */
 	def dump_kb()
-	/*
+	
+	/**
 	 * Dump the current KB to file and use id in file name
 	 * 
 	 * @param id to add to filename
 	 */ 
 	def dump_kb(id : String)
-	/*
+	
+	/**
 	 * Return the handler for the prolog engine
 	 */
 	def get_prolog_engine()	: Object
-	/*
+
+	/**
 	 * Return name of the KB
 	 */
 	def get_kb_name() : String
@@ -72,7 +77,7 @@ capacity KB_Prolog {
 	 * B - API for updating the KB
 	 */
 
-	/* 
+	/** 
 	 * Assert/retract an unformatted query
 	 */
 	def assertFirst(query : String, params : Object*)
@@ -84,29 +89,28 @@ capacity KB_Prolog {
 	 * C - API for Performing various types of queries: boolean proof, one solution, all solutions, solution iterator
 	 */
 
-	/* 
+	/**
 	 * Prove an unformatted query
 	 */
 	def prove(query : String, params : Object*) : boolean
 	def proveIn(query : String, module : Object, params : Object*) : boolean
 
-	/* 
+	/* *
 	 * Get the first result of an unformatted query as a Map from variable names to terms
 	 */
 	def askOnce(query : String, params : Object*) : Map<String, Term>
 	def askOnceIn(query : String, module : Object, params : Object*) : Map<String, Term>
 
-	/*
+	/**
 	 * Get all the answers for an unformatted query as a COllection of mappings vars --> terms
 	 */
 	def askForAllSolutions(query : String, params : Object*) : Collection<Map<String, Term>>
 	def askForAllSolutionsIn(query : String, module : Object, params : Object*) : Collection<Map<String, Term>>
 
 
-	/*
+	/**
 	 * Open a new query session in Prolog and returns an object with an iterable 
 	 */
 	def ask(query : String, params : Object*) : Query
 	def askIn(query : String, module : Object, params : Object*) : Query
 }
-
