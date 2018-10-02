@@ -5,13 +5,13 @@
 	<groupId>org.bitbucket.ssardina-research</groupId>
 	-->
 	<artifactId>sarl-prolog-cap</artifactId>
-	<version>2.6.${env.SARL_VERSION}</version>
+	<version>3.0.${env.SARL_VERSION}</version>
 
     <name>SARL Capacity for SWI Prolog Connectivity</name>
     <url>https://bitbucket.org/ssardina-research/sarl-prolog-cap</url>
     <description>
     	Capacities and Skills for SARL to connect to SWI Prolog system.
-		Relies on JPL (https://jpl7.org/) and Mochalog (https://github.com/ssardina/mochalog)
+		Relies on JPL (https://jpl7.org/)
 	</description>
 
   	<developers>
@@ -51,14 +51,6 @@
             <version>${janus.version}</version>
         </dependency>
 
-        <!--  MOCHALOG interface for SWI-Prolog -->
-        <!--  0.4.x Based on Maven with flat structure (no sub-modules)-->
-        <dependency>
-            <groupId>com.github.ssardina</groupId>
-            <artifactId>mochalog</artifactId>
-            <version>5aed56a</version>
-        </dependency>
- 		   
 		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
 		<dependency>
 		    <groupId>org.apache.commons</groupId>
@@ -78,7 +70,7 @@
         <dependency>
         	<groupId>com.github.ssardina-research</groupId>
         	<artifactId>packages-jpl</artifactId>
-        	<version>c2991b1</version>
+        	<version>ssardina-devel</version>
         </dependency>
     </dependencies>
 

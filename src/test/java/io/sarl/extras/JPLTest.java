@@ -17,11 +17,13 @@
 package io.sarl.extras;
 
 import org.jpl7.JPL;
+import org.jpl7.PrologException;
 import org.jpl7.Query;
 import org.jpl7.Term;
 
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -112,20 +114,41 @@ public class JPLTest
         boolean loaded = consultKnowledgeBase(testKBFilePath);
         assertTrue("Test KB was not consulted successfully", loaded);
 
-        // Check for string
-        queryText = "data_string(atom0)";
+        // Check for string: even though data_string("string0") is there, JPL cannot send Strings to Prolog, it will be query as data_string(string0)
+        queryText = "data_string(\"string0\")";
         hasSolution = Query.hasSolution(queryText);
-        assertTrue(String.format("No solution was found for query **%s**  !!!", queryText), hasSolution);;
+        assertFalse(String.format("Solution was found for query **%s**  !!!", queryText), hasSolution);;
 
-        
-        // Check for string
-//        queryText = "data_string(\"string0\")";
-//        query = new Query(queryText);
-//        
-//        hasSolution = query.hasSolution();
-//        assertTrue(String.format("No solution was found for query **%s**  !!!", queryText), hasSolution);;
+        // In this case will succeed because DB has data_string(string1), JPL cannot send Strings to Prolog, it will be query as data_string(string0)
+        queryText = "data_string(\"string1\")";
+        hasSolution = Query.hasSolution(queryText);
+        assertTrue(String.format("No Solution was found for query **%s**  !!!", queryText), hasSolution);;
     }
 
+    
+    /**
+     * Check a query against a string
+     */
+    @Test
+    public void noClauseExistence()
+    {
+    	String queryText;
+    	boolean hasSolution;
+    	
+        // hello_world.pl test resource
+        // Filepath relative to java-api directory
+
+        boolean loaded = consultKnowledgeBase(testKBFilePath);
+        assertTrue("Test KB was not consulted successfully", loaded);
+
+        // Check for string: even though data_string("string0") is there, JPL cannot send Strings to Prolog, it will be query as data_string(string0)
+        queryText = "no_clause(23)";
+        try {
+        	hasSolution = Query.hasSolution(queryText);
+        } catch (PrologException e) {
+        	System.out.print("Bien!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! " + e.getMessage());
+        }
+    }
     
     
     /**

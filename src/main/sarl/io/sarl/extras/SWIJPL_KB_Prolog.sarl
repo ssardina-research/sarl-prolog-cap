@@ -32,6 +32,7 @@ import org.apache.commons.lang3.StringUtils
 import java.util.Random
 import java.nio.file.Paths
 
+@SuppressWarnings("potential_field_synchronization_problem")
 skill SWIJPL_KB_Prolog implements KB_Prolog {
 	requires Logging
 	uses Logging
@@ -227,10 +228,10 @@ skill SWIJPL_KB_Prolog implements KB_Prolog {
 
 	// Prove a query incrementally, by returning an iterator solution object (with a .next method for next solution, if any)
 	// (Returns empty collection if no solution is found)
-	def ask(queryString : String, params : Object*) : Iterator<Map<String, Term>> {
+	def ask(queryString : String, params : Object*) : Query {
 		return askIn(queryString, module_name, params)
 	}
-	def askIn(queryString : String, module : Object, params : Object*) : Iterator<Map<String, Term>> {
+	def askIn(queryString : String, module : Object, params : Object*) : Query {
 		return new Query(add_module((module as String), queryString), paramsToTerms(params))
 	}
 }

@@ -41,7 +41,8 @@ data(_Variable).
 
 
 data_string("string0").
-data_string(atom0).
+data_string(string1).
+
 
 % integer, float, atom, compound, var, ok
 data_all(23, 12.21, sebastian, mother(maria,father(john)), _X, [1,2,3,4], ok).
