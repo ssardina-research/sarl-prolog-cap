@@ -68,7 +68,7 @@
         <dependency>
         	<groupId>com.github.ssardina-research</groupId>
         	<artifactId>packages-jpl</artifactId>
-        	<version>ssardina-devel</version>
+        	<version>f491eb4</version>
         </dependency>
     </dependencies>
 
