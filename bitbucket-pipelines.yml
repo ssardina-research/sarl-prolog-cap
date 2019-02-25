@@ -11,8 +11,8 @@ pipelines:
         caches:
           - maven
         script: # Modify the commands below to build your repository.
-          - export SARL_VERSION=0.7.2
-          - SARL_VERSION=0.7.2 mvn -B verify  # -B batch mode makes Maven less verbose
+          - export SARL_VERSION=0.8.6
+          - SARL_VERSION=0.8.6 mvn -B verify  # -B batch mode makes Maven less verbose
   custom:
     print:
       - step:
@@ -25,8 +25,8 @@ pipelines:
           caches:
             - maven
           script: # Modify the commands below to build your repository.
-            - export SARL_VERSION=0.7.2
-            - SARL_VERSION=0.7.2 mvn -B clean install # -B batch mode makes Maven less verbose
+            - export SARL_VERSION=0.8.6
+            - SARL_VERSION=0.8.6 mvn -B clean install # -B batch mode makes Maven less verbose
             - echo $BITBUCKET_REPO_OWNER
             - echo $BITBUCKET_REPO_SLUG
             - echo $BITBUCKET_CLONE_DIR

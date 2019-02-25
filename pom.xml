@@ -1,5 +1,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+
+    <!-- ##################################################################
+		PROJECT INFO 
+     ####################################################################### -->
 	<groupId>com.github.ssardina-research</groupId>
 	<!-- NOT RELIABLE WITH JITPACK - USING GITHUB CLONE INSTEAD 
 	<groupId>org.bitbucket.ssardina-research</groupId>
@@ -30,19 +34,30 @@
 	    </license>
   	</licenses>
 
+    <!-- ##################################################################
+		PROPERTIES 
+     ####################################################################### -->
     <properties>
         <!-- SARL framework version and configuration -->
         <sarl.version>${env.SARL_VERSION}</sarl.version>
 
-        <!-- Janus project version -->
+        <!-- JANUS project version -->
         <janus.version>2.${sarl.version}</janus.version>
 
-        <!-- Java compiler version to be used -->
-        <compiler.level>1.8</compiler.level>
+        <!-- JPL Version: https://github.com/ssardina-research/packages-jpl -->
+        <jpl.version>1ca38a0</jpl.version>	<!--  latest ssardina version before SWI 8.x.x -->
+        <jpl.version>fba2f5b</jpl.version>	<!--  new version with all fixes incorporated - SWI 8.x.x -->
+
+        <!-- JAVA compiler version to be used -->
+	    <maven.compiler.source>1.8</maven.compiler.source>
+	    <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     
 
+    <!-- ##################################################################
+		DEPENDENCIES 
+     ####################################################################### -->
     <dependencies>
         <!-- JANUS Project kernel (contains SARL language core) -->
         <dependency>
@@ -59,28 +74,45 @@
 		</dependency>
         
 
+       	<!--  JUNIT for unit testing  -->
         <dependency>
           <groupId>junit</groupId>
           <artifactId>junit</artifactId>
           <version>4.12</version>
 		</dependency>
 
+       	<!--  JPL: Java - SWI Prolog Bidirectional Interface https://github.com/ssardina-research/packages-jpl -->
         <dependency>
         	<groupId>com.github.ssardina-research</groupId>
         	<artifactId>packages-jpl</artifactId>
-        	<version>f491eb4</version>
+        	<version>maven-SNAPSHOT</version>
+        	<!-- <version>${jpl.version}</version> -->
         </dependency>
     </dependencies>
 
+    <dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>1.7.25</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+        
+
+    <!-- ##################################################################
+		REPOSITORIES 
+     ####################################################################### -->
 	<repositories>
-        <!-- Janus Project kernel (contains SARL language core) -->
+        <!-- JANUS Project kernel (contains SARL language core) -->
 	  <repository>
 	    <id>io.sarl-maven</id>
 	    <name>SARL Snapshots</name>
 	    <url>http://maven.sarl.io/</url>
 	  </repository>
 	  
-        <!-- JitPack used for remote installation of dependencies from Github and Bitbucket -->
+        <!-- JITPACK used for remote installation of dependencies from Github and Bitbucket -->
         <repository>
             <id>jitpack.io</id>
             <name>JitPack Repository</name>
@@ -90,14 +122,14 @@
 	
 	
 	<pluginRepositories>
-	  <pluginRepository>
-	    <id>io.sarl-maven</id>
-	    <name>SARL Snapshots</name>
-	    <url>http://maven.sarl.io/</url>
-	    <snapshots>
-	      <enabled>true</enabled>
-	    </snapshots>
-	  </pluginRepository>
+		  <pluginRepository>
+		    <id>io.sarl-maven</id>
+		    <name>SARL Snapshots</name>
+		    <url>http://maven.sarl.io/</url>
+		    <snapshots>
+		      <enabled>true</enabled>
+		    </snapshots>
+		  </pluginRepository>
 	</pluginRepositories>
 
 
@@ -118,7 +150,19 @@
           </resources>        
 
 
+    <!-- ##################################################################
+		BUILD PIPELINE PLUGINS 
+     ####################################################################### -->
         <plugins>
+			 <plugin>
+		        <groupId>org.apache.maven.plugins</groupId>
+		        <artifactId>maven-compiler-plugin</artifactId>
+		        <configuration>
+		            <source>1.6</source>
+		            <target>1.6</target>
+		        </configuration>
+		    </plugin>
+
             <plugin>
                 <!-- SARL Maven compiler plugin -->
                 <!-- Facilitate compilation of SARL source code to Java classes -->
@@ -127,10 +171,10 @@
                 <version>${sarl.version}</version>
                 <extensions>true</extensions>
                 <configuration>
-                    <source>${compiler.level}</source>
-                    <target>${compiler.level}</target>
-                    <encoding>${project.build.sourceEncoding}</encoding>
-                </configuration>
+					<source>${maven.compiler.source}</source>
+					<target>${maven.compiler.target}</target>
+					<encoding>${project.build.sourceEncoding}</encoding>
+				</configuration>
             </plugin>
 
 <!--
@@ -151,6 +195,7 @@
 	       <plugin>
 	              <groupId>org.apache.maven.plugins</groupId>
 	              <artifactId>maven-source-plugin</artifactId>
+	              <version>3.0.1</version>
 	              <executions>
 	                    <execution>
 	                          <id>attach-sources</id>
@@ -171,7 +216,7 @@
                 <configuration>
                     <systemPropertyVariables>
                         <propertyName>java.library.path</propertyName>
-                        <buildDirectory>/usr/lib/swi-prolog/lib/amd64/</buildDirectory>
+                        <buildDirectory>/usr/lib/swi-prolog/lib/x86_64-linux/</buildDirectory>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
