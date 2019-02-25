@@ -21,11 +21,15 @@ Version convention: Major.Minor.<SARL Version>. For example, 1.3.0.7.2 is versio
 The capacity and skills depend on the following two systems/frameworks:
 
 * [SWI Prolog](http://www.swi-prolog.org/) (>7.4.x).
-* [SWI JPL](https://jpl7.org/)) bidirectional SWI-Java interface:
-	* Obtained via Maven automatically from https://github.com/ssardina-research/packages-jpl  via [JitPack](https://jitpack.io/#ssardina-research/packages-jpl)
-	* Forked Maven-aware version of main JPL repo <https://github.com/SWI-Prolog/packages-jpl>
-	* In Linux Ubuntu JPL is provided by package `swi-prolog-java`.
-	* In Windows, the Java-SWI interface it can be installed as part of the main install.
+* [SWI JPL](https://jpl7.org/) bidirectional SWI-Java interface:
+	* This has two parts: the _native library_ and the _Java API_.
+	* Native library (e.g., `libjpl.so` in Linux):
+		* Linux (Ubuntu): Provided by package `swi-prolog-java` (`/usr/lib/swi-prolog/lib/x86_64-linux/libjpl.so`).
+		* Windows: the Java-SWI interface it can be installed as part of the main install.
+	* Java API: this is the `jpl.jar` interface.
+		* In version 8.x.x should be provided by package `swi-prolog-java` `/usr/lib/swi-prolog/lib/jpl.jar`
+		* Obtained via Maven automatically from https://github.com/ssardina-research/packages-jpl  via [JitPack](https://jitpack.io/#ssardina-research/packages-jpl)
+			* Forked Maven-aware version of main JPL repo <https://github.com/SWI-Prolog/packages-jpl>
 	* Check some [good examples on how to use JPL](https://github.com/SWI-Prolog/packages-jpl/blob/master/examples/java/).
 
 
