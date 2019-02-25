@@ -9,7 +9,7 @@
 	<groupId>org.bitbucket.ssardina-research</groupId>
 	-->
 	<artifactId>sarl-prolog-cap</artifactId>
-	<version>3.0.${env.SARL_VERSION}</version>
+	<version>3.1.${env.SARL_VERSION}</version>
 
     <name>SARL Capacity for SWI Prolog Connectivity</name>
     <url>https://bitbucket.org/ssardina-research/sarl-prolog-cap</url>
@@ -47,6 +47,7 @@
         <!-- JPL Version: https://github.com/ssardina-research/packages-jpl -->
         <jpl.version>1ca38a0</jpl.version>	<!--  latest ssardina version before SWI 8.x.x -->
         <jpl.version>fba2f5b</jpl.version>	<!--  new version with all fixes incorporated - SWI 8.x.x -->
+        <jpl.version>maven-SNAPSHOT</jpl.version>	<!--  new version with all fixes incorporated - SWI 8.x.x -->
 
         <!-- JAVA compiler version to be used -->
 	    <maven.compiler.source>1.8</maven.compiler.source>
@@ -85,8 +86,7 @@
         <dependency>
         	<groupId>com.github.ssardina-research</groupId>
         	<artifactId>packages-jpl</artifactId>
-        	<version>maven-SNAPSHOT</version>
-        	<!-- <version>${jpl.version}</version> -->
+        	<version>${jpl.version}</version>
         </dependency>
     </dependencies>
 
