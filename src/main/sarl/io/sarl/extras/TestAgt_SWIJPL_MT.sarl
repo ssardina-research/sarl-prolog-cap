@@ -13,6 +13,8 @@ import java.util.HashSet
 import java.util.Set
 import org.jpl7.Query
 import java.util.concurrent.TimeUnit
+import java.util.Map
+import org.jpl7.Term
 
 /** 
  * @author ssardina
@@ -24,9 +26,16 @@ import java.util.concurrent.TimeUnit
  
 event Test {
 	val n : int
+	val query : Query
 
 	new(n : int) {
 		this.n = n
+		this.query = null
+	}
+
+	new(n : int, q : Query) {
+		this.n = n
+		this.query = q
 	}
 }
 
@@ -52,6 +61,8 @@ agent TestAgt_SWIJPL_MT {
 	val testFile = "src/test/resources/testKB_MT.pl"
 
 	var pending : Set<Integer> = new HashSet<Integer>() // set of all SARL agents in the system
+	
+	
 	
 	on Initialize {
 		// Event trigger before the agent begin to live or to be used.
@@ -81,31 +92,79 @@ agent TestAgt_SWIJPL_MT {
 //		assertFirst("agent(main)")
 
 
-		 // In this test we post events that will open Prolog queries and keep them open fo a while, then close them
-		 //  Since each event will be handled in a different thread, a Prolog JPL engine must be attached.
-		 // the question then is to investigate which one: a completely new one OR re-use an already used one before (by another thread)
-		 //
-		 // If we wait 15 seconds between test events, then each event can be processed and the query closed, and the engine reused
-		 // Otherwise, the engine may be busy with another open query in another thread, so a new one in the pool has to be attached
-		 // 	In that case, if too many event tests are spawn, then some test will be delayed until one of the 10 engines is freed
-		 val totalEvents = 5
-		 for (var i : int = 0; i < totalEvents; i++) {
-			 pending.add(i)
-		 }
-		 for (var i : int = 0; i < totalEvents; i++) {
-			 emit(new Test(i))		// will take 5 seconds to close its query
-			 TimeUnit.SECONDS.sleep(15)	
+		// In this test we post events that will open Prolog queries and keep them open fo a while, then close them
+		//  Since each event will be handled in a different thread, a Prolog JPL engine must be attached.
+		// the question then is to investigate which one: a completely new one OR re-use an already used one before (by another thread)
+		//
+		// If we wait 15 seconds between test events, then each event can be processed and the query closed, and the engine reused
+		// Otherwise, the engine may be busy with another open query in another thread, so a new one in the pool has to be attached
+		// 	In that case, if too many event tests are spawn, then some test will be delayed until one of the 10 engines is freed
+		val totalEvents = 4
+		for (var i : int = 0; i < totalEvents; i++) {
+			pending.add(i)
+		}
+		 	val mainQuery : Query = ask("member(X, [10,20,30,40])")
+//			val mainQuery : Query = ask("between(100, 200, X), random(P), S is P*10, sleep(S)")
+//		var mainQuery : Query = ask("between(100, 200, X)")
+		// val x : boolean = mainQuery.hasNext
+		// doit(mainQuery)
+
+
+//		val x : boolean = mainQuery.hasNext
+//		mainQuery.close 
+		info("################################ LETS START EMITTING {0} TESTS ", totalEvents)
+		for (var i : int = 0; i < totalEvents; i++) {
+			 emit(new Test(i, mainQuery)) // will take 5 seconds to close its query
+			 // ATTENTION: HERE IS THE IMPORTANT BIT
+			 // 	1) IF WE WAIT 15 SECONDS, THEN THE EVENT Test(i) will be handled fully and that engine will be re-used
+			 //		2) IF WE DO NOT WAIT, THEN EACH THREAD FOR Test(i) will have to attach to and use a new engine
+			 TimeUnit.SECONDS.sleep(3)		
 		}
 
+
+		// This will be run after ALL emits Tets(i) have been completed!
 		info("################################ HAVE SPAWN ALL THE TESTS ################################")
 		TimeUnit.SECONDS.sleep(10)
-		prove("listing(tea_number/2)")	// This will re-use the very first engine for the consult above!
+		prove("listing(tea_number/3)")	// This will re-use the very first engine for the consult above!
 		info("################################ END TESTING MAIN ################################")
-		//		in(15000)[killMe]
+	}
+
+	def doit(q : Query) {
+		val solutionsIter = q 
+
+		var sol : Map<String, Term>
+		while (solutionsIter.hasNext) {
+			sol = solutionsIter.nextSolution
+			info("\t\t Solution for SINGLE THREAD test  (on engine {1}): {0}", sol.toString, solutionsIter.engine)
+		}
+
+	}
+
+	val singleTest = true
+
+	
+	on Test [singleTest] {
+		val n = occurrence.n
+		var q = occurrence.query
+
+		var solutionsIter : Query 
+		if (q !== null) {
+			info("\t\t Setting the query to what was passed in event!!!")
+			solutionsIter = q 
+		}
+			else 	solutionsIter = ask("member(N, [1,2,3,4,5,6])")
+		var sol : Map<String, Term>
+		if (solutionsIter.hasNext) {
+			sol = solutionsIter.nextSolution
+			info("\t\t Solution for SINGLE THREAD test {2} (on engine {1}): {0}", sol.toString, solutionsIter.engine, n)
+			 assertFirst("tea_number(?, ?, ?)", n, sol.toString, sol.toString)
+		}
+	    TimeUnit.SECONDS.sleep(10)		
+		// solutionsIter.close
 	}
 
 
-	on Test {
+	on Test [!singleTest] {
 		// the id number of the test
 		val n = occurrence.n
 		
@@ -113,19 +172,54 @@ agent TestAgt_SWIJPL_MT {
 		val query = "format(string(_Text), \"--------------------------> I have started the query test/4 for id ~d\", [?]),
 					  writeln(_Text), !, between(1,?,N), sleep(?)"
 
-//		val solutionsIter : Query = ask("test(?, 15, 0, N)", n)
-		val solutionsIter : Query = ask(query, n, 15, 0)
-		if (solutionsIter.hasNext) {
+//		val solutionsIter : Query = ask(query, n, 15, 0)
+		val solutionsIter : Query = ask("member(N, [1,2,3,4,5,6])")
+		var sol : Map<String, Term>
+		var sol2 : Map<String, Term>
+		while (solutionsIter.hasNext) {
 			info("------------------------------------  START TESTING *{0}* ------------------------------------", n)
-			val sol = solutionsIter.next
-			info("\t\t Solution for test {1} (on engine {2}): {0}", sol.toString, n, solutionsIter.engine)
-			assertFirst("tea_number(?, ?)", n, sol.get("N").intValue)
+			sol = solutionsIter.nextSolution
+			info("\t\t Solution for MAIN test {1} (on engine {2}): {0}", sol.toString, n, solutionsIter.engine)
+
+			// NOW A 2ND AND 3RD NEASTED QUERY WHILE solutionsIter remains open!
+			val solutionsIter2 : Query = ask("member(X,[a,b,c,d,e])")
+			while (solutionsIter2.hasNext) {	// This will close automatically due to solution exhaustion!
+				sol2 = solutionsIter2.nextSolution
+//				if (solutionsIter.hasMoreSolutions) {
+//					info("\t\t\t NEW SOLUTION FOUND FOR FIRST QUERY")
+//					sol = solutionsIter.next
+//				}
+				info("\t\t Solution for NEASTED test member {1} (on engine {2}): {0} and {3}", sol2.toString, n,
+					solutionsIter2.engine, sol.toString)
+				assertFirst("tea_number(?, ?, ?)", n, sol.get("N").intValue, sol2.get("X").toString)
+			}
+			if (solutionsIter.hasMoreSolutions) {
+				info("\t\t\t NEW SOLUTION FOUND FOR FIRST QUERY")
+				sol = solutionsIter.next
+			}
+			info("\t\t Solution for NEASTED LAST test member {1} (on engine {2}): {0}", sol.toString, n,
+				solutionsIter.engine)
+		}
+		info("--------------> FINISHED FIRST ROUND OF TESTS **{0}** - Query still open on engine {1}", n,
+			solutionsIter.engine)
+
+
+
+//		TimeUnit.SECONDS.sleep(5);
+		if (n % 2 != 0) {
+			solutionsIter.close
+			info("\t ^^^^^^^^^ DONE WAITNG 5 seconds to close  my query for test **{0}**", n)
+		} // If we do not close it, the thread will not release the engine to the pool!
+
+		TimeUnit.SECONDS.sleep(20);
+		val solutionsIter2 : Query = ask("member(X,[10,20,30,40,50])")
+		while (solutionsIter2.hasNext) { // This will close automatically due to solution exhaustion!
+			sol2 = solutionsIter2.next
+			info("\t\t Solution LAST ROUND for test member {1} (on engine {2}): {0}", sol2.toString, n, solutionsIter2.engine)
 		}
 
-		info("^^^^^^^^^ WAITNG 5 seconds to close my query for test **{0}**", n)
-		TimeUnit.SECONDS.sleep(5);
-		solutionsIter.close
-		info("\t ^^^^^^^^^ DONE WAITNG 5 seconds to close  my query for test **{0}**", n)
+		// Sleep to keep the thread alive!
+		TimeUnit.SECONDS.sleep(60);
 
 
 		emit(new End(n)) // I am done!
@@ -134,16 +228,16 @@ agent TestAgt_SWIJPL_MT {
 	}
 
 
+	// Will get the end of each Test(i) thread and when all have signaled. list and finish
 	on End {
 		synchronized (pending) {
 			pending.remove(occurrence.n)
 			if (pending.empty) {
 					info("******************** All events processed.... killing myself........")
-					prove("listing(tea_number/2)")
+					prove("listing(tea_number/3)")
 					killMe
 			}
 		}
 	}
 
 }
-
