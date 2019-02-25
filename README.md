@@ -21,17 +21,12 @@ Version convention: Major.Minor.<SARL Version>. For example, 1.3.0.7.2 is versio
 The capacity and skills depend on the following two systems/frameworks:
 
 * [SWI Prolog](http://www.swi-prolog.org/) (>7.4.x).
-* [SWI JPL](http://www.swi-prolog.org/pldoc/doc_for?object=section(%27packages/jpl.html%27)) Bidirectional interface with Java:
-	* Main Page for JPL: <https://jpl7.org/> 
-	* Github development repository: <https://github.com/SWI-Prolog/packages-jpl>
-		* Forked version being used: <https://github.com/ssardina/packages-jpl>
+* [SWI JPL](https://jpl7.org/)) bidirectional SWI-Java interface:
+	* Obtained via Maven automatically from https://github.com/ssardina-research/packages-jpl  via [JitPack](https://jitpack.io/#ssardina-research/packages-jpl)
+	* Forked Maven-aware version of main JPL repo <https://github.com/SWI-Prolog/packages-jpl>
 	* In Linux Ubuntu JPL is provided by package `swi-prolog-java`.
 	* In Windows, the Java-SWI interface it can be installed as part of the main install.
-		* Check some [good examples on how to use JPL](https://github.com/SWI-Prolog/packages-jpl/blob/master/examples/java/) including the good [Family Example]([good examples on how to use JPL](https://github.com/SWI-Prolog/packages-jpl/blob/master/examples/java/Family/Family.java)). 
-* [Mochalog](https://github.com/ssardina/mochalog), an even higher abstraction than JPL.
-	* Required only by skill **SWI_KB_Prolog**.
-	* Obtained via Maven automatically using from [JitPack](https://jitpack.io/#ssardina/mochalog)
-	* Check Mochalog page for prerequisites, install, and examples.
+	* Check some [good examples on how to use JPL](https://github.com/SWI-Prolog/packages-jpl/blob/master/examples/java/).
 
 
 Also, depending on the system being used:
