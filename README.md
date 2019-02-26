@@ -70,8 +70,8 @@ To verify you have everything setup well, run `mvn clean package` first.
 This will run some unit testing on JPL itself (file `src/test/java/io/sarl/extras/JPLTest.java`. 
 Furthermore, you can then run the SARL test agents:
 	
-	* `io.sarl.extras.TestAgt_SWI`: dummy agent testing Mochalog-based skill **SWI_KB_Prolog**. Check [source here](src/main/sarl/io/sarl/extras/TestAgt_SWIJPL.sarl).
-	* `io.sarl.extras.TestAgt_SWIJPL`: dummy agent testing JPL-based skill **SWI_KB_Prolog**. Check [source here](src/main/sarl/io/sarl/extras/TestAgt_SWI.sarl).
+	* `io.sarl.extras.TestAgt_SWIJPL`: dummy agent testing JPL-based skill **SWIJPL_KB_Prolog**. Check [source here](src/main/sarl/io/sarl/extras/TestAgt_SWIJPL.sarl).
+	* `io.sarl.extras.TestAgt_SWIJPL_MT`: dummy agent testing JPL-based skill **SWI_KB_Prolog** on multi-threaded queries. Check [source here](src/main/sarl/io/sarl/extras/TestAgt_SWIJPL_MT.sarl).
 
 Both test agents are registered in the `BootTestAgt` class, which if run with no arguments will ask which agent test to execute. You can run that booting class by doing: `mvn -o exec:java`. Both tests will at the end dump the Prolog databases into directory `my_dump_test`.
 
@@ -193,33 +193,6 @@ while the Prolog counterpart is:
 
 To see what you can do from Prolog in terms of Java objects, refer to the [Prolog API](https://jpl7.org/PrologApiOverview.jsp) section in the JPL home page.
 
-
-
-----------------------------------
-### SKILL `SWI_KB_Prolog` (via Mochalog)
-
-The `SWI_KB_Prolog` is built on top of the [Mochalog](https://github.com/ssardina/mochalog) framework for more high-level access to SWI Prolog via the JPL interface. The implementation of the above primitives is, basically, by using the Mochalog API. In turn, Mochalog relies on JPL](https://jpl7.org/) framework.
-
-Some useful notes:
-
-* Refer to the [Mochalog](https://github.com/ssardina/mochalog) readme to understand how to build queries using Mochalog (e.g., using `@` placeholders).
-* Mochalog API does not allow passing Java objects (`JRef`) to Prolog (the JPL-based skill does!). 
-* To handle responses from Prolog, where variables are grounded to Terms, we use the [Term](http://www.swi-prolog.org/packages/jpl/java_api/javadoc/jpl/Term.html) class form JPL
-* To handle pairs of variable name and term unified to, use [Pair](http://gangmax.me/blog/2017/10/10/how-to-return-multiple-values-from-a-java-method/) class; see example below.
-* The function `ask(queryS : String, params : Object*) : Iterator`: returns a Mochalog's `QuerySolutions` iterator. You can get the actual variable to term mappings via method `.bindings`
-* The `params` arguments above refer to [SARL variadic](http://www.sarl.io/docs/official/reference/general/FuncDecls.html#4-variadic-function) arguments (in Java, called [Varargs](https://www.geeksforgeeks.org/variable-arguments-varargs-in-java/)) to help build the query string by "filling" places using `@A`, `@I`, and `@S` placeholders. For example:
-
-```
-assertFirst("percepts(@A, @I, @S)", agentName, agents.get(agentName).step, percepts.toString)
-```
-
-An alternative, Java-based way to construct the query string, is to use [`String.format`](https://docs.oracle.com/javase/7/docs/api/java/util/Formatter.html):
-
-```
-assertFirst(String.format("percepts(\'%s\', %d, %s)", agentName, agents.get(agentName).step, percepts.toString))
-```
-
-See how single-quoted was used here to make sure agentName becomes an atom (and not a string!).
 
 
 
