@@ -16,6 +16,7 @@ import org.jpl7.JPLException
 import org.jpl7.JPL
 import io.sarl.core.DefaultContextInteractions
 import io.sarl.core.Schedules
+import java.util.NoSuchElementException
 
 /** 
  * @author ssardina
@@ -179,8 +180,10 @@ agent TestAgt_SWIJPL {
 		}
 		try {
 			info("\t Solution found: {0}", solutionsIter.next.toString)
+		} catch (e : NoSuchElementException) {
+			info("\t NoSuchElementException EXCEPTION CAUGHT: {0}", e.message)
 		} catch (e : JPLException) {
-			info("\t EXCEPTION CAUGHT! - No more solutions available: {0}", e.message)
+			info("\t General JPL EXCEPTION CAUGHT: {0}", e.message)
 		}
 		return true
 	}
