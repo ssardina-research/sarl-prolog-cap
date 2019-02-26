@@ -316,25 +316,6 @@ If you use **SWIJPL_KB_Prolog** Mochalog-based skill:
 					reportPersonRequestedService(occurrence.floor, occurrence.direction)
 
 					// Add car request to our beliefs
-					assertFirst("open_car_request(?, ?)", occurrence.floor, occurrence.direction.name)
-
-                    // This action comes (is inherited) from KB_Prolog directly
-					kb_dump()
-				}
-
-If you use **SWI_KB_Prolog** Mochalog-based skill:
-
-				setSkill(new SWI_KB_Prolog("agent23"))
-
-				// Load agent knowledge base
-				consult_file("src/main/prolog/sweeper_elevator_agent.pl")
-				reportMessage("I have loaded the SWI KB successfully!")		
-				
-				on CarRequestPercept 
-				{
-					reportPersonRequestedService(occurrence.floor, occurrence.direction)
-
-					// Add car request to our beliefs
 					assertFirst("open_car_request(@I, @A)", occurrence.floor, occurrence.direction.name)
 
                     // This action comes (is inherited) from KB_Prolog directly
@@ -344,11 +325,11 @@ If you use **SWI_KB_Prolog** Mochalog-based skill:
 
 
 
-### 3 - SWI-Prolog Access via JPL or Mochalog
+### 3 - SWI-Prolog Access via JPL 
 
-In this approach, we directly use SWI-Prolog via the JPL or Mochalog high-level infrastructure.
+In this approach, we directly use SWI-Prolog via the JPL high-level infrastructure.
 
-Here is some example code of JPL-based use (though for another application) in an elevator controller. Please observe the use of a module name to encapuslate the beliefset of the particular agent:
+Here is some example code of JPL-based use (though for another application) in an elevator controller. Please observe the use of a module name to encapsulate the beliefset of the particular agent:
 
 ```
 #!java
@@ -375,38 +356,6 @@ Here is some example code of JPL-based use (though for another application) in a
 ```
 
 
-And here is some example code for the Mochalog-based ersion:
-
-
-
-```
-#!java
-
-		import io.mochalog.bridge.prolog.PrologContext
-		import io.mochalog.bridge.prolog.SandboxedPrologContext
-		import io.mochalog.bridge.prolog.query.Query
-
-		// Set-up Prolog knowledgebase
-		var prolog_kb : PrologContext
-		val beliefSpace = String.format("swiplayer")
-		prolog_kb = new SandboxedPrologContext(beliefSpace)
-		prolog_kb.importFile("src/main/prolog/masssim_coordinator.pl") // newest version
-
-		// Assert percepts in the KB
-		prolog_kb.assertFirst("percepts(@A, @I, @S)", agentName, agents.get(agentName).step, percepts.toString)
-
-		// Querying one solution - Tell the KB to process last percept
-		agents.keySet().forEach([ agentName : String |
-			prolog_kb.askForSolution(Query.format("process_last_percepts(@A)", agentName))
-		])
-		
-		// Querying all solutions - Report percepts available in the KB
-		val query = Query.format("percepts(Agent, Step, Percepts)")
-		for (solution : prolog_kb.askForAllSolutions(query))
-		{
-			System.out.format("Information for agent %s on step %d\n", solution.get("Agent").toString(),  solution.get("Step").intValue)
-		}
-```
 
 ----------------------------------
 ## TROUBLESHOOTING
