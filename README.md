@@ -20,37 +20,40 @@ Version convention: Major.Minor.<SARL Version>. For example, 1.3.0.7.2 is versio
 
 The capacity and skills depend on the following two systems/frameworks:
 
-* [SWI Prolog](http://www.swi-prolog.org/) (>7.4.x).
+* [SWI Prolog](http://www.swi-prolog.org/)
+	* Either stable version 7.6.4 (available in standard Linux repos) or the 8.1.x from [SWI-devel repo](https://github.com/SWI-Prolog/swipl-devel). 
+	* The official 8.0.x versions have issues with the `libswipl.so` library and makes JPL crash; see [issue](https://github.com/ssardina-research/packages-jpl/issues/21)
 * [SWI JPL](https://jpl7.org/) bidirectional SWI-Java interface:
 	* This has two parts: the _native library_ and the _Java API_.
 	* Native library (e.g., `libjpl.so` in Linux):
 		* Linux (Ubuntu): Provided by package `swi-prolog-java` (`/usr/lib/swi-prolog/lib/x86_64-linux/libjpl.so`).
 		* Windows: the Java-SWI interface it can be installed as part of the main install.
+		* **NOTE**: we currently cannot run version 8.x.x its `libswipl.so` crashes; see above.
 	* Java API: this is the `jpl.jar` interface.
-		* In version 8.x.x should be provided by package `swi-prolog-java` `/usr/lib/swi-prolog/lib/jpl.jar`
-		* Obtained via Maven automatically from https://github.com/ssardina-research/packages-jpl  via [JitPack](https://jitpack.io/#ssardina-research/packages-jpl)
-			* Forked Maven-aware version of main JPL repo <https://github.com/SWI-Prolog/packages-jpl>
+		* Provided by package `swi-prolog-java` `/usr/lib/swi-prolog/lib/jpl.jar`
+		* However, project obtains it via Maven automatically from https://github.com/SWI-Prolog/packages-jpl  via [JitPack](https://jitpack.io/#SWI-Prolog/packages-jpl)
+			* The Maven-aware version is a [branch]https://github.com/SWI-Prolog/packages-jpl/tree/maven) in the JPL repo.
 	* Check some [good examples on how to use JPL](https://github.com/SWI-Prolog/packages-jpl/blob/master/examples/java/).
 
 
-Also, depending on the system being used:
+Also, it is very important to tell your system where Prolog is installed and where exactly the `.so/.dll` libraries are located:
 
 * If in **Windows**:
-	* Tested successfully in Windows 7 with SWI 7.6.4.
 	* Make sure SWI is installed with the JPL Java-SWI connectivity. You should have a `jpl.dll` (in the SWI `bin/` subdir) and a `jpl.jar` (in the SWI `lib/` subdir).
 	* Define a _system_ environment variable `SWI_HOME_DIR` and set it to the root directory of your installed version of SWI-Prolog (e.g., to `C:\Program Files\swipl`).
 	* Extend `Path` system environment variable with the following two components:
 		* `%SWI_HOME_DIR%\bin`
 		* `%SWI_HOME_DIR%\lib\jpl.jar`
 	* No changes to `CLASSPATH` are needed.
-* If in **Linux**:
-	* Latest package versions at <http://www.swi-prolog.org/build/PPA.txt> 
-	* JPL is provided via package `swi-prolog-java` (interface between Java and SWI) installed. This will include library `libjpl.so` (e.g., `/usr/lib/swi-prolog/lib/amd64/libjpl.so`)
-	* Extend environment library `LD_PRELOAD` for system to pre-load `libswipl.so`: `export LD_PRELOAD=libswipl.so:$LD_PRELOAD`
-		* Check [this post](https://answers.ros.org/question/132411/unable-to-load-existing-owl-in-semantic-map-editor/) and [this one](https://blog.cryptomilk.org/2014/07/21/what-is-preloading/) about library preloading.
-		* Also, check [this](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=690734) and [this](https://github.com/yuce/pyswip/issues/10) posts.
-	* Extend environment variable `LD_LIBRARY_PATH`  to point to the directory where `libjpl.so` is located (e.g., `export LD_LIBRARY_PATH=/usr/lib/swi-prolog/lib/amd64/`)
-	* If using RUN AS configuration in ECLIPSE, remember to set up these two variables `LD_LIBRARY_PATH` and `LD_PRELOAD` too (and check "Append environment to native environment").
+* If in **Linux**: 
+	* Extend the following environment variables to point to your SWI install:
+
+			 export SWI_HOME_DIR=/usr/local/swipl-git/lib/swipl/
+			 export LD_LIBRARY_PATH=$SWI_HOME_DIR/lib/x86_64-linux/:$SWI_HOME_DIR/lib/amd64/:$LD_LIBRARY_PATH
+			 export LD_PRELOAD=libswipl.so:$LD_PRELOAD   # only if necessary and your app complains
+		 
+ 	* To understand the environment library `LD_PRELOAD` check [this post](https://answers.ros.org/question/132411/unable-to-load-existing-owl-in-semantic-map-editor/) and [this one](https://blog.cryptomilk.org/2014/07/21/what-is-preloading/) about library preloading. Also, check [this](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=690734) and [this](https://github.com/yuce/pyswip/issues/10) posts.
+	* If using RUN AS configuration in ECLIPSE/IntelliJ, remember to set up these variables too (and check "Append environment to native environment").
 	
 
 
