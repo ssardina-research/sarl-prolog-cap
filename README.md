@@ -21,7 +21,7 @@ Version convention: Major.Minor.<SARL Version>. For example, 1.3.0.7.2 is versio
 The capacity and skills depend on the following two systems/frameworks:
 
 * [SWI Prolog](http://www.swi-prolog.org/): this is the actual SWI Prolog system.
-	* Use either stable version 7.6.4 (available in standard Linux repos) or the 8.1.x from [SWI-devel repo](https://github.com/SWI-Prolog/swipl-devel). 
+	* Use either stable version 7.6.4 (available in standard Linux repos) or compile and install 8.1.x from [SWI-devel repo](https://github.com/SWI-Prolog/swipl-devel). 
 	* The official 8.0.x versions have issues with the `libswipl.so/dll/dylib` library and makes JPL crash; see [issue](https://github.com/ssardina-research/packages-jpl/issues/21). It has been fixed in the git repo.
 * [SWI JPL](https://jpl7.org/) bidirectional SWI-Java interface. This has two parts: 
 	* _Native library_ (e.g., `libjpl.so/dll/dylib`):
@@ -52,6 +52,7 @@ Also, it is very important to tell your system where Prolog is installed and whe
 		 
  	* To understand the environment library `LD_PRELOAD` check [this post](https://answers.ros.org/question/132411/unable-to-load-existing-owl-in-semantic-map-editor/) and [this one](https://blog.cryptomilk.org/2014/07/21/what-is-preloading/) about library preloading. Also, check [this](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=690734) and [this](https://github.com/yuce/pyswip/issues/10) posts.
 	* If using RUN AS configuration in ECLIPSE/IntelliJ, remember to set up these variables too (and check "Append environment to native environment").
+
 * If in **MacOS**: read [this post](https://jpl7.org/DeploymentMacos)	
 
 
@@ -103,7 +104,7 @@ Replace `-SNAPSHOT` by the specific version (e.g., commit id) you want to use in
 ----------------------------------
 ## WHAT IS PROVIDED IN THIS CAPACITY/SKILL  
 
-### CAPACITY KB_PROLOG
+### Capacity KB_PROLOG: general actions for Prolog access from SARL agents
 
 This `KB_Prolog` capacity provides the following hooks to Prolog access:
 
@@ -127,7 +128,7 @@ This `KB_Prolog` capacity provides the following hooks to Prolog access:
 	* `ask2(queryS : String, params : Object*) : Iterator`: returns an iterator to solution bindings `Map<String,Term>`.
 
 
-### SKILL `SWIJPL_KB_Prolog` (via JPL) [RECOMENDED]
+### Skill `SWIJPL_KB_Prolog`: concrete implementation using SWI Prolog and JPL interface
 
 This skill is the recommended one to use and basically relies directly on the [JPL infrastructure](https://jpl7.org/).
 The main tools at disposal to extend this skill are JPL:
