@@ -2,9 +2,10 @@
 
 This project provides a Prolog knowledge-base capacity for SARL agents and TWO skills for it using [SWI Prolog](http://www.swi-prolog.org/). The Prolog capacity/skill can be used as belief representation for agents, as a replacement of Java data-structures. This yield much more succinct and declarative agent systems.
 
-The capacity provided is **KB_Prolog** (under package `io.sarl.extras`). The skills are **SWI_KB_Prolog** and **SWIJPL_KB_Prolog**.
+The package provides:
 
-The skills implementing the capacity rely on [Mochalog](https://github.com/ssardina/mochalog) and [JPL](https://jpl7.org) frameworks, which provide a high-level view and API of SWI Prolog in Java.
+* Capacity **KB_Prolog** (under package `io.sarl.extras`) specifying the actions to provide Prolog access to SARL agents.
+* Skill **SWIJPL_KB_Prolog** implementing the capacity via [SWI Prolog](http://swi-prolog.org) and [JPL](https://jpl7.org) framework, which provide a high-level view and API of SWI Prolog in Java.
 
 This package can be obtained via Maven using JitPack: <https://jitpack.io/#org.bitbucket.ssardina-research/sarl-prolog-cap>
 
