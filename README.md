@@ -56,7 +56,7 @@ Also, it is very important to tell your system where Prolog is installed and whe
 
 
 ----------------------------------
-## Develop it further
+## DEVELOP CAPACITY/SKILL FURTHER
 
 To _develop_ this capacity/skills framework further, one would need:
 
@@ -78,7 +78,7 @@ Both test agents are registered in the `BootTestAgt` class, which if run with no
 Check the source of the above two test agents to see the types of queries, from simple to more complex, that one could do.
 
 ----------------------------------
-## Include capacity/skills in your SARL application via Maven 
+## USING SARL-PROLOG-CAP CAPCITY/SKILL IN YOUR SARL APPLICATION VIA MAVEN 
 
 To add the dependency to this capacity/skills in your SARL application, you can use Maven with JitPack, by adding this dependency and repository in to your `pom.xml`:
 
@@ -101,7 +101,7 @@ Replace `-SNAPSHOT` by the specific version (e.g., commit id) you want to use in
 
 
 ----------------------------------
-## WHAT IS PROVIDED:  
+## WHAT IS PROVIDED IN THIS CAPACITY/SKILL  
 
 ### CAPACITY KB_PROLOG
 
