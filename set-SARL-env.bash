@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # For Linux-based distribution install
-export SWI_HOME_DIR=/usr/lib/swi-prolog/
+export SWI_HOME_DIR=/usr/lib/swi-prolog
 export LD_LIBRARY_PATH=$SWI_HOME_DIR/lib/x86_64-linux/:$SWI_HOME_DIR/lib/amd64/:$LD_LIBRARY_PATH
 
 # For a local install under /usr/local/swipl-git
