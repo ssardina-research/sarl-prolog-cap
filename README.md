@@ -22,9 +22,9 @@ The capacity and skills depend on the following two systems/frameworks:
 
 * [SWI Prolog](http://www.swi-prolog.org/): this is the actual SWI Prolog system.
 	* Use either stable version 7.6.4 (available in standard Linux repos) or the 8.1.x from [SWI-devel repo](https://github.com/SWI-Prolog/swipl-devel). 
-	* The official 8.0.x versions have issues with the `libswipl.so` library and makes JPL crash; see [issue](https://github.com/ssardina-research/packages-jpl/issues/21). It has been fixed in the git repo.
+	* The official 8.0.x versions have issues with the `libswipl.so/dll/dylib` library and makes JPL crash; see [issue](https://github.com/ssardina-research/packages-jpl/issues/21). It has been fixed in the git repo.
 * [SWI JPL](https://jpl7.org/) bidirectional SWI-Java interface. This has two parts: 
-	* _Native library_ (e.g., `libjpl.so/dll`):
+	* _Native library_ (e.g., `libjpl.so/dll/dylib`):
 		* Linux (Ubuntu): Provided by package `swi-prolog-java` (`/usr/lib/swi-prolog/lib/x86_64-linux/libjpl.so`).
 		* Windows: the Java-SWI interface it can be installed as part of the main install.
 	* _Java API_: this is the Java interface to Prolog provided in JAR file `jpl.jar` .
@@ -34,7 +34,7 @@ The capacity and skills depend on the following two systems/frameworks:
 	* Check some [good examples on how to use JPL](https://github.com/SWI-Prolog/packages-jpl/blob/master/examples/java/).
 
 
-Also, it is very important to tell your system where Prolog is installed and where exactly the `.so/.dll` libraries are located:
+Also, it is very important to tell your system where Prolog is installed and where exactly the `.so/dll/dylib` libraries are located:
 
 * If in **Windows**:
 	* Make sure SWI is installed with the JPL Java-SWI connectivity. You should have a `jpl.dll` (in the SWI `bin/` subdir) and a `jpl.jar` (in the SWI `lib/` subdir).
@@ -52,7 +52,7 @@ Also, it is very important to tell your system where Prolog is installed and whe
 		 
  	* To understand the environment library `LD_PRELOAD` check [this post](https://answers.ros.org/question/132411/unable-to-load-existing-owl-in-semantic-map-editor/) and [this one](https://blog.cryptomilk.org/2014/07/21/what-is-preloading/) about library preloading. Also, check [this](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=690734) and [this](https://github.com/yuce/pyswip/issues/10) posts.
 	* If using RUN AS configuration in ECLIPSE/IntelliJ, remember to set up these variables too (and check "Append environment to native environment").
-	
+* If in **MacOS**: read [this post](https://jpl7.org/DeploymentMacos)	
 
 
 ----------------------------------
@@ -62,9 +62,8 @@ To _develop_ this capacity/skills framework further, one would need:
 
 * Java Runtime Environment (JRE) and Java Compiler (javac) v1.8 (Sun version recommended)
 * Maven project management and comprehension tool (to meet dependencies, compile, package, run).
-* SARL modules and execution engine 
-	* Version defined by environment variable `SARL_VERSION`; for example `export SARL_VERSION=0.7.2`
-	* Version tested: 0.6.1, 0.7.2
+* SARL modules and execution engine. Currently using SARL 0.8.6. 
+	* Version defined by environment variable `SARL_VERSION`; for example `export SARL_VERSION=0.8.6`
 	* Obtained via Maven automatically from http://mvnrepository.com/artifact/io.sarl.maven.
 	
 To verify you have everything setup well, run `mvn clean package` first. 
@@ -202,11 +201,9 @@ To see what you can do from Prolog in terms of Java objects, refer to the [Prolo
 
 There are basically three ways one can use SWI-Prolog inside SARL agents, depending on the level of abstraction:
 
-
 1. **[RECOMMENDED]** Create a capacity **KB_Domain** for your domain application that embodies the usual KB queries required, and a skill **SWI_KB_Domain** for it extending skill **SWI_KB_Prolog** (which implements general Prolog capacity **KB_Prolog**) in the [SARL Prolog Capacity](https://bitbucket.org/ssardina-research/sarl-prolog-cap) framework that implements those queries. The SARL agent will use this capacity and skill.
 2. Make the agents directly use capacity **KB_PROLOG** (and its default skill **SWI_KB_Prolog**). As soon as the agent acquires such a skill, a Prolog engine will be created by the skill. Then the agent for example can load a KB by consulting the file: `consult_file('myKB.pl')`. This is similar to the first option but the code will be in the SARL agent itself rather than encapsulated in a domain capacity/skill.
 3. Make the agents directly access SWI-Prolog via the Mochalog or JPL APIs (depending which skill you use), for example, by creating a Prolog engine in the initialization of agents, etc.
-
 
 
 ### 1 - Creating a domain-specific Knowledge-base capacity/skill.
