@@ -75,6 +75,31 @@ public class JPLTest
     }
 
     /**
+     * Write Prolog versions using current_prolog_flag/2
+     * http://www.swi-prolog.org/pldoc/doc_for?object=current_prolog_flag/2
+     */
+    @Test
+    public void printPrologVersion()
+    {
+    	Term result;
+        // hello_world.pl test resource
+        // Filepath relative to java-api directory
+
+        // Fetch the Term object which gets bound to the specified
+        // variable
+        Map<String, Term> binding = new Query("current_prolog_flag(executable, V)").oneSolution();
+
+        result = binding.get("V");
+    	System.out.println("SWI Prolog being executed: " + result.toString());
+
+        result = new Query("current_prolog_flag(version, V)").oneSolution().get("V");
+    	System.out.println("SWI Prolog version: " + result.intValue());
+
+    
+    }
+
+    
+    /**
      * Check that basic string is correctly returned from
      * SWI-Prolog via JPL query
      */
@@ -146,7 +171,7 @@ public class JPLTest
         try {
         	hasSolution = Query.hasSolution(queryText);
         } catch (PrologException e) {
-        	System.out.print("Bien!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! " + e.getMessage());
+        	System.out.println("Bien!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! " + e.getMessage());
         }
     }
     
