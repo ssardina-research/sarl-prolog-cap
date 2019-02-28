@@ -67,19 +67,12 @@ agent TestAgt_SWIJPL {
 		if(test_11()) info("Test 11 passed!") else error("Test 11 failed!")
 		if(test_12()) info("Test 12 passed!") else error("Test 12 failed!")
 		if(test_13()) info("Test 13 passed!") else error("Test 13 failed!")
+		if(test_14()) info("Test 100 passed!") else debug("Test 14 failed!")
+		if(test_15()) info("Test 100 passed!") else debug("Test 150 failed!")
 
-		if(test_100()) info("Test 100 passed!") else debug("Test 100 failed!")
+
 		info("################################ END TESTING ################################")
-		info("My KB module is: {0}", get_prolog_engine)
 
-		info("Now spawning some slave test agents with their KB")
-		val agent_UUID = spawn(TestAgt_Slave, 200)
-		info("I have spawned my child {0}", agent_UUID.toString)
-
-		val agent_UUID2 = spawn(TestAgt_Slave, 100)
-		info("I have spawned my child {0}", agent_UUID2.toString)
-		
-		
 //		if (proveIn("slave_test(200)", String.format("'%s'", agent_UUID.toString))) {
 //			info("I am happy, have proven something on another agent....")
 //			proveIn("listing", String.format("'%s'", agent_UUID.toString))
@@ -93,7 +86,9 @@ agent TestAgt_SWIJPL {
 		val queryText = testFile
 		info("######### Test {0}: consult file ", no, queryText)
 		
-		if  (!consult(queryText)) return false
+		if(!consult(queryText)) return false
+
+		info("\t My KB module is: {0}", get_prolog_engine)
 		return true
 	}
 
@@ -394,31 +389,11 @@ agent TestAgt_SWIJPL {
 		return true
 	}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-				
-
-	def test_100() : boolean {
-		val no = 100
+	def test_14() : boolean {
+		val no = 14
 		val queryText = "listing the database"
 		info("######### Test {0}: {1}", no, queryText)
-
+	
 		dump_kb("test")
 		info("\t KB dumped!")
 		dump_kb("again")
@@ -426,20 +401,31 @@ agent TestAgt_SWIJPL {
 		return true
 	}
 
+	def test_15() : boolean {
+		val no = 15
+		val queryText = "Spawning two slave agents with own queries"
+		info("######### Test {0}: {1}", no, queryText)
 
+		info("\t Now spawning some slave test agents with their KB")
+		val agent_UUID = spawn(TestAgt_Slave, 200)
+		info("\t I have spawned my child {0}", agent_UUID.toString)
+
+		val agent_UUID2 = spawn(TestAgt_Slave, 100)
+		info("\t I have spawned my child {0}", agent_UUID2.toString)
+		return true
+	}
+
+		
 
 	on TellModule {
 		val module_of_another_agent = occurrence.module
 		
-		info("Let us list the KB of another agent with KB module {0}:", module_of_another_agent)
+		info("\t Let us list the KB of another agent with KB module {0}:", module_of_another_agent)
 		
 		proveIn("listing", module_of_another_agent)
 		
 	}
 }
-
-
-
 
 
 
@@ -469,14 +455,18 @@ agent TestAgt_Slave {
 		// You should put all the initialization statements in this block of code.
 		val n = occurrence.parameters.get(0)
 		
-		info("The SLAVE agent was started with number: {0}", n)
+		info("\t The SLAVE agent was started with number: {0}", n)
 
 		// SET THE SKILL TO JPL-based PROLOG!!!!!!!!!!!!!
 		setSkill(new SWIJPL_KB_Prolog("slave", "my_dump_test_slave"))
-		info("JPL-based KB installed with module name: {0}", get_prolog_engine)
+		info("\t JPL-based KB installed for TestAgt {1} with module name: {0}", get_prolog_engine, n)
+
+		assertLast("slave_test(?)", n)
 
 		// Consult the same file as master
+		info("\t I am about to consult file {0}", testFile)
 		consult(testFile)
+		info("\t File {0} consulted succesfully", testFile)
 
 
 		assertLast("slave_test(?)", n)
