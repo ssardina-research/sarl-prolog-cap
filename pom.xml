@@ -9,7 +9,7 @@
 	<groupId>org.bitbucket.ssardina-research</groupId>
 	-->
 	<artifactId>sarl-prolog-cap</artifactId>
-	<version>3.1.${env.SARL_VERSION}</version>
+	<version>3.5.${env.SARL_VERSION}</version>
 
     <name>SARL Capacity for SWI Prolog Connectivity</name>
     <url>https://bitbucket.org/ssardina-research/sarl-prolog-cap</url>
@@ -46,13 +46,15 @@
 
         <!-- JPL Version: https://github.com/ssardina-research/packages-jpl -->
         <jpl.version>1ca38a0</jpl.version>	<!--  latest ssardina version before SWI 8.x.x -->
-        <jpl.version>fba2f5b</jpl.version>	<!--  new version with all fixes incorporated - SWI 8.x.x -->
         <jpl.version>maven-SNAPSHOT</jpl.version>	<!--  new version with all fixes incorporated - SWI 8.x.x -->
+
 
         <!-- JAVA compiler version to be used -->
 	    <maven.compiler.source>1.8</maven.compiler.source>
 	    <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        
+        <skipTests>true</skipTests>
     </properties>
     
 
@@ -84,7 +86,7 @@
 
        	<!--  JPL: Java - SWI Prolog Bidirectional Interface https://github.com/ssardina-research/packages-jpl -->
         <dependency>
-        	<groupId>com.github.ssardina-research</groupId>
+        	<groupId>com.github.SWI-Prolog</groupId>
         	<artifactId>packages-jpl</artifactId>
         	<version>${jpl.version}</version>
         </dependency>
@@ -148,6 +150,8 @@
                     <filtering>false</filtering>
                 </resource>
           </resources>        
+
+		<testSourceDirectory>src/test/java/io/sarl/extras</testSourceDirectory>
 
 
     <!-- ##################################################################
@@ -214,10 +218,8 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.19.1</version>
                 <configuration>
-                    <systemPropertyVariables>
-                        <propertyName>java.library.path</propertyName>
-                        <buildDirectory>/usr/lib/swi-prolog/lib/x86_64-linux/</buildDirectory>
-                    </systemPropertyVariables>
+                    <!-- Check this: https://maven.apache.org/surefire/maven-surefire-plugin/examples/skipping-tests.html -->
+                    <skipTests>${skipTests}</skipTests>
                 </configuration>
             </plugin>
 
