@@ -60,24 +60,18 @@ Also, it is very important to tell your system where Prolog is installed and whe
 ----------------------------------
 ## DEVELOP CAPACITY/SKILL FURTHER
 
-To _develop_ this capacity/skills framework further, one would need:
+To _develop_ this capacity/skills framework, clone the repo (or your fork) and set-up everything as if you were going to use it.
 
-* Java Runtime Environment (JRE) and Java Compiler (javac) v1.8 (Sun version recommended)
-* Maven project management and comprehension tool (to meet dependencies, compile, package, run).
-* SARL modules and execution engine. Currently using SARL 0.8.6. 
-	* Version defined by environment variable `SARL_VERSION`; for example `export SARL_VERSION=0.8.6`
-	* Obtained via Maven automatically from http://mvnrepository.com/artifact/io.sarl.maven.
-	
-To verify you have everything setup well, run `mvn clean package` first. 
-This will run some unit testing on JPL itself (file `src/test/java/io/sarl/extras/JPLTest.java`. 
-Furthermore, you can then run the SARL test agents:
-	
+To test all is working, you can do:
+
+1. Build the framework: `mvn clean package`
+2. Run basic JPL-based unit test (no SARL, just connectivity to JPL): `mvn surefire:test -DskipTests=false`
+3. Run two SARL tsest agents via `mvn exec:java` (which will run booting agent `BootTestAgt`):
 	* `io.sarl.extras.TestAgt_SWIJPL`: dummy agent testing JPL-based skill **SWIJPL_KB_Prolog**. Check [source here](src/main/sarl/io/sarl/extras/TestAgt_SWIJPL.sarl).
 	* `io.sarl.extras.TestAgt_SWIJPL_MT`: dummy agent testing JPL-based skill **SWI_KB_Prolog** on multi-threaded queries. Check [source here](src/main/sarl/io/sarl/extras/TestAgt_SWIJPL_MT.sarl).
+4. Check the source of the above two test agents to see the types of queries, from simple to more complex, that one could do.
 
-Both test agents are registered in the `BootTestAgt` class, which if run with no arguments will ask which agent test to execute. You can run that booting class by doing: `mvn -o exec:java`. Both tests will at the end dump the Prolog databases into directory `my_dump_test`.
-
-Check the source of the above two test agents to see the types of queries, from simple to more complex, that one could do.
+_NOTE:_ the test agents in step 3 will at the end dump the Prolog databases into directory `my_dump_test`.
 
 ----------------------------------
 ## USING SARL-PROLOG-CAP CAPCITY/SKILL IN YOUR SARL APPLICATION VIA MAVEN 
