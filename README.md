@@ -153,11 +153,11 @@ To state placeholders, use the `?` symbol and a string, number or JRef filler, s
 
 		assertFirst("agentName(?)", mySARLname)	// myName is a string
 		
-		val solution = askOnce("get_player_last_loc(?, ?, Lat, Long)", playerName, 23)
+		val solution = askOnce("get_player_last_loc(?, ?, Lat, Long)", eisName, 23)
 		if (solution !== null) {
 				agent_says(
 					"Player **{0}** location is ({1},{2}) and charge is {3} at step {4}", 
-					playerName,
+					eisName,
 					solution.get("Lat").floatValue,
 					solution.get("Long").floatValue,
 					solution.get("Charge").floatValue,
