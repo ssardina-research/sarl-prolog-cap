@@ -19,7 +19,7 @@ Version convention: Major.Minor.<SARL Version>. For example, 1.3.0.7.2 is versio
       * [TABLE OF CONTENTS](#table-of-contents)
       * [PRE-REQUISITES](#pre-requisites)
       * [DEVELOP CAPACITY/SKILL FURTHER](#develop-capacityskill-further)
-      * [USING SARL-PROLOG-CAP CAPCITY/SKILL IN YOUR SARL APPLICATION VIA MAVEN](#using-sarl-prolog-cap-capcityskill-in-your-sarl-application-via-maven)
+      * [USING SARL-PROLOG-CAP IN YOUR SARL APPLICATION VIA MAVEN](#using-sarl-prolog-cap-capcityskill-in-your-sarl-application-via-maven)
       * [WHAT IS PROVIDED IN THIS CAPACITY/SKILL](#what-is-provided-in-this-capacityskill)
          * [Capacity KB_PROLOG: general actions for Prolog access from SARL agents](#capacity-kb_prolog-general-actions-for-prolog-access-from-sarl-agents)
          * [Skill SWIJPL_KB_Prolog: concrete implementation using SWI Prolog and JPL interface](#skill-swijpl_kb_prolog-concrete-implementation-using-swi-prolog-and-jpl-interface)
@@ -95,7 +95,7 @@ To test all is working, you can do:
 _NOTE:_ the test agents in step 3 will at the end dump the Prolog databases into directory `my_dump_test`.
 
 ----------------------------------
-## USING SARL-PROLOG-CAP CAPCITY/SKILL IN YOUR SARL APPLICATION VIA MAVEN 
+## USING SARL-PROLOG-CAP IN YOUR SARL APPLICATION VIA MAVEN 
 
 To add the dependency to this capacity/skills in your SARL application, you can use Maven with JitPack, by adding this dependency and repository in to your `pom.xml`:
 
