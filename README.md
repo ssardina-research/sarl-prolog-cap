@@ -89,7 +89,7 @@ To test all is working, you can do:
 2. Run basic JPL-based unit test (no SARL, just connectivity to JPL): `mvn surefire:test -DskipTests=false`
 3. Run two SARL tsest agents via `mvn exec:java` (which will run booting agent `BootTestAgt`):
 	* `io.sarl.extras.TestAgt_SWIJPL`: dummy agent testing JPL-based skill **SWIJPL_KB_Prolog**. Check [source here](src/main/sarl/io/sarl/extras/TestAgt_SWIJPL.sarl).
-	* `io.sarl.extras.TestAgt_SWIJPL_MT`: dummy agent testing JPL-based skill **SWI_KB_Prolog** on multi-threaded queries. Check [source here](src/main/sarl/io/sarl/extras/TestAgt_SWIJPL_MT.sarl).
+	* `io.sarl.extras.TestAgt_SWIJPL_MT`: dummy agent testing JPL-based skill **SWIJPL_KB_Prolog** on multi-threaded queries. Check [source here](src/main/sarl/io/sarl/extras/TestAgt_SWIJPL_MT.sarl).
 4. Check the source of the above two test agents to see the types of queries, from simple to more complex, that one could do.
 
 _NOTE:_ the test agents in step 3 will at the end dump the Prolog databases into directory `my_dump_test`.
@@ -229,24 +229,24 @@ To see what you can do from Prolog in terms of Java objects, refer to the [Prolo
 
 There are basically three ways one can use SWI-Prolog inside SARL agents, depending on the level of abstraction:
 
-1. **[RECOMMENDED]** Create a capacity **KB_Domain** for your domain application that embodies the usual KB queries required, and a skill **SWI_KB_Domain** for it extending skill **SWI_KB_Prolog** (which implements general Prolog capacity **KB_Prolog**) from the SARL Prolog Capacity framework that implements those queries. The SARL agent will use this capacity and skill.
-2. Make the agents directly use capacity **KB_PROLOG** (and its default skill **SWI_KB_Prolog**). As soon as the agent acquires such a skill, a Prolog engine will be created by the skill. Then the agent for example can load a KB by consulting the file: `consult_file('myKB.pl')`. This is similar to the first option but the code will be in the SARL agent itself rather than encapsulated in a domain capacity/skill.
+1. **[RECOMMENDED]** Create a capacity **KB_Domain** for your domain application that embodies the usual KB queries required, and a skill **SWI_KB_Domain** for it extending skill **SWIJPL_KB_Prolog** (which implements general Prolog capacity **KB_Prolog**) from the SARL Prolog Capacity framework that implements those queries. The SARL agent will use this capacity and skill.
+2. Make the agents directly use capacity **KB_PROLOG** (and its default skill **SWIJPL_KB_Prolog**). As soon as the agent acquires such a skill, a Prolog engine will be created by the skill. Then the agent for example can load a KB by consulting the file: `consult_file('myKB.pl')`. This is similar to the first option but the code will be in the SARL agent itself rather than encapsulated in a domain capacity/skill.
 3. Make the agents directly access SWI-Prolog via the Mochalog or JPL APIs (depending which skill you use), for example, by creating a Prolog engine in the initialization of agents, etc.
 
 
 ### 1 - Creating a domain-specific Knowledge-base capacity/skill.
 
-This is the recommended approach. The idea is to create a capacity **KB_Domain** for your domain application that embodies the usual KB queries required, and a corresponding skill **SWI_KB_Domain** for it that _extends_ the base **SWI_KB_Prolog** skill (which itself implements general Prolog capacity **KB_Prolog**) from the SARL Prolog Capacity framework that implements those queries. 
+This is the recommended approach. The idea is to create a capacity **KB_Domain** for your domain application that embodies the usual KB queries required, and a corresponding skill **SWI_KB_Domain** for it that _extends_ the base **SWIJPL_KB_Prolog** skill (which itself implements general Prolog capacity **KB_Prolog**) from the SARL Prolog Capacity framework that implements those queries. 
 
-The domain-dependent **SWI_KB_Domain** skill will have access to all the SWI Prolog tools provided in skill **SWI_KB_Prolog** and can implement the domain queries via SWI queries using the Mochalog and JPL infrastructures.
+The domain-dependent **SWI_KB_Domain** skill will have access to all the SWI Prolog tools provided in skill **SWIJPL_KB_Prolog** and can implement the domain queries via SWI queries using the Mochalog and JPL infrastructures.
  
 Under this approach, the SARL agent will:
 	* Use capacity **KB_Domain**, which is the capacity for the queries of the domain.
 		* A SARL agent will only use the queries provided by this capability via its functions.
-	* Use skill **SWI_KB_Domain**, which implements capacity **KB_Domain** and extends **SWI_KB_Prolog**.
+	* Use skill **SWI_KB_Domain**, which implements capacity **KB_Domain** and extends **SWIJPL_KB_Prolog**.
 		* It is this skill that will perform Prolog queries via the Prolog tools offered by **KB_Prolog**.
 
-Note that the functions in **SWI_KB_Prolog** will _NOT_ be visible to the SARL agent itself, who can only access functions defined in domain capacity **KB_Domain**. If the SARL agent wants to do direct Prolog queries, it can also use capacity **KB_Prolog**, which means that the SWI-based functions implemented in skill **SWI_KB_Prolog** are now accessible at the agent level. 
+Note that the functions in built-in **SWIJPL_KB_Prolog** will _NOT_ be visible to the SARL agent itself, who can only access functions defined in domain capacity **KB_Domain**. If the SARL agent wants to do direct Prolog queries, it can also use capacity **KB_Prolog**, which means that the SWI-based functions implemented in skill **SWIJPL_KB_Prolog** are now accessible at the agent level. 
 
 
 Here are the steps to this approach:
@@ -336,11 +336,11 @@ private def performNextJob
 Here, instead of creating a domain capacity and skill for the common Prolog accesses that the application will do (e.g., common queries), we can make the agents use the **KB_Prolog** capacity directly. This means that the behaviors of the SARL agent will access Prolog  directly via the skill implementing the generic **KB_Prolog** capacity.
 
 
-If you use **SWI_KB_Prolog** skill (that implements **KB_Prolog** using SWI Prolog):
+If you use the built-in **SWIJPL_KB_Prolog** skill (that implements **KB_Prolog** using SWI Prolog):
 
 ```java
 
-setSkill(new SWI_KB_Prolog("agent23"))
+setSkill(new SWIJPL_KB_Prolog("agent23"))
 
 // Load agent knowledge base
 consult_file("src/main/prolog/sweeper_elevator_agent.pl")
