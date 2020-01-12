@@ -50,7 +50,7 @@ The capacity and skills depend on the following two systems/frameworks:
 		* Windows: the Java-SWI interface it can be installed as part of the main install.
 	* _Java API_: this is the Java interface to Prolog provided in JAR file `jpl.jar` .
 		* In Linux, provided by package `swi-prolog-java` `/usr/lib/swi-prolog/lib/jpl.jar`
-		* However, project obtains it via Maven automatically from https://github.com/SWI-Prolog/packages-jpl  via [JitPack](https://jitpack.io/#SWI-Prolog/packages-jpl). The Maven-aware version is a [branch]https://github.com/SWI-Prolog/packages-jpl/tree/maven) in the JPL repo.
+		* However, project obtains it via Maven automatically from https://github.com/SWI-Prolog/packages-jpl  via [JitPack](https://jitpack.io/#SWI-Prolog/packages-jpl). The Maven-aware version is a specific [maven branch](https://github.com/SWI-Prolog/packages-jpl/tree/maven) in the JPL repo.
 	* Check some [good examples on how to use JPL](https://github.com/SWI-Prolog/packages-jpl/blob/master/examples/java/).
 
 
