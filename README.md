@@ -333,10 +333,10 @@ private def performNextJob
 
 ### 2 - Directly using the capacity and skill in agents.
 
-Here, instead of creating a domain capacity and skill for the common Prolog accesses that the application will do (e.g., common queries), we can make the agents directly use the `KB_Prolog` capacity. This means that the behaviors of the SARL agent will make the Prolog access directly.
+Here, instead of creating a domain capacity and skill for the common Prolog accesses that the application will do (e.g., common queries), we can make the agents use the **KB_Prolog** capacity directly. This means that the behaviors of the SARL agent will access Prolog  directly via the skill implementing the generic **KB_Prolog** capacity.
 
 
-If you use **SWIJPL_KB_Prolog** Mochalog-based skill:
+If you use **SWI_KB_Prolog** skill (that implements **KB_Prolog** using SWI Prolog):
 
 ```java
 
@@ -351,7 +351,7 @@ on CarRequestPercept
 	reportPersonRequestedService(occurrence.floor, occurrence.direction)
 
 	// Add car request to our beliefs
-	assertFirst("open_car_request(@I, @A)", occurrence.floor, occurrence.direction.name)
+	assertFirst("open_car_request(?, ?)", occurrence.floor, occurrence.direction.name)
 
 // This action comes (is inherited) from KB_Prolog directly
 	kb_dump()
@@ -363,7 +363,7 @@ on CarRequestPercept
 
 ### 3 - SWI-Prolog Access via JPL 
 
-In this approach, we directly use SWI-Prolog via the JPL high-level infrastructure.
+In this approach, we directly use SWI-Prolog via the JPL high-level infrastructure, without going via any SARL skill/capacity.
 
 Here is some example code of JPL-based use (though for another application) in an elevator controller. Please observe the use of a module name to encapsulate the beliefset of the particular agent:
 
