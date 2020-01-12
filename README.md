@@ -50,8 +50,7 @@ The capacity and skills depend on the following two systems/frameworks:
 		* Windows: the Java-SWI interface it can be installed as part of the main install.
 	* _Java API_: this is the Java interface to Prolog provided in JAR file `jpl.jar` .
 		* In Linux, provided by package `swi-prolog-java` `/usr/lib/swi-prolog/lib/jpl.jar`
-		* However, project obtains it via Maven automatically from https://github.com/SWI-Prolog/packages-jpl  via [JitPack](https://jitpack.io/#SWI-Prolog/packages-jpl)
-			* The Maven-aware version is a [branch]https://github.com/SWI-Prolog/packages-jpl/tree/maven) in the JPL repo.
+		* However, project obtains it via Maven automatically from https://github.com/SWI-Prolog/packages-jpl  via [JitPack](https://jitpack.io/#SWI-Prolog/packages-jpl). The Maven-aware version is a [branch]https://github.com/SWI-Prolog/packages-jpl/tree/maven) in the JPL repo.
 	* Check some [good examples on how to use JPL](https://github.com/SWI-Prolog/packages-jpl/blob/master/examples/java/).
 
 
@@ -67,11 +66,13 @@ Also, it is very important to tell your system where Prolog is installed and whe
 * If in **Linux**: 
 	* Extend the following environment variables to point to your SWI install:
 
-			 export SWI_HOME_DIR=/usr/local/swipl-git/lib/swipl/
-			 export LD_LIBRARY_PATH=$SWI_HOME_DIR/lib/x86_64-linux/:$SWI_HOME_DIR/lib/amd64/:$LD_LIBRARY_PATH
-			 export LD_PRELOAD=libswipl.so:$LD_PRELOAD   # only if necessary and your app complains
+	```shell
+	 export SWI_HOME_DIR=/usr/local/swipl-git/lib/swipl/
+	 export LD_LIBRARY_PATH=$SWI_HOME_DIR/lib/x86_64-linux/:$SWI_HOME_DIR/lib/amd64/:$LD_LIBRARY_PATH
+	 export LD_PRELOAD=libswipl.so:$LD_PRELOAD   # only if necessary and your app complains
+	```
 		 
- 	* To understand the environment library `LD_PRELOAD` check [this post](https://answers.ros.org/question/132411/unable-to-load-existing-owl-in-semantic-map-editor/) and [this one](https://blog.cryptomilk.org/2014/07/21/what-is-preloading/) about library preloading. Also, check [this](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=690734) and [this](https://github.com/yuce/pyswip/issues/10) posts.
+	* To understand the environment library `LD_PRELOAD` check [this post](https://answers.ros.org/question/132411/unable-to-load-existing-owl-in-semantic-map-editor/) and [this one](https://blog.cryptomilk.org/2014/07/21/what-is-preloading/) about library preloading. Also, check [this](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=690734) and [this](https://github.com/yuce/pyswip/issues/10) posts.
 	* If using RUN AS configuration in ECLIPSE/IntelliJ, remember to set up these variables too (and check "Append environment to native environment").
 
 * If in **MacOS**: read [this post](https://jpl7.org/DeploymentMacos)	
@@ -98,22 +99,24 @@ _NOTE:_ the test agents in step 3 will at the end dump the Prolog databases into
 
 To add the dependency to this capacity/skills in your SARL application, you can use Maven with JitPack, by adding this dependency and repository in to your `pom.xml`:
 
-        <!--  SARL PROLOG CAPACITY -->
-        <dependency>
-            <groupId>org.bitbucket.ssardina-research</groupId>
-            <artifactId>sarl-prolog-cap</artifactId>
-            <version>-SNAPSHOT</version>
-        </dependency>
+```xml
 
-        <!-- JitPack used for remote installation of dependencies from Github and Bitbucket -->
-        <repository>
-            <id>jitpack.io</id>
-            <name>JitPack Repository</name>
-            <url>https://jitpack.io</url>
-        </repository>
+<!--  SARL PROLOG CAPACITY -->
+<dependency>
+    <groupId>org.bitbucket.ssardina-research</groupId>
+    <artifactId>sarl-prolog-cap</artifactId>
+    <version>-SNAPSHOT</version>
+</dependency>
 
-The JitPack link for this repository is here](https://jitpack.io/#org.bitbucket.ssardina-research/sarl-prolog-cap).
-Replace `-SNAPSHOT` by the specific version (e.g., commit id) you want to use in your application.
+<!-- JitPack used for remote installation of dependencies from Github and Bitbucket -->
+<repository>
+    <id>jitpack.io</id>
+    <name>JitPack Repository</name>
+    <url>https://jitpack.io</url>
+</repository>
+```
+
+The JitPack link for this repository is [here](https://jitpack.io/#ssardina-agts/sarl-prolog-cap). Replace `-SNAPSHOT` by the specific version (e.g., commit id) you want to use in your application.
 
 
 ----------------------------------
@@ -171,40 +174,49 @@ So what does the skill provide beyond JPL itself? In a nutshell, two things:
 
 To state placeholders, use the `?` symbol and a string, number or JRef filler, such as:
 
-		assertFirst("agentName(?)", mySARLname)	// myName is a string
-		
-		val solution = askOnce("get_player_last_loc(?, ?, Lat, Long)", eisName, 23)
-		if (solution !== null) {
-				agent_says(
-					"Player **{0}** location is ({1},{2}) and charge is {3} at step {4}", 
-					eisName,
-					solution.get("Lat").floatValue,
-					solution.get("Long").floatValue,
-					solution.get("Charge").floatValue,
-					solution.get("Step").intValue
-					)
-			} else {
+```java
+
+assertFirst("agentName(?)", mySARLname)	// myName is a string
+
+val solution = askOnce("get_player_last_loc(?, ?, Lat, Long)", eisName, 23)
+if (solution !== null) {
+		agent_says(
+			"Player **{0}** location is ({1},{2}) and charge is {3} at step {4}", 
+			eisName,
+			solution.get("Lat").floatValue,
+			solution.get("Long").floatValue,
+			solution.get("Charge").floatValue,
+			solution.get("Step").intValue
+			)
+	} else {
+```
 		
 		
 In this skill one can pass Prolog a Java object, and SWI will be able to use it (e.g., call a method on it). For example:
 		
-		// JREF
-		val int_obj : Integer = new Integer(232)
-		solution = askOnce("print_integer(?, ?)", JPL.newJRef(int_obj), "N")
-		if(solution === null) return false
-		info("Solution for N: {0}", solution.get("N").intValue)
+```java
+
+// JREF
+val int_obj : Integer = new Integer(232)
+solution = askOnce("print_integer(?, ?)", JPL.newJRef(int_obj), "N")
+if(solution === null) return false
+info("Solution for N: {0}", solution.get("N").intValue)
+```
 
 while the Prolog counterpart is:
 
-		%% Check what can you do from Prolog to call Java: http://www.swi-prolog.org/pldoc/man?section=jpl
-		print_integer(JRef, X2) :-
-		%    jpl_get(JRef, intValue, X),         % this if it is accessing a field
-		    jpl_call(JRef, intValue, [], X),    % X should be the int value of object Integer JRef
-		    jpl_ref_to_type(JRef, T),           % T should be class([java,lang],[Integer])
-		    jpl_type_to_classname(T, ClassName),    % ClassName should be java.lang.Integer
-		    X2 is X+1,
-		    format(string(Text), "MESSAGE FROM PROLOG: The integer value of JAVA object (~s) is ~d", [ClassName, X2]),
-		    writeln(Text).	
+```prolog
+
+%% Check what can you do from Prolog to call Java: http://www.swi-prolog.org/pldoc/man?section=jpl
+print_integer(JRef, X2) :-
+%    jpl_get(JRef, intValue, X),         % this if it is accessing a field
+    jpl_call(JRef, intValue, [], X),    % X should be the int value of object Integer JRef
+    jpl_ref_to_type(JRef, T),           % T should be class([java,lang],[Integer])
+    jpl_type_to_classname(T, ClassName),    % ClassName should be java.lang.Integer
+    X2 is X+1,
+    format(string(Text), "MESSAGE FROM PROLOG: The integer value of JAVA object (~s) is ~d", [ClassName, X2]),
+    writeln(Text).	
+```
 
 
 To see what you can do from Prolog in terms of Java objects, refer to the [Prolog API](https://jpl7.org/PrologApiOverview.jsp) section in the JPL home page.
@@ -217,14 +229,14 @@ To see what you can do from Prolog in terms of Java objects, refer to the [Prolo
 
 There are basically three ways one can use SWI-Prolog inside SARL agents, depending on the level of abstraction:
 
-1. **[RECOMMENDED]** Create a capacity **KB_Domain** for your domain application that embodies the usual KB queries required, and a skill **SWI_KB_Domain** for it extending skill **SWI_KB_Prolog** (which implements general Prolog capacity **KB_Prolog**) in the [SARL Prolog Capacity](https://bitbucket.org/ssardina-research/sarl-prolog-cap) framework that implements those queries. The SARL agent will use this capacity and skill.
+1. **[RECOMMENDED]** Create a capacity **KB_Domain** for your domain application that embodies the usual KB queries required, and a skill **SWI_KB_Domain** for it extending skill **SWI_KB_Prolog** (which implements general Prolog capacity **KB_Prolog**) from the SARL Prolog Capacity framework that implements those queries. The SARL agent will use this capacity and skill.
 2. Make the agents directly use capacity **KB_PROLOG** (and its default skill **SWI_KB_Prolog**). As soon as the agent acquires such a skill, a Prolog engine will be created by the skill. Then the agent for example can load a KB by consulting the file: `consult_file('myKB.pl')`. This is similar to the first option but the code will be in the SARL agent itself rather than encapsulated in a domain capacity/skill.
 3. Make the agents directly access SWI-Prolog via the Mochalog or JPL APIs (depending which skill you use), for example, by creating a Prolog engine in the initialization of agents, etc.
 
 
 ### 1 - Creating a domain-specific Knowledge-base capacity/skill.
 
-This is the recommended approach. The idea is to create a capacity **KB_Domain** for your domain application that embodies the usual KB queries required, and a corresponding skill **SWI_KB_Domain** for it that _extends_ the base **SWI_KB_Prolog** skill (which itself implements general Prolog capacity **KB_Prolog**) in the [SARL Prolog Capacity](https://bitbucket.org/ssardina-research/sarl-prolog-cap) framework that implements those queries. 
+This is the recommended approach. The idea is to create a capacity **KB_Domain** for your domain application that embodies the usual KB queries required, and a corresponding skill **SWI_KB_Domain** for it that _extends_ the base **SWI_KB_Prolog** skill (which itself implements general Prolog capacity **KB_Prolog**) from the SARL Prolog Capacity framework that implements those queries. 
 
 The domain-dependent **SWI_KB_Domain** skill will have access to all the SWI Prolog tools provided in skill **SWI_KB_Prolog** and can implement the domain queries via SWI queries using the Mochalog and JPL infrastructures.
  
@@ -239,102 +251,112 @@ Note that the functions in **SWI_KB_Prolog** will _NOT_ be visible to the SARL a
 
 Here are the steps to this approach:
 
-1. Create a Capacity *C* for your application that provides the main queries to your domain.
+1. To start, create a capacity **C** for your application that provides the main queries to your domain.
 	* For example, `KB_Elevator` capacity for an elevator domain with functions such as:
 		* `kb_load(file : String)`: load the KB encoded in a file.
 		* `kb_registerCarRequest(floor : int, dir : String)`: register that there has been a request in a floor towards a direction.
 		* `kb_getNextJob() : Pair<Integer, Direction>`: get the next job (floor & direction) to serve. (see the [Pair](http://gangmax.me/blog/2017/10/10/how-to-return-multiple-values-from-a-java-method/) class)
 	* Observe this capacity can be implemented in many ways, for example, with plan Java.
-2. Create a skill *S* for the capacity *C* that will be a Prolog Knowledgebase.
-	* The skill will *extend* a skill for *KB_Prolog*, for example it can extend the skill `SWIJPL_KB_Prolog`. This means that everything in the *KB_Prolog* capacity will be available in *S* so that *S* can use Prolog to implement the domain queries. For example:
+2. Create a skill **S** for the capacity **C** that will be a Prolog Knowledgebase.
+	* The skill will *extend* a skill for **KB_Prolog**, for example it can extend the skill `SWIJPL_KB_Prolog`. This means that everything in the **KB_Prolog** capacity will be available in **S** so that **S** can use Prolog to implement the domain queries. For example:
 		
-				skill SWI_KB_Elevator extends SWIJPL_KB_Prolog implements KB_Elevator  {
-		
-					val logging_level : int
-					new (l : int = 0, name : String) {
-						super(name) // Call the super's constructor
-						logging_level = l
-					}
-				
-					def kb_registerCarRequest(floor : int, dir : String) {
-						assertFirst("open_car_request(?, ?)", floor, dir)
-					}
+```java
 
-					def kb_load(file : String) {
-						consult_file(file)
-					}
-					
-					....
-				}
+skill SWI_KB_Elevator extends SWIJPL_KB_Prolog implements KB_Elevator  {
 
-3. Your application will use skill *S* (for domain capacity *C*):
+	val logging_level : int
+	new (l : int = 0, name : String) {
+		super(name) // Call the super's constructor
+		logging_level = l
+	}
 
-				import au.edu.rmit.agtgrp.elevatorsim.sarlctrl.beliefs.KB_Elevator
-				import au.edu.rmit.agtgrp.elevatorsim.sarlctrl.beliefs.SWI_KB_Elevator
+	def kb_registerCarRequest(floor : int, dir : String) {
+		assertFirst("open_car_request(?, ?)", floor, dir)
+	}
 
-				// http://gangmax.me/blog/2017/10/10/how-to-return-multiple-values-from-a-java-method/
-				import org.apache.commons.lang3.tuple.Pair
+	def kb_load(file : String) {
+		consult_file(file)
+	}
+	
+	....
+}
+```
 
-				setSkill(new SWI_KB_Elevator(0, "agent23", "my_dump"))
+3. Your application will use skill **S** (for domain capacity **C**):
 
-				// Load agent knowledge base
-				kb_load("src/main/prolog/sweeper_elevator_agent.pl")
-				reportMessage("I have loaded the SWI KB successfully!")		
+```java
+
+import au.edu.rmit.agtgrp.elevatorsim.sarlctrl.beliefs.KB_Elevator
+import au.edu.rmit.agtgrp.elevatorsim.sarlctrl.beliefs.SWI_KB_Elevator
+
+// http://gangmax.me/blog/2017/10/10/how-to-return-multiple-values-from-a-java-method/
+import org.apache.commons.lang3.tuple.Pair
+
+setSkill(new SWI_KB_Elevator(0, "agent23", "my_dump"))
+
+// Load agent knowledge base
+kb_load("src/main/prolog/sweeper_elevator_agent.pl")
+reportMessage("I have loaded the SWI KB successfully!")		
 
 
-				on CarRequestPercept 
-				{
-					reportPersonRequestedService(occurrence.floor, occurrence.direction)
+on CarRequestPercept 
+{
+	reportPersonRequestedService(occurrence.floor, occurrence.direction)
 
-					// Add car request to our beliefs
-					kb_registerCarRequest(occurrence.floor, occurrence.direction.name);
+	// Add car request to our beliefs
+	kb_registerCarRequest(occurrence.floor, occurrence.direction.name);
 
-                    // This action comes (is inherited) from KB_Prolog directly
-					kb_dump()
-				}
+// This action comes (is inherited) from KB_Prolog directly
+	kb_dump()
+}
 
-				/**
-				 * Handle the most preferable next request as soon as
-				 * it is available. Preference is defined by our beliefs.
-				 */
-				private def performNextJob
-				{
-					// Begin polling for new jobs asynchronously
-					execute [
-						val job : Pair<Integer, Direction> = kb_getNextJob()
-						val destination : int = job.left
-						val direction : Direction = job.right
+/**
+ * Handle the most preferable next request as soon as
+ * it is available. Preference is defined by our beliefs.
+ */
+private def performNextJob
+{
+	// Begin polling for new jobs asynchronously
+	execute [
+		val job : Pair<Integer, Direction> = kb_getNextJob()
+		val destination : int = job.left
+		val direction : Direction = job.right
 
-						reportTravellingTo(carID, destination, direction)
+		reportTravellingTo(carID, destination, direction)
 
-						// Send car to destination by communicating it to Boss (and everyone else)
-						var sendCar = new SendCarAction(carID, destination, direction)
-						emit(sendCar) // Notify the SweeperBossAgent
-					]
-				}
+		// Send car to destination by communicating it to Boss (and everyone else)
+		var sendCar = new SendCarAction(carID, destination, direction)
+		emit(sendCar) // Notify the SweeperBossAgent
+	]
+}
+```
 
 ### 2 - Directly using the capacity and skill in agents.
 
 Here, instead of creating a domain capacity and skill for the common Prolog accesses that the application will do (e.g., common queries), we can make the agents directly use the `KB_Prolog` capacity. This means that the behaviors of the SARL agent will make the Prolog access directly.
 
+
 If you use **SWIJPL_KB_Prolog** Mochalog-based skill:
 
-				setSkill(new SWI_KB_Prolog("agent23"))
+```java
 
-				// Load agent knowledge base
-				consult_file("src/main/prolog/sweeper_elevator_agent.pl")
-				reportMessage("I have loaded the SWI KB successfully!")		
-				
-				on CarRequestPercept 
-				{
-					reportPersonRequestedService(occurrence.floor, occurrence.direction)
+setSkill(new SWI_KB_Prolog("agent23"))
 
-					// Add car request to our beliefs
-					assertFirst("open_car_request(@I, @A)", occurrence.floor, occurrence.direction.name)
+// Load agent knowledge base
+consult_file("src/main/prolog/sweeper_elevator_agent.pl")
+reportMessage("I have loaded the SWI KB successfully!")		
 
-                    // This action comes (is inherited) from KB_Prolog directly
-					kb_dump()
-				}
+on CarRequestPercept 
+{
+	reportPersonRequestedService(occurrence.floor, occurrence.direction)
+
+	// Add car request to our beliefs
+	assertFirst("open_car_request(@I, @A)", occurrence.floor, occurrence.direction.name)
+
+// This action comes (is inherited) from KB_Prolog directly
+	kb_dump()
+}
+```
 
 
 
@@ -345,28 +367,27 @@ In this approach, we directly use SWI-Prolog via the JPL high-level infrastructu
 
 Here is some example code of JPL-based use (though for another application) in an elevator controller. Please observe the use of a module name to encapsulate the beliefset of the particular agent:
 
-```
-#!java
+```java
 
-		import org.jpl7.Query
+import org.jpl7.Query
 
-		// Set-up Prolog knowledgebase
-		val beliefSpace = String.format("swiplayer")
-		consult(System.format("%s:(%s)", beliefSpace, "src/main/prolog/masssim_coordinator.pl") // newest version
+// Set-up Prolog knowledgebase
+val beliefSpace = String.format("swiplayer")
+consult(System.format("%s:(%s)", beliefSpace, "src/main/prolog/masssim_coordinator.pl") // newest version
 
-		// Assert percepts in the KB
-		Query.hasSolution(System.format("%s:percepts(?, ?, ?)", beliefSpace), agentName, agents.get(agentName).step, percepts.toString)
+// Assert percepts in the KB
+Query.hasSolution(System.format("%s:percepts(?, ?, ?)", beliefSpace), agentName, agents.get(agentName).step, percepts.toString)
 
-		// Querying one solution - Tell the KB to process last percept
-		agents.keySet().forEach([ agentName : String |
-			Query.oneSolution("process_last_percepts(?)", agentName)
-		])
-		
-		// Querying all solutions - Report percepts available in the KB
-		for (solution : allSolutions("percepts(Agent, Step, Percepts)"))
-		{
-			System.out.format("Information for agent %s on step %d\n", solution.get("Agent").toString(),  solution.get("Step").intValue)
-		}
+// Querying one solution - Tell the KB to process last percept
+agents.keySet().forEach([ agentName : String |
+	Query.oneSolution("process_last_percepts(?)", agentName)
+])
+
+// Querying all solutions - Report percepts available in the KB
+for (solution : allSolutions("percepts(Agent, Step, Percepts)"))
+{
+	System.out.format("Information for agent %s on step %d\n", solution.get("Agent").toString(),  solution.get("Step").intValue)
+}
 ```
 
 
@@ -376,18 +397,21 @@ Here is some example code of JPL-based use (though for another application) in a
 
 * Did you get something like this?
 
-			ERROR: /usr/lib/swi-prolog/library/process.pl:53:
-				/usr/lib/swi-prolog/library/process.pl:53: Initialization goal raised exception:
-				'$open_shared_object'/3: /usr/lib/swi-prolog/lib/amd64/process.so: undefined symbol: Sfilefunctions
-			ERROR: /usr/lib/swi-prolog/library/prolog_pack.pl:52:
-				Exported procedure process:process_kill/2 is not defined
-			ERROR: /usr/lib/swi-prolog/library/prolog_pack.pl:52:
-				Exported procedure process:process_group_kill/2 is not defined
-			ERROR: /usr/lib/swi-prolog/library/prolog_pack.pl:52:
-				Exported procedure process:process_wait/3 is not defined
-			java: symbol lookup error: /usr/lib/swi-prolog/lib/amd64/readutil.so: undefined symbol: PL_new_atom
+```shell
 
-	Then you may not have set `LD_PRELOAD` env variable correctly.
+ERROR: /usr/lib/swi-prolog/library/process.pl:53:
+	/usr/lib/swi-prolog/library/process.pl:53: Initialization goal raised exception:
+	'$open_shared_object'/3: /usr/lib/swi-prolog/lib/amd64/process.so: undefined symbol: Sfilefunctions
+ERROR: /usr/lib/swi-prolog/library/prolog_pack.pl:52:
+	Exported procedure process:process_kill/2 is not defined
+ERROR: /usr/lib/swi-prolog/library/prolog_pack.pl:52:
+	Exported procedure process:process_group_kill/2 is not defined
+ERROR: /usr/lib/swi-prolog/library/prolog_pack.pl:52:
+	Exported procedure process:process_wait/3 is not defined
+java: symbol lookup error: /usr/lib/swi-prolog/lib/amd64/readutil.so: undefined symbol: PL_new_atom
+```
+
+Then you may not have set `LD_PRELOAD` env variable correctly.
 
 
 ----------------------------------
