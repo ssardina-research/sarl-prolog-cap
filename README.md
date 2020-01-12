@@ -1,20 +1,40 @@
 # SARL Capacity for Prolog Knowledge Bases
 
-This project provides a Prolog knowledge-base capacity for SARL agents and TWO skills for it using [SWI Prolog](http://www.swi-prolog.org/). The Prolog capacity/skill can be used as belief representation for agents, as a replacement of Java data-structures. This yield much more succinct and declarative agent systems.
+This project provides a Prolog knowledge-base capacity for SARL agents and two skills for it using [SWI Prolog](http://www.swi-prolog.org/). The Prolog capacity/skill can be used as belief representation for agents, as a replacement of Java data-structures. This yields much more succinct and declarative agent systems.
 
 The package provides:
 
 * Capacity **KB_Prolog** (under package `io.sarl.extras`) specifying the actions to provide Prolog access to SARL agents.
 * Skill **SWIJPL_KB_Prolog** implementing the capacity via [SWI Prolog](http://swi-prolog.org) and [JPL](https://jpl7.org) framework, which provide a high-level view and API of SWI Prolog in Java.
 
-This package can be obtained via Maven using JitPack: <https://jitpack.io/#org.bitbucket.ssardina-research/sarl-prolog-cap>
+This package can be obtained via Maven using JitPack: <https://jitpack.io/#ssardina-agts/sarl-prolog-cap>
 
 Version convention: Major.Minor.<SARL Version>. For example, 1.3.0.7.2 is version 1.3 for SARL 0.7.2.
 
 ----------------------------------
 ## TABLE OF CONTENTS
 
-[TOC]
+<!--ts-->
+   * [SARL Capacity for Prolog Knowledge Bases](#sarl-capacity-for-prolog-knowledge-bases)
+      * [TABLE OF CONTENTS](#table-of-contents)
+      * [PRE-REQUISITES](#pre-requisites)
+      * [DEVELOP CAPACITY/SKILL FURTHER](#develop-capacityskill-further)
+      * [USING SARL-PROLOG-CAP CAPCITY/SKILL IN YOUR SARL APPLICATION VIA MAVEN](#using-sarl-prolog-cap-capcityskill-in-your-sarl-application-via-maven)
+      * [WHAT IS PROVIDED IN THIS CAPACITY/SKILL](#what-is-provided-in-this-capacityskill)
+         * [Capacity KB_PROLOG: general actions for Prolog access from SARL agents](#capacity-kb_prolog-general-actions-for-prolog-access-from-sarl-agents)
+         * [Skill SWIJPL_KB_Prolog: concrete implementation using SWI Prolog and JPL interface](#skill-swijpl_kb_prolog-concrete-implementation-using-swi-prolog-and-jpl-interface)
+      * [USING SWI-Prolog IN SARL AGENTS/APPLICATIONS](#using-swi-prolog-in-sarl-agentsapplications)
+         * [1 - Creating a domain-specific Knowledge-base capacity/skill.](#1---creating-a-domain-specific-knowledge-base-capacityskill)
+         * [2 - Directly using the capacity and skill in agents.](#2---directly-using-the-capacity-and-skill-in-agents)
+         * [3 - SWI-Prolog Access via JPL](#3---swi-prolog-access-via-jpl)
+      * [TROUBLESHOOTING](#troubleshooting)
+      * [CONTACT](#contact)
+      * [LICENSE](#license)
+
+<!-- Added by: ssardina, at: 2020-01-11T22:24+11:00 -->
+
+<!--te-->
+
 
 ----------------------------------
 ## PRE-REQUISITES
