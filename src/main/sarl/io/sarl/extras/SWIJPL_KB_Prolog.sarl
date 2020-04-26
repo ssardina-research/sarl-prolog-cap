@@ -30,6 +30,7 @@ import java.util.List
 import org.apache.commons.lang3.StringUtils
 import java.util.Random
 import java.nio.file.Paths
+import org.jpl7.JPL
 
 @SuppressWarnings("potential_field_synchronization_problem")
 skill SWIJPL_KB_Prolog implements KB_Prolog {
@@ -44,6 +45,10 @@ skill SWIJPL_KB_Prolog implements KB_Prolog {
 	var module_name : String // name of the SWI Prolog module to be used for this skill instance (will be unique!)
 	var kb_dump_dir : String // directory where the current KB is to be dumped
 
+	private val final swi_home = System.getenv("SWI_HOME_DIR")
+	private val final swi_exec = System.getenv("SWI_EXEC_FILE")
+	private val final swi_boot = System.getenv("SWIPL_BOOT_FILE")
+
 	/**
 	 * CONSTRUCTORS AND INSTALL
 	 */
@@ -51,8 +56,11 @@ skill SWIJPL_KB_Prolog implements KB_Prolog {
 		super() // Call the super's constructor
 		kb_name = name
 	
-		if (kb_dump_dir !== null) set_dump_root(kb_dump_dir)
+		if(kb_dump_dir !== null) set_dump_root(kb_dump_dir)
+
+		
 	}
+
 	new(name : String) {
 		this(name, null)
 		set_dump_root(Paths.get("kb_dump", formatter.format(new Date())).toString)
@@ -78,7 +86,12 @@ skill SWIJPL_KB_Prolog implements KB_Prolog {
 		return String.format("'%s':(%s)", module, query)
 	}
 
-
+	private def init_JPL {
+		val init_swi_config = String.format("%s -x %s -F swipl --home=%s -g true -q", System.getenv("SWI_EXEC_FILE"),
+			System.getenv("SWIPL_BOOT_FILE"), System.getenv("SWI_HOME_DIR"));
+		JPL.setDefaultInitArgs(init_swi_config.split("\\s+")); // initialize SWIPL engine
+		JPL.init()
+	}
 
 
 	/**

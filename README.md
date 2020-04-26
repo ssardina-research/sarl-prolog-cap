@@ -15,21 +15,20 @@ Version convention: Major.Minor.<SARL Version>. For example, 1.3.0.7.2 is versio
 ## TABLE OF CONTENTS
 
 <!--ts-->
-   * [SARL Capacity for Prolog Knowledge Bases](#sarl-capacity-for-prolog-knowledge-bases)
-      * [TABLE OF CONTENTS](#table-of-contents)
-      * [PRE-REQUISITES](#pre-requisites)
-      * [DEVELOP CAPACITY/SKILL FURTHER](#develop-capacityskill-further)
-      * [USING SARL-PROLOG-CAP IN YOUR SARL APPLICATION VIA MAVEN](#using-sarl-prolog-cap-capcityskill-in-your-sarl-application-via-maven)
-      * [WHAT IS PROVIDED IN THIS CAPACITY/SKILL](#what-is-provided-in-this-capacityskill)
-         * [Capacity KB_PROLOG: general actions for Prolog access from SARL agents](#capacity-kb_prolog-general-actions-for-prolog-access-from-sarl-agents)
-         * [Skill SWIJPL_KB_Prolog: concrete implementation using SWI Prolog and JPL interface](#skill-swijpl_kb_prolog-concrete-implementation-using-swi-prolog-and-jpl-interface)
-      * [USING SWI-Prolog IN SARL AGENTS/APPLICATIONS](#using-swi-prolog-in-sarl-agentsapplications)
-         * [1 - Creating a domain-specific Knowledge-base capacity/skill.](#1---creating-a-domain-specific-knowledge-base-capacityskill)
-         * [2 - Directly using the capacity and skill in agents.](#2---directly-using-the-capacity-and-skill-in-agents)
-         * [3 - SWI-Prolog Access via JPL](#3---swi-prolog-access-via-jpl)
-      * [TROUBLESHOOTING](#troubleshooting)
-      * [CONTACT](#contact)
-      * [LICENSE](#license)
+* [TABLE OF CONTENTS](#table-of-contents)
+* [PRE-REQUISITES](#pre-requisites)
+* [DEVELOP CAPACITY/SKILL FURTHER](#develop-capacityskill-further)
+* [USING SARL-PROLOG-CAP IN YOUR SARL APPLICATION VIA MAVEN](#using-sarl-prolog-cap-capcityskill-in-your-sarl-application-via-maven)
+* [WHAT IS PROVIDED IN THIS CAPACITY/SKILL](#what-is-provided-in-this-capacityskill)
+	* [Capacity KB_PROLOG: general actions for Prolog access from SARL agents](#capacity-kb_prolog-general-actions-for-prolog-access-from-sarl-agents)
+	* [Skill SWIJPL_KB_Prolog: concrete implementation using SWI Prolog and JPL interface](#skill-swijpl_kb_prolog-concrete-implementation-using-swi-prolog-and-jpl-interface)
+* [USING SWI-Prolog IN SARL AGENTS/APPLICATIONS](#using-swi-prolog-in-sarl-agentsapplications)
+	* [1 - Creating a domain-specific Knowledge-base capacity/skill.](#1---creating-a-domain-specific-knowledge-base-capacityskill)
+	* [2 - Directly using the capacity and skill in agents.](#2---directly-using-the-capacity-and-skill-in-agents)
+	* [3 - SWI-Prolog Access via JPL](#3---swi-prolog-access-via-jpl)
+* [TROUBLESHOOTING](#troubleshooting)
+* [CONTACT](#contact)
+* [LICENSE](#license)
 
 <!-- Added by: ssardina, at: 2020-01-11T22:24+11:00 -->
 
@@ -43,14 +42,20 @@ The capacity and skills depend on the following two systems/frameworks:
 
 * [SWI Prolog](http://www.swi-prolog.org/): this is the actual SWI Prolog system.
 	* Use either stable version 7.6.4 (available in standard Linux repos) or compile and install 8.1.x from [SWI-devel repo](https://github.com/SWI-Prolog/swipl-devel). 
-	* The official 8.0.x versions have issues with the `libswipl.so/dll/dylib` library and makes JPL crash; see [issue](https://github.com/ssardina-research/packages-jpl/issues/21). It has been fixed in the git repo.
+	* Unfortunately, the official 8.0.x versions in the PPA repo have issues with the `libswipl.so/dll/dylib` library and makes JPL crash; see [issue](https://github.com/ssardina-research/packages-jpl/issues/21). It has been fixed in the git repo though.
 * [SWI JPL](https://jpl7.org/) bidirectional SWI-Java interface. This has two parts: 
-	* _Native library_ (e.g., `libjpl.so/dll/dylib`):
-		* Linux (Ubuntu): Provided by package `swi-prolog-java` (`/usr/lib/swi-prolog/lib/x86_64-linux/libjpl.so`).
+	* _Native library_ `libjpl.so/dll/dylib`:
+		* Linux (Ubuntu): Provided by package `swi-prolog-java` (`/usr/lib/libswipl.so`). If you installed SWIPL manually, it would be in a path like `/usr/local/swipl-git/lib/swipl/lib/x86_64-linux/libjpl.so`.
 		* Windows: the Java-SWI interface it can be installed as part of the main install.
 	* _Java API_: this is the Java interface to Prolog provided in JAR file `jpl.jar` .
-		* In Linux, provided by package `swi-prolog-java` `/usr/lib/swi-prolog/lib/jpl.jar`
-		* However, project obtains it via Maven automatically from https://github.com/SWI-Prolog/packages-jpl  via [JitPack](https://jitpack.io/#SWI-Prolog/packages-jpl). The Maven-aware version is a specific [maven branch](https://github.com/SWI-Prolog/packages-jpl/tree/maven) in the JPL repo.
+		* While package `swi-prolog-java` provides such JAR file (in Linux, in `/usr/lib/swi-prolog/lib/jpl.jar`) for JPL 7.5.0, the JPL Java API has been much improved since then. This software uses at least the 7.5.0 version.
+		* To get the latst `jpl.jar` either manually compile and installed SWIPL with JPL (and it will be in, e.g., `/usr/local/swipl-git/lib/swipl/lib/jpl.jar`) or download the JAR file from the site.
+		* Once you have the JAR file, manually install `jpl.jar` artifact in your local Maven repo as follows:
+		
+				mvn install:install-file -Dfile=/usr/local/swipl-git/lib/swipl/lib/jpl.jar \
+					-DgroupId=com.github.SWI-Prolog -DartifactId=packages-jpl \
+					-Dversion=7.6.0 -Dpackaging=jar
+		
 	* Check some [good examples on how to use JPL](https://github.com/SWI-Prolog/packages-jpl/blob/master/examples/java/).
 
 
@@ -69,7 +74,7 @@ Also, it is very important to tell your system where Prolog is installed and whe
 	```shell
 	 export SWI_HOME_DIR=/usr/local/swipl-git/lib/swipl/
 	 export LD_LIBRARY_PATH=$SWI_HOME_DIR/lib/x86_64-linux/:$SWI_HOME_DIR/lib/amd64/:$LD_LIBRARY_PATH
-	 export LD_PRELOAD=libswipl.so:$LD_PRELOAD   # only if necessary and your app complains
+	 export LD_PRELOAD=/usr/local/swipl-git/lib/swipl/lib/x86_64-linux/libswipl.so:$LD_PRELOAD   # only if necessary and your app complains
 	```
 		 
 	* To understand the environment library `LD_PRELOAD` check [this post](https://answers.ros.org/question/132411/unable-to-load-existing-owl-in-semantic-map-editor/) and [this one](https://blog.cryptomilk.org/2014/07/21/what-is-preloading/) about library preloading. Also, check [this](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=690734) and [this](https://github.com/yuce/pyswip/issues/10) posts.

@@ -4,12 +4,12 @@
     <!-- ##################################################################
 		PROJECT INFO 
      ####################################################################### -->
-	<groupId>org.bitbucket.ssardina-research</groupId>
+	<groupId>com.github.ssardina-agts</groupId>
 	<artifactId>sarl-prolog-cap</artifactId>
-	<version>3.5.${env.SARL_VERSION}</version>
+	<version>3.6.${env.SARL_VERSION}</version>
 
     <name>SARL Capacity for SWI Prolog Connectivity</name>
-    <url>https://bitbucket.org/ssardina-research/sarl-prolog-cap</url>
+    <url>https://github.com/ssardina-agts/sarl-prolog-cap</url>
     <description>
     	Capacities and Skills for SARL to connect to SWI Prolog system.
 		Relies on JPL (https://jpl7.org/)
@@ -40,11 +40,6 @@
 
         <!-- JANUS project version -->
         <janus.version>2.${sarl.version}</janus.version>
-
-        <!-- JPL Version: https://github.com/ssardina-research/packages-jpl -->
-        <jpl.version>1ca38a0</jpl.version>	<!--  latest ssardina version before SWI 8.x.x -->
-        <jpl.version>maven-SNAPSHOT</jpl.version>	<!--  new version with all fixes incorporated - SWI 8.x.x -->
-
 
         <!-- JAVA compiler version to be used -->
 	    <maven.compiler.source>1.8</maven.compiler.source>
@@ -81,11 +76,16 @@
           <version>4.12</version>
 		</dependency>
 
-       	<!--  JPL: Java - SWI Prolog Bidirectional Interface https://github.com/ssardina-research/packages-jpl -->
+       	<!--  JPL: Java - SWI Prolog Bidirectional Interface https://github.com/ssardina-research/packages-jpl 
+       			Install manually locally 
+    	
+		     	mvn install:install-file -Dfile=/usr/local/swipl-git/lib/swipl/lib/jpl.jar \ 
+		     		-DgroupId=com.github.SWI-Prolog -DartifactId=packages-jpl -Dversion=7.6.0 -Dpackaging=jar
+   		-->
         <dependency>
         	<groupId>com.github.SWI-Prolog</groupId>
         	<artifactId>packages-jpl</artifactId>
-        	<version>${jpl.version}</version>
+        	<version>7.6.0</version>
         </dependency>
     </dependencies>
 
@@ -111,12 +111,6 @@
 	    <url>http://maven.sarl.io/</url>
 	  </repository>
 	  
-        <!-- JITPACK used for remote installation of dependencies from Github and Bitbucket -->
-        <repository>
-            <id>jitpack.io</id>
-            <name>JitPack Repository</name>
-            <url>https://jitpack.io</url>
-        </repository>
 	</repositories>
 	
 	
