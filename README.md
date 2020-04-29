@@ -38,49 +38,24 @@ Version convention: Major.Minor.<SARL Version>. For example, 1.3.0.7.2 is versio
 ----------------------------------
 ## PRE-REQUISITES
 
-The capacity and skills depend on the following two systems/frameworks:
+This capacity & skill requires [SWIPL with JPL installed for use](https://jpl7.org/DeploymentLinux):
 
-* [SWI Prolog](http://www.swi-prolog.org/): this is the actual SWI Prolog system.
-	* Use either stable version 7.6.4 (available in standard Linux repos) or compile and install 8.1.x from [SWI-devel repo](https://github.com/SWI-Prolog/swipl-devel). 
-	* Unfortunately, the official 8.0.x versions in the PPA repo have issues with the `libswipl.so/dll/dylib` library and makes JPL crash; see [issue](https://github.com/ssardina-research/packages-jpl/issues/21). It has been fixed in the git repo though.
-* [SWI JPL](https://jpl7.org/) bidirectional SWI-Java interface. This has two parts: 
-	* _Native library_ `libjpl.so/dll/dylib`:
-		* Linux (Ubuntu): Provided by package `swi-prolog-java` (`/usr/lib/libswipl.so`). If you installed SWIPL manually, it would be in a path like `/usr/local/swipl-git/lib/swipl/lib/x86_64-linux/libjpl.so`.
-		* Windows: the Java-SWI interface it can be installed as part of the main install.
-	* _Java API_: this is the Java interface to Prolog provided in JAR file `jpl.jar` .
-		* While package `swi-prolog-java` provides such JAR file (in Linux, in `/usr/lib/swi-prolog/lib/jpl.jar`) for JPL 7.5.0, the JPL Java API has been much improved since then. This software uses at least the 7.5.0 version.
-		* To get the latst `jpl.jar` either manually compile and installed SWIPL with JPL (and it will be in, e.g., `/usr/local/swipl-git/lib/swipl/lib/jpl.jar`) or download the JAR file from the site.
-		* Once you have the JAR file, manually install `jpl.jar` artifact in your local Maven repo as follows:
+* [SWIPL](http://www.swi-prolog.org/): this is the actual SWI Prolog system, including its main library ``libswipl.so/dll/dylib`.
+	* Use either stable version 7.6.4 (available in standard Linux repos) or, better, compile and install 8.1.x from [SWI-devel repo](https://github.com/SWI-Prolog/swipl-devel). 
+	* Unfortunately, the official 8.0.x versions in the PPA repo have issues with the `libswipl.so/dll/dylib` library and makes JPL crash; see [issue](https://github.com/ssardina-research/packages-jpl/issues/21). It has been fixed in the git repo though, but you need to compile manually yet.
+* [SWI JPL](https://jpl7.org/) bidirectional SWI-Java interface. In Linux Ubuntu it is provided by package `swi-prolog-java`. It has two parts: 
+	* _Native library_ `libjpl.so/dll/dylib`: This is the C library implementing the interface between SWIPL and Java. 
+	* _jpl.pl_: This is a SWI Prolog library providing the [Prolog API](https://jpl7.org/PrologApiOverview) to access Java from Prolog.
+	* _Java API_: this is the `jpl.jar` that provides the [Java API](https://jpl7.org/JavaApiOverview) to access Prolog from Java. While package `swi-prolog-java` provides such JAR file for JPL 7.5.0 (in Linux, in `/usr/lib/swi-prolog/lib/jpl.jar`), the JPL Java API has been much improved since then. This software uses at least the 7.6.0 version. To get the latest `jpl.jar` either manually compile the latest SWIPL with the JPL package (e.g., `/usr/local/swipl-git/lib/swipl/lib/jpl.jar`) or download the JAR file from the site. Once you have the JAR file, manually install `jpl.jar` artifact in your local Maven repo as follows:
 		
-				mvn install:install-file -Dfile=/usr/local/swipl-git/lib/swipl/lib/jpl.jar \
+			mvn install:install-file -Dfile=/usr/local/swipl-git/lib/swipl/lib/jpl.jar \
 					-DgroupId=com.github.SWI-Prolog -DartifactId=packages-jpl \
 					-Dversion=7.6.0 -Dpackaging=jar
 		
-	* Check some [good examples on how to use JPL](https://github.com/SWI-Prolog/packages-jpl/blob/master/examples/java/).
+	
+Here are some [good examples on how to use JPL](https://github.com/SWI-Prolog/packages-jpl/blob/master/examples/java/) from Java.
 
-
-Also, it is very important to tell your system where Prolog is installed and where exactly the `.so/dll/dylib` libraries are located:
-
-* If in **Windows**:
-	* Make sure SWI is installed with the JPL Java-SWI connectivity. You should have a `jpl.dll` (in the SWI `bin/` subdir) and a `jpl.jar` (in the SWI `lib/` subdir).
-	* Define a _system_ environment variable `SWI_HOME_DIR` and set it to the root directory of your installed version of SWI-Prolog (e.g., to `C:\Program Files\swipl`).
-	* Extend `Path` system environment variable with the following two components:
-		* `%SWI_HOME_DIR%\bin`
-		* `%SWI_HOME_DIR%\lib\jpl.jar`
-	* No changes to `CLASSPATH` are needed.
-* If in **Linux**: 
-	* Extend the following environment variables to point to your SWI install:
-
-	```shell
-	 export SWI_HOME_DIR=/usr/local/swipl-git/lib/swipl/
-	 export LD_LIBRARY_PATH=$SWI_HOME_DIR/lib/x86_64-linux/:$SWI_HOME_DIR/lib/amd64/:$LD_LIBRARY_PATH
-	 export LD_PRELOAD=/usr/local/swipl-git/lib/swipl/lib/x86_64-linux/libswipl.so:$LD_PRELOAD   # only if necessary and your app complains
-	```
-		 
-	* To understand the environment library `LD_PRELOAD` check [this post](https://answers.ros.org/question/132411/unable-to-load-existing-owl-in-semantic-map-editor/) and [this one](https://blog.cryptomilk.org/2014/07/21/what-is-preloading/) about library preloading. Also, check [this](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=690734) and [this](https://github.com/yuce/pyswip/issues/10) posts.
-	* If using RUN AS configuration in ECLIPSE/IntelliJ, remember to set up these variables too (and check "Append environment to native environment").
-
-* If in **MacOS**: read [this post](https://jpl7.org/DeploymentMacos)	
+Besides the above being installed, it is also very important to tell your system and application where Prolog is and the above components can be found. To do so, one may need to set-up a few environment variables, like `LD_LIBRARY_PATH` and `LD_PRELOAD` (to find native `.so/dll/dylib` libraries), `CLASSPATH` (to point to `jpl.jar`) and `SWI_HOME_DIR` (to point to SWIPL home dir). Please refer to [this guide](https://jpl7.org/DeploymentLinux) on JPL documentation.
 
 
 ----------------------------------
