@@ -1,6 +1,8 @@
 # SARL Capacity for Prolog Knowledge Bases
 
-This project provides a Prolog knowledge-base capacity for SARL agents and two skills for it using [SWI Prolog](http://www.swi-prolog.org/). The Prolog capacity/skill can be used as belief representation for agents, as a replacement of Java data-structures. This yields much more succinct and declarative agent systems.
+This project provides a Prolog knowledge-base capacity for SARL agents and two skills for it using [SWI Prolog](http://www.swi-prolog.org/). 
+
+The Prolog capacity/skills can be used as _belief representation and reasoning_ system for agents, as a replacement of Java data-structures. Doing so generally yields much more succinct and declarative agent systems.
 
 The package provides:
 
