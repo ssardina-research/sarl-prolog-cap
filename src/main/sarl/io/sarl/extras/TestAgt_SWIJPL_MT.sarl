@@ -50,6 +50,19 @@ event End {
 event Work {
 }
 
+
+/**
+ * This is a test to use one or more SWIPL engines at the same time in a multi-thread application
+ * See first how JPL handles many queries at the same time in multi-threaded apps: https://jpl7.org/TutorialMultithreaded
+ * 
+ * JPL has a pool of 10 SWIPL engines. 
+ * Each thread is attached to 1 thread when a query is active. The engine is re-used in the thread
+ * However, when all queries in a thread close, the engine is given back to the pool and can be reused.
+ * 
+ * Using SARL, we emit many events, each will be handled in a thread
+ * Each thread will handing an event will do a Prolog query.
+ * If the queries come too close in time, new engines will be used form the pool
+ */
 @SuppressWarnings("potential_field_synchronization_problem")
 agent TestAgt_SWIJPL_MT {
 	uses Logging
@@ -73,11 +86,11 @@ agent TestAgt_SWIJPL_MT {
 		// SET THE SKILL TO JPL-based PROLOG!!!!!!!!!!!!!
 		setSkill(new SWIJPL_KB_Prolog("test", "my_dump_test"))
 
-		// we start the testing work with an event because no even can start before Initialize completes fully!
-		// this means that if we emit an event, then pause for x seconds here, then that event i not handled; nothing can
-		// be handled until Initialize is concluded!
+		// we start the testing work with an event because no event can start before Initialize completes fully!
+		// this means that if we emit an event, then pause for x seconds here, then that event is not handled; 
+		// nothing can be handled until Initialize is concluded!
 		emit(new Work())
-		info("Initailize completed!!!!!!!!!!!!!!!!!!!!!!!!!")
+		info("Agent TestAgt_SWIJPL_MT Initialization completed!")
 	}
 
 
@@ -92,87 +105,81 @@ agent TestAgt_SWIJPL_MT {
 //		assertFirst("agent(main)")
 
 
-		// In this test we post events that will open Prolog queries and keep them open fo a while, then close them
-		//  Since each event will be handled in a different thread, a Prolog JPL engine must be attached.
-		// the question then is to investigate which one: a completely new one OR re-use an already used one before (by another thread)
+		// In this test we post events that will open Prolog queries and keep them open for a while, then close them.
+		//	JPL will have a pool of up to 10 Prolog engines. After that, a new query has to wait to be run in some
+		//	engine
+		// Since each event will be handled in a different thread, a Prolog JPL engine must be attached to the thread.
+		// 
+		// The question then is to investigate which one: 
+		//		a completely new one OR re-use an already used one before (by another thread)
 		//
-		// If we wait 15 seconds between test events, then each event can be processed and the query closed, and the engine reused
-		// Otherwise, the engine may be busy with another open query in another thread, so a new one in the pool has to be attached
-		// 	In that case, if too many event tests are spawn, then some test will be delayed until one of the 10 engines is freed
+		// If we wait 15 seconds between test events, then each event can be processed and the query closed, 
+		//		and the engine reused.
+		// If we wait longer, the engine may be busy with another open query in another thread, so a new one in the pool 
+		//		has to be attached.
+		// 	In that case, if too many event tests are spawn, then some test will be delayed until one of the 10 
+		//		engines is freed
 		val totalEvents = 4
 		for (var i : int = 0; i < totalEvents; i++) {
 			pending.add(i)
 		}
-		 	val mainQuery : Query = ask("member(X, [10,20,30,40])")
-//			val mainQuery : Query = ask("between(100, 200, X), random(P), S is P*10, sleep(S)")
-//		var mainQuery : Query = ask("between(100, 200, X)")
-		// val x : boolean = mainQuery.hasNext
-		// doit(mainQuery)
+			var mainQuery : Query
+//			mainQuery = ask("member(X, [10,20,30,40])")
+			// val mainQuery : Query = ask("between(100, 200, X), random(P), S is P*10, sleep(S)")
 
-
-//		val x : boolean = mainQuery.hasNext
-//		mainQuery.close 
 		info("################################ LETS START EMITTING {0} TESTS ", totalEvents)
 		for (var i : int = 0; i < totalEvents; i++) {
 			 emit(new Test(i, mainQuery)) // will take 5 seconds to close its query
 			 // ATTENTION: HERE IS THE IMPORTANT BIT
-			 // 	1) IF WE WAIT 15 SECONDS, THEN THE EVENT Test(i) will be handled fully and that engine will be re-used
+			 // 	1) IF WE WAIT 10 SECONDS, THEN THE EVENT Test(i) will be handled fully and that engine will be re-used
 			 //		2) IF WE DO NOT WAIT, THEN EACH THREAD FOR Test(i) will have to attach to and use a new engine
-			 TimeUnit.SECONDS.sleep(3)		
+			 TimeUnit.SECONDS.sleep(1)		
 		}
 
 
-		// This will be run after ALL emits Tets(i) have been completed!
+		// This will be run after ALL emits Tests(i) have been completed!
 		info("################################ HAVE SPAWN ALL THE TESTS ################################")
 		TimeUnit.SECONDS.sleep(10)
 		prove("listing(tea_number/3)")	// This will re-use the very first engine for the consult above!
 		info("################################ END TESTING MAIN ################################")
 	}
 
-	def doit(q : Query) {
-		val solutionsIter = q 
-
-		var sol : Map<String, Term>
-		while (solutionsIter.hasNext) {
-			sol = solutionsIter.nextSolution
-			info("\t\t Solution for SINGLE THREAD test  (on engine {1}): {0}", sol.toString, solutionsIter.engine)
-		}
-
-	}
-
+	
 	val singleTest = true
 
 	
 	on Test [singleTest] {
-		val n = occurrence.n
-		var q = occurrence.query
+		val n = occurrence.n			// id of event
+		var q = occurrence.query	// query passed in the event
 
 		var solutionsIter : Query 
 		if (q !== null) {
 			info("\t\t Setting the query to what was passed in event!!!")
 			solutionsIter = q 
-		}
-			else 	solutionsIter = ask("member(N, [1,2,3,4,5,6])")
+		}	else 	
+			solutionsIter = ask("random(1, 100, N)") // new query if event didn't carry a query
+		
 		var sol : Map<String, Term>
 		if (solutionsIter.hasNext) {
 			sol = solutionsIter.nextSolution
 			info("\t\t Solution for SINGLE THREAD test {2} (on engine {1}): {0}", sol.toString, solutionsIter.engine, n)
 			 assertFirst("tea_number(?, ?, ?)", n, sol.toString, sol.toString)
 		}
-	    TimeUnit.SECONDS.sleep(10)		
+	    TimeUnit.SECONDS.sleep(5)		
 		// solutionsIter.close
 	}
 
 
+	// This test nested queries
 	on Test [!singleTest] {
 		// the id number of the test
 		val n = occurrence.n
 		
 		// the query! Used to be in a file...
-		val query = "format(string(_Text), \"--------------------------> I have started the query test/4 for id ~d\", [?]),
+		val query = "format(string(_Text), \"-------------> I have started the query test/4 for id ~d\", [?]),
 					  writeln(_Text), !, between(1,?,N), sleep(?)"
-
 //		val solutionsIter : Query = ask(query, n, 15, 0)
+
 		val solutionsIter : Query = ask("member(N, [1,2,3,4,5,6])")
 		var sol : Map<String, Term>
 		var sol2 : Map<String, Term>
