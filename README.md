@@ -83,9 +83,9 @@ To add the dependency to this capacity/skills in your SARL application, you can 
 
 <!--  SARL PROLOG CAPACITY -->
 <dependency>
-    <groupId>org.bitbucket.ssardina-research</groupId>
+    <groupId>com.github.ssardina-agts</groupId>
     <artifactId>sarl-prolog-cap</artifactId>
-    <version>-SNAPSHOT</version>
+    <version>3.6.0.10.0</version>
 </dependency>
 
 <!-- JitPack used for remote installation of dependencies from Github and Bitbucket -->
@@ -96,7 +96,7 @@ To add the dependency to this capacity/skills in your SARL application, you can 
 </repository>
 ```
 
-The JitPack link for this repository is [here](https://jitpack.io/#ssardina-agts/sarl-prolog-cap). Replace `-SNAPSHOT` by the specific version (e.g., commit id) you want to use in your application.
+The JitPack link for this repository is [here](https://jitpack.io/#ssardina-agts/sarl-prolog-cap). 
 
 
 ----------------------------------
