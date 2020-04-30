@@ -11,7 +11,7 @@ The package provides:
 
 This package can be obtained via Maven using JitPack: <https://jitpack.io/#ssardina-agts/sarl-prolog-cap>
 
-Version convention: Major.Minor.<SARL Version>. For example, 1.3.0.7.2 is version 1.3 for SARL 0.7.2.
+Version convention: Major.Minor.<SARL Version>. For example, 1.3.0.10.0 is version 1.3 for SARL 0.10.0.
 
 ----------------------------------
 ## TABLE OF CONTENTS
