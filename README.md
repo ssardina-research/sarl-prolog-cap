@@ -92,7 +92,7 @@ To add the dependency to this capacity/skills in your SARL application, you can 
 <dependency>
     <groupId>com.github.ssardina-agts</groupId>
     <artifactId>sarl-prolog-cap</artifactId>
-    <version>3.6.0.10.0</version>
+    <version>4.0.0.10.0</version>
 </dependency>
 
 <!-- JitPack used for remote installation of dependencies from Github and Bitbucket -->
