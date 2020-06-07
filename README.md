@@ -48,11 +48,16 @@ This capacity & skill requires [SWIPL with JPL installed for use](https://jpl7.o
 * [SWI JPL](https://jpl7.org/) bidirectional SWI-Java interface. In Linux Ubuntu it is provided by package `swi-prolog-java`. It has two parts: 
 	* _Native library_ `libjpl.so/dll/dylib`: This is the C library implementing the interface between SWIPL and Java. 
 	* _jpl.pl_: This is a SWI Prolog library providing the [Prolog API](https://jpl7.org/PrologApiOverview) to access Java from Prolog.
-	* _Java API_: this is the `jpl.jar` that provides the [Java API](https://jpl7.org/JavaApiOverview) to access Prolog from Java. While package `swi-prolog-java` provides such JAR file for JPL 7.5.0 (in Linux, in `/usr/lib/swi-prolog/lib/jpl.jar`), the JPL Java API has been much improved since then. This software uses at least the 7.6.0 version. To get the latest `jpl.jar` either manually compile the latest SWIPL with the JPL package (e.g., `/usr/local/swipl-git/lib/swipl/lib/jpl.jar`) or download the JAR file from the site. Once you have the JAR file, manually install `jpl.jar` artifact in your local Maven repo as follows:
+	* _Java API_: this is the `jpl.jar` that provides the [Java API](https://jpl7.org/JavaApiOverview) to access Prolog from Java. 
+		* The package `swi-prolog-java` provided in standard distributions (e.g., Ubuntu) come with JPL 7.5.0 (in Linux, in `/usr/lib/swi-prolog/lib/jpl.jar`), which is very old.
+	    * The [PPA](https://www.swi-prolog.org/build/PPA.txt) has SWIPL 8.2+ which already carries JPL 7.6.0 version. One could install this version into Maven local repo as follows:
+
+				mvn install:install-file -Dfile=/usr/local/swipl-git/lib/swipl/lib/jpl.jar \
+						-DgroupId=com.github.SWI-Prolog -DartifactId=packages-jpl \
+						-Dversion=7.6.0 -Dpackaging=jar
+
 		
-			mvn install:install-file -Dfile=/usr/local/swipl-git/lib/swipl/lib/jpl.jar \
-					-DgroupId=com.github.SWI-Prolog -DartifactId=packages-jpl \
-					-Dversion=7.6.0 -Dpackaging=jar
+		* Still, SARL-PROLOG-CAP will grab the latest version from the official repo, by obtaining the [latest SNAPSHOT in the maven branch](https://github.com/SWI-Prolog/packages-jpl/tree/maven).
 		
 	
 Here are some [good examples on how to use JPL](https://github.com/SWI-Prolog/packages-jpl/blob/master/examples/java/) from Java.
