@@ -1,16 +1,6 @@
-/** 
- * A skill implementing KB_Prolog capacity via JPL framework https://jpl7.org/
- * 
- * The main feature on top of JPL are:
- * 	1. Module/sandboxing: the skill will create a specific module so that the agent owner has its own KB
- *  2. Much more direct use of JPL placeholders ?: no need to create new object terms for the arguments: skill will guess them!
- * 
- * @author Sebastian Sardina (ssardina@gmail.com)
- */
 package io.sarl.extras
 
 import io.sarl.core.Logging
-
 
 import org.jpl7.Term
 import org.jpl7.JRef
@@ -32,6 +22,16 @@ import java.util.Random
 import java.nio.file.Paths
 import org.jpl7.JPL
 
+/** 
+ * A skill implementing KB_Prolog capacity via SWIPL (https://www.swi-prolog.org/) and JPL framework https://jpl7.org/
+ * 
+ * The main feature on top of JPL are:
+ * 
+ * 1. Module/sandboxing: the skill will create a specific module so that the agent owner has its own KB.
+ * 2. Much more direct use of JPL placeholders ?: no need to create new object terms for the arguments: skill will guess them!
+ * 
+ * @author Sebastian Sardina (ssardina@gmail.com)
+ */
 @SuppressWarnings("potential_field_synchronization_problem")
 skill SWIJPL_KB_Prolog implements KB_Prolog {
 	requires Logging

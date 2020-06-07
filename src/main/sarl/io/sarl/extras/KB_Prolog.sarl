@@ -1,7 +1,7 @@
 /** 
  * Prolog knowledge base Capacity/Skill for SARL
  * 
- * Copyright (C) 2018 Sebastian Sardina (ssardina@gmail.com).
+ * Copyright (C) 2018-2020 Sebastian Sardina (ssardina@gmail.com).
 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,8 @@ import org.jpl7.Query
 
 
 /** 
+ * This capacity provides an interface for SARL agents to access Prolog knowledge bases
+ * 
  * @author Sebastian Sardina (ssardina@gmail.com)
  * 
  */
@@ -53,7 +55,7 @@ capacity KB_Prolog {
 	def use_module(file : String) : boolean
 
 	/** 
-	 * Set the root dir for dumping knowledge bases
+	 * Set the root directory for dumping knowledge bases
 	 */
 	def set_dump_root(kb_dump_dir : String)
 
@@ -108,7 +110,7 @@ capacity KB_Prolog {
 	def askOnceIn(query : String, module : Object, params : Object*) : Map<String, Term>
 
 	/**
-	 * Get all the answers for an unformatted query as a COllection of mappings vars --> terms
+	 * Get all the answers for an unformatted query as a COllection of mappings variables --> terms
 	 */
 	def askForAllSolutions(query : String, params : Object*) : Collection<Map<String, Term>>
 	def askForAllSolutionsIn(query : String, module : Object, params : Object*) : Collection<Map<String, Term>>

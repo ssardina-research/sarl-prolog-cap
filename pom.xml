@@ -6,7 +6,7 @@
      ####################################################################### -->
 	<groupId>com.github.ssardina-agts</groupId>
 	<artifactId>sarl-prolog-cap</artifactId>
-	<version>3.6.${env.SARL_VERSION}</version>
+	<version>4.0.${sarl.version}</version>
 
     <name>SARL Capacity for SWI Prolog Connectivity</name>
     <url>https://github.com/ssardina-agts/sarl-prolog-cap</url>
@@ -19,8 +19,8 @@
     	<developer>
 	      <name>Sebastian Sardina</name>
 	      <email>ssardina@gmail.com</email>
-	      <organization>ssardina-research</organization>
-	      <organizationUrl>https://bitbucket.org/ssardina-research/</organizationUrl>
+	      <organization>ssardina-agts</organization>
+	      <organizationUrl>https://github.com/ssardina-agts</organizationUrl>
 	    </developer>
   	</developers>
 
@@ -36,7 +36,7 @@
      ####################################################################### -->
     <properties>
         <!-- SARL framework version and configuration -->
-        <sarl.version>${env.SARL_VERSION}</sarl.version>
+        <sarl.version>0.10.0</sarl.version>
 
         <!-- JANUS project version -->
         <janus.version>2.${sarl.version}</janus.version>
@@ -77,16 +77,20 @@
 		</dependency>
 
        	<!--  JPL: Java - SWI Prolog Bidirectional Interface https://github.com/ssardina-research/packages-jpl 
-       			Install manually locally 
+       	
+       	  We could install it manually by getting, for example, the local copy from the distribution: 
     	
-		     	mvn install:install-file -Dfile=/usr/local/swipl-git/lib/swipl/lib/jpl.jar \ 
-		     		-DgroupId=com.github.SWI-Prolog -DartifactId=packages-jpl -Dversion=7.6.0 -Dpackaging=jar
+		  mvn install:install-file -Dfile=/usr/share/java/jpl.jar -DgroupId=com.github.SWI-Prolog -DartifactId=packages-jpl -Dversion=7.6.0 -Dpackaging=jar
+		  
+		  Or we can just get it via JitPack by grabbing the latest version of the maven branch 
+		  which is meant to have master + pom.xml
    		-->
         <dependency>
         	<groupId>com.github.SWI-Prolog</groupId>
         	<artifactId>packages-jpl</artifactId>
-        	<version>7.6.0</version>
+        	<version>maven-SNAPSHOT</version>
         </dependency>
+
     </dependencies>
 
     <dependencyManagement>
@@ -110,7 +114,13 @@
 	    <name>SARL Snapshots</name>
 	    <url>http://maven.sarl.io/</url>
 	  </repository>
-	  
+	
+        <!-- JitPack used for remote installation of MASSim from Github -->
+        <repository>
+            <id>jitpack.io</id>
+            <name>JitPack Repository</name>
+            <url>https://jitpack.io</url>
+        </repository>
 	</repositories>
 	
 	

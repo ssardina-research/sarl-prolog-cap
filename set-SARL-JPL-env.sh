@@ -63,4 +63,4 @@ fi
 
 
 # Set SARL VERSION
-export SARL_VERSION=0.8.6
+export SARL_VERSION=0.10.0
