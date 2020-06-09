@@ -1,26 +1,25 @@
 package io.sarl.extras
 
 import io.sarl.core.Logging
-
-import org.jpl7.Term
-import org.jpl7.JRef
-import org.jpl7.Compound
-import org.jpl7.Atom
-import org.jpl7.Query
-import org.jpl7.Util
-
-import java.util.Collection
-import java.util.Map
-import java.util.ArrayList
-import java.util.Date
 import java.io.File
-import java.text.SimpleDateFormat
-import java.util.List
-
-import org.apache.commons.lang3.StringUtils
-import java.util.Random
 import java.nio.file.Paths
+import java.text.SimpleDateFormat
+import java.util.ArrayList
+import java.util.Collection
+import java.util.Date
+import java.util.List
+import java.util.Map
+import java.util.Random
+import org.apache.commons.lang3.StringUtils
+import org.jpl7.Atom
+import org.jpl7.Compound
+import org.jpl7.Float
+import org.jpl7.Integer
 import org.jpl7.JPL
+import org.jpl7.JRef
+import org.jpl7.Query
+import org.jpl7.Term
+import org.jpl7.Variable
 
 /** 
  * A skill implementing KB_Prolog capacity via SWIPL (https://www.swi-prolog.org/) and JPL framework https://jpl7.org/
@@ -32,22 +31,22 @@ import org.jpl7.JPL
  * 
  * @author Sebastian Sardina (ssardina@gmail.com)
  */
-@SuppressWarnings("potential_field_synchronization_problem")
+@SuppressWarnings("potential_inefficient_value_conversion", "potential_field_synchronization_problem")
 skill SWIJPL_KB_Prolog implements KB_Prolog {
-	requires Logging
+//	requires Logging
 	uses Logging
 	
 	// Runtime of object creation - used to timestamp a directory to dump the KB
 	val formatter = new SimpleDateFormat("yyyy-MM-dd--HH-mm-ss")
-	val runtime_timestamp = formatter.format(new Date()) // store runtime date time as a string
+//	val runtime_timestamp = formatter.format(new Date()) // store runtime date time as a string
 
 	protected val kb_name : String // Informal name given to the KB by the agent owner (may not be unique!)
 	var module_name : String // name of the SWI Prolog module to be used for this skill instance (will be unique!)
 	var kb_dump_dir : String // directory where the current KB is to be dumped
 
-	private val final swi_home = System.getenv("SWI_HOME_DIR")
-	private val final swi_exec = System.getenv("SWI_EXEC_FILE")
-	private val final swi_boot = System.getenv("SWIPL_BOOT_FILE")
+//	val swi_home = System.getenv("SWI_HOME_DIR")
+//	val swi_exec = System.getenv("SWI_EXEC_FILE")
+//	val swi_boot = System.getenv("SWIPL_BOOT_FILE")
 
 	/**
 	 * CONSTRUCTORS AND INSTALL
@@ -86,7 +85,7 @@ skill SWIJPL_KB_Prolog implements KB_Prolog {
 		return String.format("'%s':(%s)", module, query)
 	}
 
-	private def init_JPL {
+	def init_JPL {
 		val init_swi_config = String.format("%s -x %s -F swipl --home=%s -g true -q", System.getenv("SWI_EXEC_FILE"),
 			System.getenv("SWIPL_BOOT_FILE"), System.getenv("SWI_HOME_DIR"));
 		JPL.setDefaultInitArgs(init_swi_config.split("\\s+")); // initialize SWIPL engine
@@ -137,7 +136,7 @@ skill SWIJPL_KB_Prolog implements KB_Prolog {
 
 		//	escape % via double %%
 		// F has to be anonymous because JPL cannot return a blob: gives error (so we use _F)
-		val timestamp_format = "'%Y-%m-%d--%H-%M-%S'"
+//		val timestamp_format = "'%Y-%m-%d--%H-%M-%S'"
 
 		// Format of file to dump: kb_directory_path/
 		val query = String.format("
@@ -155,10 +154,7 @@ skill SWIJPL_KB_Prolog implements KB_Prolog {
 		return kb_name
 	}
 
-	//	This will yield the Mochalog Prolog object (one can then apply Mochalog methods to it directly!)
-	// Not probably the more recommended
 	def get_prolog_engine() : String {
-//		return engine_t
 		return module_name
 	}
 
@@ -167,27 +163,27 @@ skill SWIJPL_KB_Prolog implements KB_Prolog {
 
 		params.forEach [ param : Object |
 			if (param instanceof Number) {
-				if (param instanceof Integer) {
-					paramsTerms.add(new org.jpl7.Integer(param.intValue))
+				if (param instanceof java.lang.Integer) {
+					paramsTerms.add(new Integer(param.intValue))
 				} else // Float or Double
-					paramsTerms.add(new org.jpl7.Float(param.doubleValue))
+					paramsTerms.add(new Float(param.doubleValue))
 			} else if (param instanceof String) {
 				if (Character.isUpperCase(param.charAt(0))) {	
-					paramsTerms.add(new org.jpl7.Variable(param))
+					paramsTerms.add(new Variable(param))
 				} else if (param.startsWith("'")) {
 					val prolog_atom : String = StringUtils.substringBetween(param, "'", "'")
-					paramsTerms.add(new org.jpl7.Atom(prolog_atom))
+					paramsTerms.add(new Atom(prolog_atom))
 				} else if (!param.contains("(") && !param.contains("[") && !param.contains(" is ")) {
-					paramsTerms.add(new org.jpl7.Atom(param))
+					paramsTerms.add(new Atom(param))
 				} else {
-					val prolog_term = Util.textToTerm(param)
+					val prolog_term = Term.textToTerm(param)
 //					debug("The converted prolog term is: {0}", prolog_term)
 					paramsTerms.add(prolog_term)
 				}
 			} else if (param instanceof JRef || param instanceof Atom || param instanceof Compound ||
-				param instanceof org.jpl7.Integer || param instanceof org.jpl7.Float) {
+				param instanceof Integer || param instanceof Float) {
 				paramsTerms.add(param as Term)
-			} else if (param instanceof Object) {
+			} else { // if (param instanceof Object)
 				paramsTerms.add(new JRef(param))
 			}
 //			debug("\t The converted parameter is: {0}", paramsTerms.last)

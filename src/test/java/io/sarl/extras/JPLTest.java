@@ -158,7 +158,7 @@ public class JPLTest
     public void noClauseExistence()
     {
     	String queryText;
-    	boolean hasSolution;
+    	
     	
         // hello_world.pl test resource
         // Filepath relative to java-api directory
@@ -169,7 +169,7 @@ public class JPLTest
         // Check for string: even though data_string("string0") is there, JPL cannot send Strings to Prolog, it will be query as data_string(string0)
         queryText = "no_clause(23)";
         try {
-        	hasSolution = Query.hasSolution(queryText);
+        	Query.hasSolution(queryText);
         } catch (PrologException e) {
         	System.out.println("Bien!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! " + e.getMessage());
         }

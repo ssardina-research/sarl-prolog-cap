@@ -9,6 +9,7 @@ import java.util.Scanner
  * @author Sebastian Sardina (ssardina@gmail.com)
  * 
  */
+@SuppressWarnings("all")
 class BootTestAgt {
 	// Code adapted from example how to boot from name string: 	http://tinyurl.com/ycolmey5
 	def static main(args : String[]) : void {

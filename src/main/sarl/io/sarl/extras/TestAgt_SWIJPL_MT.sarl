@@ -1,19 +1,14 @@
-/** 
- * 
- */
 package io.sarl.extras
 
-import io.sarl.core.Initialize
-import io.sarl.core.Logging
-import io.sarl.core.Lifecycle
-
 import io.sarl.core.DefaultContextInteractions
-import io.sarl.core.Schedules
+import io.sarl.core.Initialize
+import io.sarl.core.Lifecycle
+import io.sarl.core.Logging
 import java.util.HashSet
-import java.util.Set
-import org.jpl7.Query
-import java.util.concurrent.TimeUnit
 import java.util.Map
+import java.util.Set
+import java.util.concurrent.TimeUnit
+import org.jpl7.Query
 import org.jpl7.Term
 
 /** 
@@ -68,10 +63,9 @@ agent TestAgt_SWIJPL_MT {
 	uses Logging
 	uses KB_Prolog	
 	uses Lifecycle
-	uses Schedules
 	uses DefaultContextInteractions
 
-	val testFile = "src/test/resources/testKB_MT.pl"
+//	val testFile = "src/test/resources/testKB_MT.pl"
 
 	var pending : Set<Integer> = new HashSet<Integer>() // set of all SARL agents in the system
 	
@@ -148,9 +142,10 @@ agent TestAgt_SWIJPL_MT {
 	val singleTest = true
 
 	
+	@SuppressWarnings("discouraged_occurrence_readonly_use")
 	on Test [singleTest] {
 		val n = occurrence.n			// id of event
-		var q = occurrence.query	// query passed in the event
+		val q = occurrence.query	// query passed in the event
 
 		var solutionsIter : Query 
 		if (q !== null) {
@@ -176,8 +171,6 @@ agent TestAgt_SWIJPL_MT {
 		val n = occurrence.n
 		
 		// the query! Used to be in a file...
-		val query = "format(string(_Text), \"-------------> I have started the query test/4 for id ~d\", [?]),
-					  writeln(_Text), !, between(1,?,N), sleep(?)"
 //		val solutionsIter : Query = ask(query, n, 15, 0)
 
 		val solutionsIter : Query = ask("member(N, [1,2,3,4,5,6])")
@@ -237,8 +230,10 @@ agent TestAgt_SWIJPL_MT {
 
 	// Will get the end of each Test(i) thread and when all have signaled. list and finish
 	on End {
+		val n = occurrence.n
+		
 		synchronized (pending) {
-			pending.remove(occurrence.n)
+			pending.remove(n)
 			if (pending.empty) {
 					info("******************** All events processed.... killing myself........")
 					prove("listing(tea_number/3)")
