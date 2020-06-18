@@ -1,12 +1,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-    <!-- ##################################################################
-		PROJECT INFO 
-     ####################################################################### -->
+	<!-- ############################## PROJECT INFO ############################## -->
 	<groupId>com.github.ssardina-agts</groupId>
 	<artifactId>sarl-prolog-cap</artifactId>
-	<version>4.0.${sarl.version}</version>
+	<version>4.0.0.10.0</version>
 
     <name>SARL Capacity for SWI Prolog Connectivity</name>
     <url>https://github.com/ssardina-agts/sarl-prolog-cap</url>
@@ -31,9 +29,7 @@
 	    </license>
   	</licenses>
 
-    <!-- ##################################################################
-		PROPERTIES 
-     ####################################################################### -->
+ 	<!-- ############################## PROPERTIES ############################## -->
     <properties>
         <!-- SARL framework version and configuration -->
         <sarl.version>0.10.0</sarl.version>
@@ -49,10 +45,38 @@
         <skipTests>true</skipTests>
     </properties>
     
+   	<!-- ############################## REPOSITORIES ############################## -->
+	<repositories>
+		<!-- JANUS Project kernel (contains SARL language core) -->
+		<repository>
+			<id>io.sarl-maven</id>
+			<name>SARL Snapshots</name>
+			<url>http://maven.sarl.io/</url>
+		</repository>
 
-    <!-- ##################################################################
-		DEPENDENCIES 
-     ####################################################################### -->
+  		<repository>
+          <id>com.github</id>
+          <name>GitHub SWI-Prolog/packages-jpl Apache Maven Packages</name>
+          <url>https://maven.pkg.github.com/SWI-Prolog/packages-jpl/</url>
+        </repository>
+	
+	</repositories>
+	
+	
+	<pluginRepositories>
+		  <pluginRepository>
+		    <id>io.sarl-maven</id>
+		    <name>SARL Snapshots</name>
+		    <url>http://maven.sarl.io/</url>
+		    <snapshots>
+		      <enabled>true</enabled>
+		    </snapshots>
+		  </pluginRepository>
+	</pluginRepositories>
+
+    
+
+  	<!-- ############################## DEPENDENCIES ############################## -->
     <dependencies>
         <!-- JANUS Project kernel (contains SARL language core) -->
         <dependency>
@@ -118,8 +142,6 @@
                 <artifactId>org.eclipse.jdt.core</artifactId>
               </exclusion>
             </exclusions>
-            
-            
         </dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
@@ -137,20 +159,14 @@
           <version>4.12</version>
 		</dependency>
 
-       	<!--  JPL: Java - SWI Prolog Bidirectional Interface https://github.com/ssardina-research/packages-jpl 
        	
-       	  We could install it manually by getting, for example, the local copy from the distribution: 
-    	
-		  mvn install:install-file -Dfile=/usr/share/java/jpl.jar -DgroupId=com.github.SWI-Prolog -DartifactId=packages-jpl -Dversion=7.6.0 -Dpackaging=jar
-		  
-		  Or we can just get it via JitPack by grabbing the latest version of the maven branch 
-		  which is meant to have master + pom.xml
-   		-->
-        <dependency>
-        	<groupId>com.github.SWI-Prolog</groupId>
-        	<artifactId>packages-jpl</artifactId>
-        	<version>maven-SNAPSHOT</version>
-        </dependency>
+       	<!--  JPL bidirectional Prolog-Java: https://github.com/SWI-Prolog/packages-jpl  -->
+		<dependency>
+			<groupId>com.github.SWI-Prolog</groupId>
+			<artifactId>packages-jpl</artifactId>
+			<version>7.6.1</version>
+		</dependency>
+
 
     </dependencies>
 
@@ -165,144 +181,91 @@
 	</dependencyManagement>
         
 
-    <!-- ##################################################################
-		REPOSITORIES 
-     ####################################################################### -->
-	<repositories>
-        <!-- JANUS Project kernel (contains SARL language core) -->
-	  <repository>
-	    <id>io.sarl-maven</id>
-	    <name>SARL Snapshots</name>
-	    <url>http://maven.sarl.io/</url>
-	  </repository>
-	
-        <!-- JitPack used for remote installation of MASSim from Github -->
-        <repository>
-            <id>jitpack.io</id>
-            <name>JitPack Repository</name>
-            <url>https://jitpack.io</url>
-        </repository>
-	</repositories>
-	
-	
-	<pluginRepositories>
-		  <pluginRepository>
-		    <id>io.sarl-maven</id>
-		    <name>SARL Snapshots</name>
-		    <url>http://maven.sarl.io/</url>
-		    <snapshots>
-		      <enabled>true</enabled>
-		    </snapshots>
-		  </pluginRepository>
-	</pluginRepositories>
+   
 
 
 
-
-
-    <!-- Build pipeline plugins -->
-    <build>
- 			<resources>
-               <resource>
-                    <directory>src/main/sarl</directory>
-                    <filtering>false</filtering>
-                </resource>
-                <resource>
-                    <directory>src/main/java</directory>
-                    <filtering>false</filtering>
-                </resource>
-          </resources>        
+   	<!-- ############################## BUILD PIPELINE PLUGINS ############################## -->
+	<build>
+		<resources>
+			<resource>
+				<directory>src/main/sarl</directory>
+				<filtering>false</filtering>
+			</resource>
+			<resource>
+				<directory>src/main/java</directory>
+				<filtering>false</filtering>
+			</resource>
+		</resources>
 
 		<testSourceDirectory>src/test/java/io/sarl/extras</testSourceDirectory>
 
 
-    <!-- ##################################################################
-		BUILD PIPELINE PLUGINS 
-     ####################################################################### -->
-        <plugins>
-			 <plugin>
-		        <groupId>org.apache.maven.plugins</groupId>
-		        <artifactId>maven-compiler-plugin</artifactId>
-		        <configuration>
-		            <source>1.6</source>
-		            <target>1.6</target>
-		        </configuration>
-		    </plugin>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
 
-            <plugin>
-                <!-- SARL Maven compiler plugin -->
-                <!-- Facilitate compilation of SARL source code to Java classes -->
-                <groupId>io.sarl.maven</groupId>
-                <artifactId>sarl-maven-plugin</artifactId>
-                <version>${sarl.version}</version>
-                <extensions>true</extensions>
-                <configuration>
+			<plugin>
+				<!-- SARL Maven compiler plugin -->
+				<!-- Facilitate compilation of SARL source code to Java classes -->
+				<groupId>io.sarl.maven</groupId>
+				<artifactId>sarl-maven-plugin</artifactId>
+				<version>${sarl.version}</version>
+				<extensions>true</extensions>
+				<configuration>
 					<source>${maven.compiler.source}</source>
 					<target>${maven.compiler.target}</target>
 					<encoding>${project.build.sourceEncoding}</encoding>
 				</configuration>
-            </plugin>
+			</plugin>
 
-<!--
+			<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-javadoc-plugin</artifactId> 
+				<executions> <execution> <id>attach-javadocs</id> <goals> <goal>jar</goal> 
+				</goals> </execution> </executions> </plugin> -->
+			<!-- Attach sources -->
 			<plugin>
-                 <groupId>org.apache.maven.plugins</groupId>
-                 <artifactId>maven-javadoc-plugin</artifactId>
-                 <executions>
-                   <execution>
-                         <id>attach-javadocs</id>
-                         <goals>
-                           <goal>jar</goal>
-                         </goals>
-                   </execution>
-                 </executions>
-            </plugin>
--->
-           <!--  Attach sources -->
-	       <plugin>
-	              <groupId>org.apache.maven.plugins</groupId>
-	              <artifactId>maven-source-plugin</artifactId>
-	              <version>3.0.1</version>
-	              <executions>
-	                    <execution>
-	                          <id>attach-sources</id>
-	                           <goals>
-	                               <goal>jar</goal>
-	                           </goals>
-	                    </execution>
-	              </executions>
-	       </plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>3.0.1</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 
-			<!-- https://maven.apache.org/surefire/maven-surefire-plugin/
-			The Surefire Plugin is used during the test phase of the build lifecycle to execute the unit tests of an application. 
-			It generates reports in two different file formats:
-			 -->
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.19.1</version>
-                <configuration>
-                    <!-- Check this: https://maven.apache.org/surefire/maven-surefire-plugin/examples/skipping-tests.html -->
-                    <skipTests>${skipTests}</skipTests>
-                </configuration>
-            </plugin>
+			<!-- https://maven.apache.org/surefire/maven-surefire-plugin/ The Surefire 
+				Plugin is used during the test phase of the build lifecycle to execute the 
+				unit tests of an application. It generates reports in two different file 
+				formats: -->
+			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.19.1</version>
+				<configuration>
+					<!-- Check this: https://maven.apache.org/surefire/maven-surefire-plugin/examples/skipping-tests.html -->
+					<skipTests>${skipTests}</skipTests>
+				</configuration>
+			</plugin>
 
-			<!--  Class to execute via maven exec:java 
-			https://www.mojohaus.org/exec-maven-plugin/
-			-->
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <configuration>
-	                <!-- 
-	                 	<mainClass>io.janusproject.Boot</mainClass>
-	                 -->
-	                 	<mainClass>BootTestAgt</mainClass>
-                </configuration>
-            </plugin>
-
-
-
+			<!-- Class to execute via maven exec:java https://www.mojohaus.org/exec-maven-plugin/ -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<configuration>
+					<!-- <mainClass>io.janusproject.Boot</mainClass> -->
+					<mainClass>BootTestAgt</mainClass>
+				</configuration>
+			</plugin>
 		</plugins>
-
-    </build>
+	</build>
 
 </project>
