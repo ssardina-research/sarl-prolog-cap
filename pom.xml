@@ -59,6 +59,14 @@
           <name>GitHub SWI-Prolog/packages-jpl Apache Maven Packages</name>
           <url>https://maven.pkg.github.com/SWI-Prolog/packages-jpl/</url>
         </repository>
+        
+        <!-- JitPack used for getting Maven packages from GitHub -->
+        <repository>
+            <id>jitpack.io</id>
+            <name>JitPack Repository</name>
+            <url>https://jitpack.io</url>
+        </repository>
+        
 	
 	</repositories>
 	
@@ -164,7 +172,7 @@
 		<dependency>
 			<groupId>com.github.SWI-Prolog</groupId>
 			<artifactId>packages-jpl</artifactId>
-			<version>7.6.1</version>
+			<version>V8.3.2</version>	<!-- version 7.6.1 of JPL -->
 		</dependency>
 
 
