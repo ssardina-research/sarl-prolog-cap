@@ -1,6 +1,3 @@
-/** 
- * 
- */
 package io.sarl.extras
 
 import io.sarl.core.DefaultContextInteractions
@@ -15,6 +12,7 @@ import org.jpl7.JPL
 import org.jpl7.JPLException
 import org.jpl7.PrologException
 import org.jpl7.Term
+import java.util.UUID
 
 /** 
  * @author ssardina
@@ -38,6 +36,7 @@ agent TestAgt_SWIJPL {
 	uses KB_Prolog	
 	uses Lifecycle
 	uses Schedules
+	uses DefaultContextInteractions
 
 	val testFile = "src/test/resources/testKB.pl"
 	
@@ -335,7 +334,6 @@ agent TestAgt_SWIJPL {
 //		info("Solution for query person(X,11,city(perth)): {0}", solution.toString)
 
 
-
 		return true
 	}
 
@@ -398,22 +396,23 @@ agent TestAgt_SWIJPL {
 		info("\t KB dumped again!!")
 		return true
 	}
-
+//
 	def test_15() : boolean {
 		val no = 15
 		val queryText = "Spawning two slave agents with own queries"
 		info("######### Test {0}: {1}", no, queryText)
 
 		info("\t Now spawning some slave test agents with their KB")
-		val agent_UUID = spawn(TestAgt_Slave, 200)
+		val agent_UUID = UUID.randomUUID();
+		spawnInContextWithID(TestAgt_Slave, agent_UUID, defaultContext, 200)
 		info("\t I have spawned my child {0}", agent_UUID.toString)
 
-		val agent_UUID2 = spawn(TestAgt_Slave, 100)
+		val agent_UUID2 = UUID::randomUUID;
+		typeof(TestAgt_Slave).spawnInContextWithID(agent_UUID, defaultContext, 100)
 		info("\t I have spawned my child {0}", agent_UUID2.toString)
 		return true
 	}
 
-		
 
 	on TellModule {
 		val module_of_another_agent = occurrence.module
@@ -424,18 +423,6 @@ agent TestAgt_SWIJPL {
 		
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
