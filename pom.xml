@@ -4,7 +4,7 @@
 	<!-- ############################## PROJECT INFO ############################## -->
 	<groupId>com.github.ssardina-agts</groupId>
 	<artifactId>sarl-prolog-cap</artifactId>
-	<version>4.0.0.10.0</version>
+	<version>4.0.${env.SARL_VERSION}</version>
 
     <name>SARL Capacity for SWI Prolog Connectivity</name>
     <url>https://github.com/ssardina-agts/sarl-prolog-cap</url>
@@ -32,10 +32,11 @@
  	<!-- ############################## PROPERTIES ############################## -->
     <properties>
         <!-- SARL framework version and configuration -->
-        <sarl.version>0.10.0</sarl.version>
+        <!-- SARL framework version and configuration -->
+        <sarl.version>${env.SARL_VERSION}</sarl.version>
 
         <!-- JANUS project version -->
-        <janus.version>2.${sarl.version}</janus.version>
+        <janus.version>3.${sarl.version}</janus.version>
 
         <!-- JAVA compiler version to be used -->
 	    <maven.compiler.source>1.8</maven.compiler.source>
@@ -164,7 +165,7 @@
         <dependency>
           <groupId>junit</groupId>
           <artifactId>junit</artifactId>
-          <version>4.12</version>
+          <version>[4.13.1,)</version>
 		</dependency>
 
        	

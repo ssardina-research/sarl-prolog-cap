@@ -1,7 +1,7 @@
 /** 
  * Class to boot up task 2 agent controller
  */
-import io.janusproject.Boot
+import io.sarl.sre.boot.Boot;
 import io.sarl.lang.core.Agent
 import java.util.Scanner
 
@@ -13,8 +13,10 @@ import java.util.Scanner
 class BootTestAgt {
 	// Code adapted from example how to boot from name string: 	http://tinyurl.com/ycolmey5
 	def static main(args : String[]) : void {
-		Boot.offline = true
-		Boot.verboseLevel = 7 // ALL
+		// OLD SRE 2.x version
+//		Boot.offline = true
+//		Boot.verboseLevel = 7 // ALL
+
 		val basePackage = "io.sarl.extras"
 		val AGENTS_AVAILABLE : String[] = #["default", "TestAgt_SWIJPL", "TestAgt_SWIJPL_MT"]
 
@@ -46,7 +48,7 @@ class BootTestAgt {
 		var SARLagent : Class<? extends Agent>
 		SARLagent = type.asSubclass(Agent)
 		assert SARLagent != null;
-		Boot.startJanus(SARLagent)
+		Boot.createMainObject.startAgent(SARLagent)		
 	}
 
 	/** 
