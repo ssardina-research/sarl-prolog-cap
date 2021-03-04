@@ -41,17 +41,17 @@ Version convention: Major.Minor.<SARL Version>. For example, 1.3.0.10.0 is versi
 ----------------------------------
 ## PRE-REQUISITES
 
-This capacity & skill requires [SWIPL with JPL installed for use](https://jpl7.org/DeploymentLinux):
+This capacity & skill requires [SWI-Prolog with JPL](https://jpl7.org/DeploymentLinux) installed:
 
-* [SWIPL](http://www.swi-prolog.org/): this is the actual SWI Prolog system, including its main library `libswipl.so/dll/dylib`.
+* [SWI-Prolog](http://www.swi-prolog.org/): this is the actual SWI Prolog system, including its main library `libswipl.so/dll/dylib`.
 	* Use either stable version 7.6.4 (available in standard Linux repos) or, better, compile and install 8.1.x from [SWI-devel repo](https://github.com/SWI-Prolog/swipl-devel).
 	* Official 8.0.x versions has issues with the `libswipl.so/dll/dylib` library and makes JPL crash; see [issue](https://github.com/ssardina-research/packages-jpl/issues/21). It has been fixed in the git repo though, and should be fine in higher 8.2.x.
-* [SWI JPL](https://jpl7.org/) bidirectional SWI-Java interface. In Linux Ubuntu it is provided by package `swi-prolog-java`. It has two parts:
-	* Native library `libjpl.so/dll/dylib`: This is the C library implementing the interface between SWIPL and Java.
+* [JPL](https://jpl7.org/) bidirectional SWI-Java interface. In Linux Ubuntu it is provided by package `swi-prolog-java`. It has two parts:
+	* Native library `libjpl.so/dll/dylib`: This is the C library implementing the interface between SWI-Prolog and Java.
 	* Prolog library `jpl.pl`: This is a SWI Prolog library providing the [Prolog API](https://jpl7.org/PrologApiOverview) to access Java from Prolog.
 	* Java API `jpl.jar`: provides the [Java API](https://jpl7.org/JavaApiOverview) to access Prolog from Java.
 		* The package `swi-prolog-java` provided in standard distributions (e.g., Ubuntu) come with JPL 7.5.0 (in Linux, in `/usr/lib/swi-prolog/lib/jpl.jar`), which is very old.
-	    * The [PPA](https://www.swi-prolog.org/build/PPA.txt) has SWIPL 8.2+ which already carries JPL 7.6.0 version. One could install this version into Maven local repo as follows:
+	    * The [PPA](https://www.swi-prolog.org/build/PPA.txt) has SWI-Prolog 8.2+ which already carries JPL 7.6.0 version. One could install this version into Maven local repo as follows:
 
 				mvn install:install-file -Dfile=/usr/local/swipl-git/lib/swipl/lib/jpl.jar \
 						-DgroupId=com.github.SWI-Prolog -DartifactId=packages-jpl \
@@ -63,7 +63,7 @@ This capacity & skill requires [SWIPL with JPL installed for use](https://jpl7.o
 
 Here are some [good examples on how to use JPL](https://github.com/SWI-Prolog/packages-jpl/blob/master/examples/java/) from Java.
 
-Besides the above being installed, it is also very important to tell your system and application where Prolog is and the above components can be found. To do so, one may need to set-up a few environment variables, like `LD_LIBRARY_PATH` and `LD_PRELOAD` (to find native `.so/dll/dylib` libraries), `CLASSPATH` (to point to `jpl.jar`) and `SWI_HOME_DIR` (to point to SWIPL home dir). Please refer to [this guide](https://jpl7.org/DeploymentLinux) on JPL documentation.
+Besides the above being installed, it is also very important to tell your system and application where Prolog is and the above components can be found. To do so, one may need to set-up a few environment variables, like `LD_LIBRARY_PATH` and `LD_PRELOAD` (to find native `.so/dll/dylib` libraries), `CLASSPATH` (to point to `jpl.jar`) and `SWI_HOME_DIR` (to point to SWI-Prolog home dir). Please refer to [this guide](https://jpl7.org/DeploymentLinux) on JPL documentation.
 
 ----------------------------------
 ## DEVELOP CAPACITY/SKILL FURTHER
