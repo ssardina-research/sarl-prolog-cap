@@ -47,7 +47,7 @@ class BootTestAgt {
 		var SARLagent : Class<? extends Agent>
 		SARLagent = type.asSubclass(Agent)
 		assert SARLagent != null;
-		sre.startAgent(typeof(DummyMultiCarController))
+		sre.startAgent(SARLagent)
 	}
 
 	/** 
