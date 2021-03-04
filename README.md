@@ -23,13 +23,14 @@ Version convention: Major.Minor.<SARL Version>. For example, 1.3.0.10.0 is versi
 	- [DEVELOP CAPACITY/SKILL FURTHER](#develop-capacityskill-further)
 	- [USING SARL-PROLOG-CAP IN YOUR SARL APPLICATION VIA MAVEN](#using-sarl-prolog-cap-in-your-sarl-application-via-maven)
 	- [WHAT IS PROVIDED IN THIS CAPACITY/SKILL](#what-is-provided-in-this-capacityskill)
-		- [Capacity KB_PROLOG: general actions for Prolog access from SARL agents](#capacity-kb_prolog-general-actions-for-prolog-access-from-sarl-agents)
-		- [Skill `SWIJPL_KB_Prolog`: concrete implementation using SWI Prolog and JPL interface](#skill-swijpl_kb_prolog-concrete-implementation-using-swi-prolog-and-jpl-interface)
+		- [Capacity `KB_Prolog`: general actions for Prolog access from SARL agents](#capacity-kb_prolog-general-actions-for-prolog-access-from-sarl-agents)
+		- [Skill `SWIJPL_KB_Prolog`: implementation of `KB_Prolog` using SWI Prolog + JPL](#skill-swijpl_kb_prolog-implementation-of-kb_prolog-using-swi-prolog--jpl)
 	- [USING SWI-Prolog IN SARL AGENTS/APPLICATIONS](#using-swi-prolog-in-sarl-agentsapplications)
 		- [1 - Creating a domain-specific Knowledge-base capacity/skill](#1---creating-a-domain-specific-knowledge-base-capacityskill)
 		- [2 - Directly using the capacity and skill in agents](#2---directly-using-the-capacity-and-skill-in-agents)
 		- [3 - SWI-Prolog Access via JPL](#3---swi-prolog-access-via-jpl)
 	- [TROUBLESHOOTING](#troubleshooting)
+		- [Undefined symbols](#undefined-symbols)
 	- [CONTACT](#contact)
 	- [LICENSE](#license)
 
@@ -42,7 +43,7 @@ Version convention: Major.Minor.<SARL Version>. For example, 1.3.0.10.0 is versi
 
 This capacity & skill requires [SWIPL with JPL installed for use](https://jpl7.org/DeploymentLinux):
 
-* [SWIPL](http://www.swi-prolog.org/): this is the actual SWI Prolog system, including its main library ``libswipl.so/dll/dylib`.
+* [SWIPL](http://www.swi-prolog.org/): this is the actual SWI Prolog system, including its main library `libswipl.so/dll/dylib`.
 	* Use either stable version 7.6.4 (available in standard Linux repos) or, better, compile and install 8.1.x from [SWI-devel repo](https://github.com/SWI-Prolog/swipl-devel).
 	* Official 8.0.x versions has issues with the `libswipl.so/dll/dylib` library and makes JPL crash; see [issue](https://github.com/ssardina-research/packages-jpl/issues/21). It has been fixed in the git repo though, and should be fine in higher 8.2.x.
 * [SWI JPL](https://jpl7.org/) bidirectional SWI-Java interface. In Linux Ubuntu it is provided by package `swi-prolog-java`. It has two parts:
@@ -122,7 +123,7 @@ The JitPack link for this repository is [here](https://jitpack.io/#ssardina-agts
 ----------------------------------
 ## WHAT IS PROVIDED IN THIS CAPACITY/SKILL
 
-### Capacity KB_PROLOG: general actions for Prolog access from SARL agents
+### Capacity `KB_Prolog`: general actions for Prolog access from SARL agents
 
 This `KB_Prolog` capacity provides the following hooks to Prolog access:
 
@@ -145,7 +146,7 @@ This `KB_Prolog` capacity provides the following hooks to Prolog access:
 	* `ask(queryS : String, params : Object*) : Iterator`: returns an iterator to solutions.
 	* `ask2(queryS : String, params : Object*) : Iterator`: returns an iterator to solution bindings `Map<String,Term>`.
 
-### Skill `SWIJPL_KB_Prolog`: concrete implementation using SWI Prolog and JPL interface
+### Skill `SWIJPL_KB_Prolog`: implementation of `KB_Prolog` using SWI Prolog + JPL
 
 This skill is the recommended one to use and basically relies directly on the [JPL infrastructure](https://jpl7.org/).
 The main tools at disposal to extend this skill are JPL:
@@ -377,7 +378,9 @@ for (solution : allSolutions("percepts(Agent, Step, Percepts)"))
 ----------------------------------
 ## TROUBLESHOOTING
 
-* Did you get something like this?
+### Undefined symbols
+
+If you get something like this:
 
 ```shell
 
@@ -393,7 +396,7 @@ ERROR: /usr/lib/swi-prolog/library/prolog_pack.pl:52:
 java: symbol lookup error: /usr/lib/swi-prolog/lib/amd64/readutil.so: undefined symbol: PL_new_atom
 ```
 
-Then you may not have set `LD_PRELOAD` env variable correctly.
+then you may not have set `LD_PRELOAD` environment variable correctly to point to your `libswipl.so` (so that it is loaded in advance).
 
 ----------------------------------
 ## CONTACT
