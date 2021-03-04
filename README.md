@@ -26,8 +26,8 @@ Version convention: Major.Minor.<SARL Version>. For example, 1.3.0.10.0 is versi
 		- [Capacity KB_PROLOG: general actions for Prolog access from SARL agents](#capacity-kb_prolog-general-actions-for-prolog-access-from-sarl-agents)
 		- [Skill `SWIJPL_KB_Prolog`: concrete implementation using SWI Prolog and JPL interface](#skill-swijpl_kb_prolog-concrete-implementation-using-swi-prolog-and-jpl-interface)
 	- [USING SWI-Prolog IN SARL AGENTS/APPLICATIONS](#using-swi-prolog-in-sarl-agentsapplications)
-		- [1 - Creating a domain-specific Knowledge-base capacity/skill.](#1---creating-a-domain-specific-knowledge-base-capacityskill)
-		- [2 - Directly using the capacity and skill in agents.](#2---directly-using-the-capacity-and-skill-in-agents)
+		- [1 - Creating a domain-specific Knowledge-base capacity/skill](#1---creating-a-domain-specific-knowledge-base-capacityskill)
+		- [2 - Directly using the capacity and skill in agents](#2---directly-using-the-capacity-and-skill-in-agents)
 		- [3 - SWI-Prolog Access via JPL](#3---swi-prolog-access-via-jpl)
 	- [TROUBLESHOOTING](#troubleshooting)
 	- [CONTACT](#contact)
@@ -43,12 +43,12 @@ Version convention: Major.Minor.<SARL Version>. For example, 1.3.0.10.0 is versi
 This capacity & skill requires [SWIPL with JPL installed for use](https://jpl7.org/DeploymentLinux):
 
 * [SWIPL](http://www.swi-prolog.org/): this is the actual SWI Prolog system, including its main library ``libswipl.so/dll/dylib`.
-	* Use either stable version 7.6.4 (available in standard Linux repos) or, better, compile and install 8.1.x from [SWI-devel repo](https://github.com/SWI-Prolog/swipl-devel). 
-	* Unfortunately, the official 8.0.x versions in the PPA repo have issues with the `libswipl.so/dll/dylib` library and makes JPL crash; see [issue](https://github.com/ssardina-research/packages-jpl/issues/21). It has been fixed in the git repo though, but you need to compile manually yet.
-* [SWI JPL](https://jpl7.org/) bidirectional SWI-Java interface. In Linux Ubuntu it is provided by package `swi-prolog-java`. It has two parts: 
-	* _Native library_ `libjpl.so/dll/dylib`: This is the C library implementing the interface between SWIPL and Java. 
-	* _jpl.pl_: This is a SWI Prolog library providing the [Prolog API](https://jpl7.org/PrologApiOverview) to access Java from Prolog.
-	* _Java API_: this is the `jpl.jar` that provides the [Java API](https://jpl7.org/JavaApiOverview) to access Prolog from Java. 
+	* Use either stable version 7.6.4 (available in standard Linux repos) or, better, compile and install 8.1.x from [SWI-devel repo](https://github.com/SWI-Prolog/swipl-devel).
+	* Official 8.0.x versions has issues with the `libswipl.so/dll/dylib` library and makes JPL crash; see [issue](https://github.com/ssardina-research/packages-jpl/issues/21). It has been fixed in the git repo though, and should be fine in higher 8.2.x.
+* [SWI JPL](https://jpl7.org/) bidirectional SWI-Java interface. In Linux Ubuntu it is provided by package `swi-prolog-java`. It has two parts:
+	* Native library `libjpl.so/dll/dylib`: This is the C library implementing the interface between SWIPL and Java.
+	* Prolog library `jpl.pl`: This is a SWI Prolog library providing the [Prolog API](https://jpl7.org/PrologApiOverview) to access Java from Prolog.
+	* Java API `jpl.jar`: provides the [Java API](https://jpl7.org/JavaApiOverview) to access Prolog from Java.
 		* The package `swi-prolog-java` provided in standard distributions (e.g., Ubuntu) come with JPL 7.5.0 (in Linux, in `/usr/lib/swi-prolog/lib/jpl.jar`), which is very old.
 	    * The [PPA](https://www.swi-prolog.org/build/PPA.txt) has SWIPL 8.2+ which already carries JPL 7.6.0 version. One could install this version into Maven local repo as follows:
 
@@ -56,14 +56,13 @@ This capacity & skill requires [SWIPL with JPL installed for use](https://jpl7.o
 						-DgroupId=com.github.SWI-Prolog -DartifactId=packages-jpl \
 						-Dversion=7.6.0 -Dpackaging=jar
 
-		
+
 		* Still, SARL-PROLOG-CAP will grab the latest version from the official repo, by obtaining the [latest SNAPSHOT in the maven branch](https://github.com/SWI-Prolog/packages-jpl/tree/maven).
-		
-	
+
+
 Here are some [good examples on how to use JPL](https://github.com/SWI-Prolog/packages-jpl/blob/master/examples/java/) from Java.
 
 Besides the above being installed, it is also very important to tell your system and application where Prolog is and the above components can be found. To do so, one may need to set-up a few environment variables, like `LD_LIBRARY_PATH` and `LD_PRELOAD` (to find native `.so/dll/dylib` libraries), `CLASSPATH` (to point to `jpl.jar`) and `SWI_HOME_DIR` (to point to SWIPL home dir). Please refer to [this guide](https://jpl7.org/DeploymentLinux) on JPL documentation.
-
 
 ----------------------------------
 ## DEVELOP CAPACITY/SKILL FURTHER
@@ -73,9 +72,9 @@ To _develop_ this capacity/skills framework, clone the repo (or your fork) and s
 To test all is working, you can do:
 
 1. Build the framework: `mvn clean package`
-2. Run basic JPL-based unit test (no SARL, just connectivity to JPL): 
+2. Run basic JPL-based unit test (no SARL, just connectivity to JPL):
    * Via Maven: `mvn surefire:test -DskipTests=false`
-   * Directly using Java and JUnit4: 
+   * Directly using Java and JUnit4:
 
 		```bash
 		[ssardina@Thinkpad-X1 sarl-prolog-cap.git]$ java -cp target/sarl-prolog-cap-4.0.0.11.0.jar:/usr/share/java/junit4.jar:/usr/share/java/hamcrest-core-1.3.jar:target/test-classes/:/usr/lib/swi-prolog/lib/jpl.jar org.junit.runner.JUnitCore io.sarl.extras.JPLTest
@@ -97,7 +96,7 @@ To test all is working, you can do:
 _NOTE:_ the test agents in step 3 will at the end dump the Prolog databases into directory `my_dump_test`.
 
 ----------------------------------
-## USING SARL-PROLOG-CAP IN YOUR SARL APPLICATION VIA MAVEN 
+## USING SARL-PROLOG-CAP IN YOUR SARL APPLICATION VIA MAVEN
 
 To add the dependency to this capacity/skills in your SARL application, you can use Maven with JitPack, by adding this dependency and repository in to your `pom.xml`:
 
@@ -118,7 +117,7 @@ To add the dependency to this capacity/skills in your SARL application, you can 
 </repository>
 ```
 
-The JitPack link for this repository is [here](https://jitpack.io/#ssardina-agts/sarl-prolog-cap). 
+The JitPack link for this repository is [here](https://jitpack.io/#ssardina-agts/sarl-prolog-cap).
 
 ----------------------------------
 ## WHAT IS PROVIDED IN THIS CAPACITY/SKILL
@@ -180,7 +179,7 @@ assertFirst("agentName(?)", mySARLname)	// myName is a string
 val solution = askOnce("get_player_last_loc(?, ?, Lat, Long)", eisName, 23)
 if (solution !== null) {
 		agent_says(
-			"Player **{0}** location is ({1},{2}) and charge is {3} at step {4}", 
+			"Player **{0}** location is ({1},{2}) and charge is {3} at step {4}",
 			eisName,
 			solution.get("Lat").floatValue,
 			solution.get("Long").floatValue,
@@ -212,7 +211,7 @@ print_integer(JRef, X2) :-
     jpl_type_to_classname(T, ClassName),    % ClassName should be java.lang.Integer
     X2 is X+1,
     format(string(Text), "MESSAGE FROM PROLOG: The integer value of JAVA object (~s) is ~d", [ClassName, X2]),
-    writeln(Text).	
+    writeln(Text).
 ```
 
 
@@ -223,111 +222,108 @@ To see what you can do from Prolog in terms of Java objects, refer to the [Prolo
 
 There are basically three ways one can use SWI-Prolog inside SARL agents, depending on the level of abstraction:
 
-1. **[RECOMMENDED]** Create a capacity **KB_Domain** for your domain application that embodies the usual KB queries required, and a skill **SWI_KB_Domain** for it extending skill **SWIJPL_KB_Prolog** (which implements general Prolog capacity **KB_Prolog**) from the SARL Prolog Capacity framework that implements those queries. The SARL agent will use this capacity and skill.
-2. Make the agents directly use capacity **KB_PROLOG** (and its default skill **SWIJPL_KB_Prolog**). As soon as the agent acquires such a skill, a Prolog engine will be created by the skill. Then the agent for example can load a KB by consulting the file: `consult_file('myKB.pl')`. This is similar to the first option but the code will be in the SARL agent itself rather than encapsulated in a domain capacity/skill.
-3. Make the agents directly access SWI-Prolog via the Mochalog or JPL APIs (depending which skill you use), for example, by creating a Prolog engine in the initialization of agents, etc.
+1. **[RECOMMENDED]** Create a capacity **`KB_Domain`** for your domain application that embodies the usual KB queries required, and a skill **`SWI_KB_Domain`** for it extending skill `SWIJPL_KB_Prolog` (which implements general Prolog capacity `KB_Prolog`) from the SARL Prolog Capacity framework that implements those queries. The SARL agent will use this capacity and skill.
+2. Make the agents directly use capacity `KB_Prolog` (and its default skill `SWIJPL_KB_Prolog`). As soon as the agent acquires such a skill, a Prolog engine will be created by the skill. Then the agent for example can load a KB by consulting the file: `consult_file('myKB.pl')`. This is similar to the first option but the code will be in the SARL agent itself rather than encapsulated in a domain capacity/skill.
+3. Make the agents directly access SWI-Prolog via the JPL APIs (depending which skill you use), for example, by creating a Prolog engine in the initialization of agents, etc.
 
-### 1 - Creating a domain-specific Knowledge-base capacity/skill.
+### 1 - Creating a domain-specific Knowledge-base capacity/skill
 
-This is the recommended approach. The idea is to create a capacity **KB_Domain** for your domain application that embodies the usual KB queries required, and a corresponding skill **SWI_KB_Domain** for it that _extends_ the base **SWIJPL_KB_Prolog** skill (which itself implements general Prolog capacity **KB_Prolog**) from the SARL Prolog Capacity framework that implements those queries. 
+This is the recommended approach. The idea is to create a capacity **`KB_Domain`** (e.g., `KB_Elevator`) for your domain application that embodies the usual KB queries required, and a corresponding skill **`SWI_KB_Domain`** for it that _extends_ the base `SWIJPL_KB_Prolog` skill (which itself implements general Prolog capacity `KB_Prolog`) from the SARL Prolog Capacity framework. 
 
-The domain-dependent **SWI_KB_Domain** skill will have access to all the SWI Prolog tools provided in skill **SWIJPL_KB_Prolog** and can implement the domain queries via SWI queries using the Mochalog and JPL infrastructures.
- 
+The domain-dependent `SWI_KB_Domain` skill will have access to all the SWI-Prolog tools provided in skill `SWIJPL_KB_Prolog` and can implement the domain queries via SWI queries using the JPL infrastructure.
+
 Under this approach, the SARL agent will:
-	* Use capacity **KB_Domain**, which is the capacity for the queries of the domain.
-		* A SARL agent will only use the queries provided by this capability via its functions.
-	* Use skill **SWI_KB_Domain**, which implements capacity **KB_Domain** and extends **SWIJPL_KB_Prolog**.
-		* It is this skill that will perform Prolog queries via the Prolog tools offered by **KB_Prolog**.
 
-Note that the functions in built-in **SWIJPL_KB_Prolog** will _NOT_ be visible to the SARL agent itself, who can only access functions defined in domain capacity **KB_Domain**. If the SARL agent wants to do direct Prolog queries, it can also use capacity **KB_Prolog**, which means that the SWI-based functions implemented in skill **SWIJPL_KB_Prolog** are now accessible at the agent level.
+* Use capacity `KB_Domain`, which is the capacity for the queries of the domain.
+* Adopt skill `SWI_KB_Domain`, which implements capacity `KB_Domain` and extends `SWIJPL_KB_Prolog`.
+* The SARL agent will only use the queries provided by these capability/skill via its functions.
+
+Note that the functions in built-in `SWIJPL_KB_Prolog` will _NOT_ be visible to the SARL agent itself, who can only access functions defined in domain capacity `KB_Domain`. If the SARL agent wants to do direct Prolog queries, it can also use capacity `KB_Prolog`, which means that the SWI-based functions implemented in skill `SWIJPL_KB_Prolog` are now accessible at the agent level.
 
 Here are the steps to this approach:
 
-1. To start, create a capacity **C** for your application that provides the main queries to your domain.
-	* For example, `KB_Elevator` capacity for an elevator domain with functions such as:
-		* `kb_load(file : String)`: load the KB encoded in a file.
-		* `kb_registerCarRequest(floor : int, dir : String)`: register that there has been a request in a floor towards a direction.
-		* `kb_getNextJob() : Pair<Integer, Direction>`: get the next job (floor & direction) to serve. (see the [Pair](http://gangmax.me/blog/2017/10/10/how-to-return-multiple-values-from-a-java-method/) class)
-	* Observe this capacity can be implemented in many ways, for example, with plan Java.
-2. Create a skill **S** for the capacity **C** that will be a Prolog Knowledgebase.
-	* The skill will *extend* a skill for **KB_Prolog**, for example it can extend the skill `SWIJPL_KB_Prolog`. This means that everything in the **KB_Prolog** capacity will be available in **S** so that **S** can use Prolog to implement the domain queries. For example:
+1. To start, create a domain-specific capacity for your application that provides the main queries to your domain. For example, `KB_Elevator` capacity for an elevator domain with functions such as:
 
-```java
+   - `kb_load(file : String)`: load the KB encoded in a file.
+   - `kb_registerCarRequest(floor : int, dir : String)`: register that there has been a request in a floor towards a direction.
+   - `kb_getNextJob() : Pair<Integer, Direction>`: get the next job (floor & direction) to serve. (see the [Pair](http://gangmax.me/blog/2017/10/10/how-to-return-multiple-values-from-a-java-method/) class)
 
-skill SWI_KB_Elevator extends SWIJPL_KB_Prolog implements KB_Elevator  {
+1. Create a domain skill for the domain capacity just created. The skill will *extend* a skill for capacity `KB_Prolog`, for example it can extend the skill `SWIJPL_KB_Prolog`. This means that everything in the `KB_Prolog` capacity will be available in the domain skill so that it can use Prolog to implement the domain queries. For example:
 
-	val logging_level : int
-	new (l : int = 0, name : String) {
-		super(name) // Call the super's constructor
-		logging_level = l
+	```java
+
+	skill SWI_KB_Elevator extends SWIJPL_KB_Prolog implements KB_Elevator  {
+
+		val logging_level : int
+		new (l : int = 0, name : String) {
+			super(name) // Call the super's constructor
+			logging_level = l
+		}
+
+		def kb_registerCarRequest(floor : int, dir : String) {
+			assertFirst("open_car_request(?, ?)", floor, dir)
+		}
+
+		def kb_load(file : String) {
+			consult_file(file)
+		}
+
+		....
+	}
+	```
+
+1. Your application will use the domain capacity and adopt its domain skill:
+
+	```java
+
+	import au.edu.rmit.agtgrp.elevatorsim.sarlctrl.beliefs.KB_Elevator
+	import au.edu.rmit.agtgrp.elevatorsim.sarlctrl.beliefs.SWI_KB_Elevator
+
+	// http://gangmax.me/blog/2017/10/10/how-to-return-multiple-values-from-a-java-method/
+	import org.apache.commons.lang3.tuple.Pair
+
+	setSkill(new SWI_KB_Elevator(0, "agent23", "my_dump"))
+
+	// Load agent knowledge base
+	kb_load("src/main/prolog/sweeper_elevator_agent.pl")
+	reportMessage("I have loaded the SWI KB successfully!")
+
+
+	on CarRequestPercept
+	{
+		reportPersonRequestedService(occurrence.floor, occurrence.direction)
+
+		// Add car request to our beliefs
+		kb_registerCarRequest(occurrence.floor, occurrence.direction.name);
+
+	// This action comes (is inherited) from KB_Prolog directly
+		kb_dump()
 	}
 
-	def kb_registerCarRequest(floor : int, dir : String) {
-		assertFirst("open_car_request(?, ?)", floor, dir)
+	/**
+	* Handle the most preferable next request as soon as
+	* it is available. Preference is defined by our beliefs.
+	*/
+	private def performNextJob
+	{
+		// Begin polling for new jobs asynchronously
+		execute [
+			val job : Pair<Integer, Direction> = kb_getNextJob()
+			val destination : int = job.left
+			val direction : Direction = job.right
+
+			reportTravellingTo(carID, destination, direction)
+
+			// Send car to destination by communicating it to Boss (and everyone else)
+			var sendCar = new SendCarAction(carID, destination, direction)
+			emit(sendCar) // Notify the SweeperBossAgent
+		]
 	}
+	```
 
-	def kb_load(file : String) {
-		consult_file(file)
-	}
+### 2 - Directly using the capacity and skill in agents
 
-	....
-}
-```
-
-3. Your application will use skill **S** (for domain capacity **C**):
-
-```java
-
-import au.edu.rmit.agtgrp.elevatorsim.sarlctrl.beliefs.KB_Elevator
-import au.edu.rmit.agtgrp.elevatorsim.sarlctrl.beliefs.SWI_KB_Elevator
-
-// http://gangmax.me/blog/2017/10/10/how-to-return-multiple-values-from-a-java-method/
-import org.apache.commons.lang3.tuple.Pair
-
-setSkill(new SWI_KB_Elevator(0, "agent23", "my_dump"))
-
-// Load agent knowledge base
-kb_load("src/main/prolog/sweeper_elevator_agent.pl")
-reportMessage("I have loaded the SWI KB successfully!")		
-
-
-on CarRequestPercept 
-{
-	reportPersonRequestedService(occurrence.floor, occurrence.direction)
-
-	// Add car request to our beliefs
-	kb_registerCarRequest(occurrence.floor, occurrence.direction.name);
-
-// This action comes (is inherited) from KB_Prolog directly
-	kb_dump()
-}
-
-/**
- * Handle the most preferable next request as soon as
- * it is available. Preference is defined by our beliefs.
- */
-private def performNextJob
-{
-	// Begin polling for new jobs asynchronously
-	execute [
-		val job : Pair<Integer, Direction> = kb_getNextJob()
-		val destination : int = job.left
-		val direction : Direction = job.right
-
-		reportTravellingTo(carID, destination, direction)
-
-		// Send car to destination by communicating it to Boss (and everyone else)
-		var sendCar = new SendCarAction(carID, destination, direction)
-		emit(sendCar) // Notify the SweeperBossAgent
-	]
-}
-```
-
-### 2 - Directly using the capacity and skill in agents.
-
-Here, instead of creating a domain capacity and skill for the common Prolog accesses that the application will do (e.g., common queries), we can make the agents use the **KB_Prolog** capacity directly. This means that the behaviors of the SARL agent will access Prolog  directly via the skill implementing the generic **KB_Prolog** capacity.
-
-If you use the built-in **SWIJPL_KB_Prolog** skill (that implements **KB_Prolog** using SWI Prolog):
+Here, instead of creating a domain capacity and skill for the common Prolog accesses that the application will do (e.g., common queries), we can make the agents use the `KB_Prolog` capacity directly. This means that the behaviors of the SARL agent will access Prolog directly via the skill implementing the generic `KB_Prolog` capacity, for example by adopting skill `SWIJPL_KB_Prolog` skill that uses SWI-Prolog:
 
 ```java
 
@@ -335,9 +331,9 @@ setSkill(new SWIJPL_KB_Prolog("agent23"))
 
 // Load agent knowledge base
 consult_file("src/main/prolog/sweeper_elevator_agent.pl")
-reportMessage("I have loaded the SWI KB successfully!")		
+reportMessage("I have loaded the SWI KB successfully!")
 
-on CarRequestPercept 
+on CarRequestPercept
 {
 	reportPersonRequestedService(occurrence.floor, occurrence.direction)
 
@@ -351,7 +347,7 @@ on CarRequestPercept
 
 ### 3 - SWI-Prolog Access via JPL 
 
-In this approach, we directly use SWI-Prolog via the JPL high-level infrastructure, without going via any SARL skill/capacity.
+In this approach, we directly use SWI-Prolog via the JPL high-level  infrastructure, without going via any SARL skill/capacity.
 
 Here is some example code of JPL-based use (though for another application) in an elevator controller. Please observe the use of a module name to encapsulate the beliefset of the particular agent:
 
@@ -400,12 +396,12 @@ java: symbol lookup error: /usr/lib/swi-prolog/lib/amd64/readutil.so: undefined 
 Then you may not have set `LD_PRELOAD` env variable correctly.
 
 ----------------------------------
-## CONTACT 
+## CONTACT
 
 * Sebastian Sardina (ssardina@gmail.com)
 
 ----------------------------------
-## LICENSE 
+## LICENSE
 
 This project is using the GPLv3 for open source licensing for information and the license visit GNU website (https://www.gnu.org/licenses/gpl-3.0.en.html).
 
