@@ -112,4 +112,12 @@ capacity KB_Prolog {
 	 */
 	def ask(query : String, params : Object*) : Query
 	def askIn(query : String, module : Object, params : Object*) : Query
+	
+	
+	/**
+	 * Quote a String with '...' to make it an atom
+	 */
+	def quote(atom : String) : String
+	
+	
 }

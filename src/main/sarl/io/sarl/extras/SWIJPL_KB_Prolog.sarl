@@ -250,4 +250,8 @@ skill SWIJPL_KB_Prolog implements KB_Prolog {
 	def askIn(queryString : String, module : Object, params : Object*) : Query {
 		return new Query(add_module((module as String), queryString), paramsToTerms(params))
 	}
+
+	def quote(atom : String) : String {
+		return String.format("'%s'", atom)
+	}
 }
