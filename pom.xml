@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<!-- ########################################################################## -->
@@ -44,48 +46,13 @@
 
 		<skipTests>true</skipTests>
 
-		<!-- to run SARL directly via Java -->
+		<!-- To run SARL directly via Java -->
 		<!-- The main class to boot by default on exec:java -->
 		<!-- override by -Dexec.mainClass= -->
 		<cliRunnerMainClass>io.sarl.sre.boot.Boot</cliRunnerMainClass>
 		<exec.mainClass>BootTestAgt</exec.mainClass>
 	</properties>
 
-
-	<!-- ########################################################################## -->
-	<!-- ############################## REPOSITORIES ############################## -->
-	<!-- ########################################################################## -->
-	<repositories>
-		<!-- SARL Repo (contains SARL language core) -->
-		<repository>
-			<id>maven.sarl.io</id>
-			<name>SARL Maven Repository</name>
-			<url>http://maven.sarl.io/</url>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-
-		<!-- JitPack used for remote installation of MASSim from Github -->
-		<repository>
-			<id>jitpack.io</id>
-			<name>JitPack Repository</name>
-			<url>https://jitpack.io</url>
-		</repository>
-	</repositories>
-
-
-	<!-- Repository definitions -->
-	<pluginRepositories>
-		<pluginRepository>
-			<id>maven.sarl.io</id>
-			<name>SARL Maven Repository</name>
-			<url>http://maven.sarl.io/</url>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</pluginRepository>
-	</pluginRepositories>
 
 
 	<!-- ########################################################################## -->
@@ -94,10 +61,116 @@
 	<dependencies>
 
 		<dependency>
+			<!-- To compile SARL applications -->
 			<groupId>io.sarl.maven</groupId>
 			<artifactId>io.sarl.maven.sdk</artifactId>
 			<version>${sarl.version}</version>
+			<!-- To remove all the WARNINGS -->
+			<exclusions>
+				<exclusion>
+					<groupId>org.eclipse.platform</groupId>
+					<artifactId>org.eclipse.equinox.common</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.platform</groupId>
+					<artifactId>org.eclipse.osgi</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.platform</groupId>
+					<artifactId>org.eclipse.equinox.common</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.platform</groupId>
+					<artifactId>org.eclipse.core.jobs</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.platform</groupId>
+					<artifactId>org.eclipse.equinox.registry</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.platform</groupId>
+					<artifactId>org.eclipse.equinox.preferences</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.platform</groupId>
+					<artifactId>org.eclipse.equinox.preferences</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.platform</groupId>
+					<artifactId>org.eclipse.core.contenttype</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.platform</groupId>
+					<artifactId>org.eclipse.equinox.app</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.platform</groupId>
+					<artifactId>org.eclipse.osgi</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.platform</groupId>
+					<artifactId>org.eclipse.equinox.common</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.platform</groupId>
+					<artifactId>org.eclipse.equinox.preferences</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.platform</groupId>
+					<artifactId>org.eclipse.equinox.registry</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.platform</groupId>
+					<artifactId>org.eclipse.equinox.registry</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.platform</groupId>
+					<artifactId>org.eclipse.core.jobs</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.platform</groupId>
+					<artifactId>org.eclipse.core.contenttype</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.platform</groupId>
+					<artifactId>org.eclipse.equinox.app</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.platform</groupId>
+					<artifactId>org.eclipse.osgi</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.platform</groupId>
+					<artifactId>org.eclipse.core.runtime</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.platform</groupId>
+					<artifactId>org.eclipse.core.filesystem</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.platform</groupId>
+					<artifactId>org.eclipse.core.runtime</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.platform</groupId>
+					<artifactId>org.eclipse.core.resources</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.platform</groupId>
+					<artifactId>org.eclipse.text</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.jdt</groupId>
+					<artifactId>org.eclipse.jdt.core</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 
+		<!-- To run SARL applications using the SRE -->
+		<dependency>
+			<groupId>io.janusproject</groupId>
+			<artifactId>io.janusproject.kernel</artifactId>
+			<version>3.${sarl.version}</version>
 			<!-- To remove all the WARNINGS -->
 			<exclusions>
 				<exclusion>
@@ -207,7 +280,7 @@
 		</dependency>
 
 
-		<!--  JUNIT for unit testing  -->
+		<!-- JUNIT for unit testing -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -215,13 +288,12 @@
 		</dependency>
 
 
-		<!--  JPL bidirectional Prolog-Java: https://github.com/SWI-Prolog/packages-jpl  -->
+		<!-- JPL bidirectional Prolog-Java: https://github.com/SWI-Prolog/packages-jpl -->
 		<dependency>
 			<groupId>com.github.SWI-Prolog</groupId>
 			<artifactId>packages-jpl</artifactId>
 			<version>V8.3.2</version> <!-- version 7.6.1 of JPL -->
 		</dependency>
-
 
 	</dependencies>
 
@@ -234,6 +306,43 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
+
+
+	<!-- ########################################################################## -->
+	<!-- ############################## REPOSITORIES ############################## -->
+	<!-- ########################################################################## -->
+	<repositories>
+		<!-- SARL Repo (contains SARL language core) -->
+		<repository>
+			<id>maven.sarl.io</id>
+			<name>SARL Maven Repository</name>
+			<url>http://maven.sarl.io/</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+
+		<!-- JitPack used for remote installation of MASSim from Github -->
+		<repository>
+			<id>jitpack.io</id>
+			<name>JitPack Repository</name>
+			<url>https://jitpack.io</url>
+		</repository>
+	</repositories>
+
+
+	<!-- Repository definitions -->
+	<pluginRepositories>
+		<pluginRepository>
+			<id>maven.sarl.io</id>
+			<name>SARL Maven Repository</name>
+			<url>http://maven.sarl.io/</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
+
 
 
 	<!-- ########################################################################## -->
@@ -253,7 +362,7 @@
 
 		<testSourceDirectory>src/test/java/io/sarl/extras</testSourceDirectory>
 
-		<!--  PLUGINS FOR BUILDING -->
+		<!-- PLUGINS FOR BUILDING -->
 		<plugins>
 			<plugin>
 				<!-- SARL Maven compiler plugin -->
@@ -282,12 +391,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<!--  
-				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
-				</configuration>
-				-->
+				<!-- <configuration> <source>1.6</source> <target>1.6</target> </configuration> -->
 			</plugin>
 
 			<!-- Attach sources -->
