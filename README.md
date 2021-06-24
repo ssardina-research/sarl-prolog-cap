@@ -11,7 +11,7 @@ The package provides:
 
 This package can be obtained via Maven using JitPack: <https://jitpack.io/#ssardina-agts/sarl-prolog-cap>
 
-Version convention: Major.Minor.<SARL Version>. For example, 1.3.0.10.0 is version 1.3 for SARL 0.10.0.
+[Semantic versioning](https://semver.org/) is used with versions of the form `Major.Minor.Patch`. Each version will rely on a particular SARL version, which is indicated via `<sarl.version>` property in the POM file.
 
 ----------------------------------
 ## TABLE OF CONTENTS
@@ -57,9 +57,7 @@ This capacity & skill requires [SWI-Prolog with JPL](https://jpl7.org/Deployment
 						-DgroupId=com.github.SWI-Prolog -DartifactId=packages-jpl \
 						-Dversion=7.6.0 -Dpackaging=jar
 
-
 		* Still, SARL-PROLOG-CAP will grab the latest version from the official repo, by obtaining the [latest SNAPSHOT in the maven branch](https://github.com/SWI-Prolog/packages-jpl/tree/maven).
-
 
 Here are some [good examples on how to use JPL](https://github.com/SWI-Prolog/packages-jpl/blob/master/examples/java/) from Java.
 
@@ -77,7 +75,7 @@ To test all is working, you can do:
    * Via Maven: `mvn surefire:test -DskipTests=false`
    * Directly using Java and JUnit4:
 
-		```bash
+		```shell
 		[ssardina@Thinkpad-X1 sarl-prolog-cap.git]$ java -cp target/sarl-prolog-cap-4.0.0.11.0.jar:/usr/share/java/junit4.jar:/usr/share/java/hamcrest-core-1.3.jar:target/test-classes/:/usr/lib/swi-prolog/lib/jpl.jar org.junit.runner.JUnitCore io.sarl.extras.JPLTest
 		JUnit version 4.12
 		.SWI Prolog being executed: '/usr/lib/swi-prolog/bin/x86_64-linux/swipl'
@@ -107,7 +105,7 @@ To add the dependency to this capacity/skills in your SARL application, you can 
 <dependency>
     <groupId>com.github.ssardina-agts</groupId>
     <artifactId>sarl-prolog-cap</artifactId>
-    <version>4.0.0.11.0</version>
+    <version>87d4ea9</version>
 </dependency>
 
 <!-- JitPack used for remote installation of dependencies from Github and Bitbucket -->

@@ -1,184 +1,231 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
+	<!-- ########################################################################## -->
 	<!-- ############################## PROJECT INFO ############################## -->
+	<!-- ########################################################################## -->
 	<groupId>com.github.ssardina-agts</groupId>
 	<artifactId>sarl-prolog-cap</artifactId>
-	<version>4.0.${sarl.version}</version>
+	<version>4.1.0</version>
 
-    <name>SARL Capacity for SWI Prolog Connectivity</name>
-    <url>https://github.com/ssardina-agts/sarl-prolog-cap</url>
-    <description>
+	<name>SARL Capacity for SWI Prolog Connectivity</name>
+	<url>https://github.com/ssardina-agts/sarl-prolog-cap</url>
+	<description>
     	Capacities and Skills for SARL to connect to SWI Prolog system.
 		Relies on JPL (https://jpl7.org/)
 	</description>
 
-  	<developers>
-    	<developer>
-	      <name>Sebastian Sardina</name>
-	      <email>ssardina@gmail.com</email>
-	      <organization>ssardina-agts</organization>
-	      <organizationUrl>https://github.com/ssardina-agts</organizationUrl>
-	    </developer>
-  	</developers>
+	<developers>
+		<developer>
+			<name>Sebastian Sardina</name>
+			<email>ssardina@gmail.com</email>
+			<organization>ssardina-agts</organization>
+			<organizationUrl>https://github.com/ssardina-agts</organizationUrl>
+		</developer>
+	</developers>
 
-  	<licenses>
-	    <license>
-	      <name>GNU General Public License, Version 3.0</name>
-	      <url>https://www.gnu.org/licenses/gpl-3.0.en.html</url>
-	    </license>
-  	</licenses>
+	<licenses>
+		<license>
+			<name>GNU General Public License, Version 3.0</name>
+			<url>https://www.gnu.org/licenses/gpl-3.0.en.html</url>
+		</license>
+	</licenses>
 
- 	<!-- ############################## PROPERTIES ############################## -->
-    <properties>
-        <!-- SARL framework version and configuration -->
-        <sarl.version>0.11.0</sarl.version>
 
-        <!-- JANUS project version -->
-        <janus.version>3.${sarl.version}</janus.version>
+	<!-- ########################################################################## -->
+	<!-- ############################## PROPERTIES ############################## -->
+	<!-- ########################################################################## -->
+	<properties>
+		<!-- SARL framework version and configuration -->
+		<sarl.version>0.11.0</sarl.version>
 
-        <!-- JAVA compiler version to be used -->
-	    <maven.compiler.source>1.8</maven.compiler.source>
-	    <maven.compiler.target>1.8</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        
-        <skipTests>true</skipTests>
-    </properties>
-    
-   	<!-- ############################## REPOSITORIES ############################## -->
+		<jdk.version>1.8</jdk.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+		<skipTests>true</skipTests>
+
+		<!-- to run SARL directly via Java -->
+		<!-- The main class to boot by default on exec:java -->
+		<!-- override by -Dexec.mainClass= -->
+		<cliRunnerMainClass>io.sarl.sre.boot.Boot</cliRunnerMainClass>
+		<exec.mainClass>BootTestAgt</exec.mainClass>
+	</properties>
+
+
+	<!-- ########################################################################## -->
+	<!-- ############################## REPOSITORIES ############################## -->
+	<!-- ########################################################################## -->
 	<repositories>
-		<!-- JANUS Project kernel (contains SARL language core) -->
+		<!-- SARL Repo (contains SARL language core) -->
 		<repository>
-			<id>io.sarl-maven</id>
-			<name>SARL Snapshots</name>
+			<id>maven.sarl.io</id>
+			<name>SARL Maven Repository</name>
 			<url>http://maven.sarl.io/</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
 		</repository>
 
-  		<repository>
-          <id>com.github</id>
-          <name>GitHub SWI-Prolog/packages-jpl Apache Maven Packages</name>
-          <url>https://maven.pkg.github.com/SWI-Prolog/packages-jpl/</url>
-        </repository>
-        
-        <!-- JitPack used for getting Maven packages from GitHub -->
-        <repository>
-            <id>jitpack.io</id>
-            <name>JitPack Repository</name>
-            <url>https://jitpack.io</url>
-        </repository>
-        
-	
+		<!-- JitPack used for remote installation of MASSim from Github -->
+		<repository>
+			<id>jitpack.io</id>
+			<name>JitPack Repository</name>
+			<url>https://jitpack.io</url>
+		</repository>
 	</repositories>
-	
-	
+
+
+	<!-- Repository definitions -->
 	<pluginRepositories>
-		  <pluginRepository>
-		    <id>io.sarl-maven</id>
-		    <name>SARL Snapshots</name>
-		    <url>http://maven.sarl.io/</url>
-		    <snapshots>
-		      <enabled>true</enabled>
-		    </snapshots>
-		  </pluginRepository>
+		<pluginRepository>
+			<id>maven.sarl.io</id>
+			<name>SARL Maven Repository</name>
+			<url>http://maven.sarl.io/</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</pluginRepository>
 	</pluginRepositories>
 
-    
 
-  	<!-- ############################## DEPENDENCIES ############################## -->
-    <dependencies>
-        <!-- JANUS Project kernel (contains SARL language core) -->
-        <dependency>
-            <groupId>io.janusproject</groupId>
-            <artifactId>io.janusproject.kernel</artifactId>
-            <version>${janus.version}</version>
-            
-            <exclusions>
-              <exclusion>
-                <groupId>org.eclipse.platform</groupId>
-                <artifactId>org.eclipse.equinox.common</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.eclipse.platform</groupId>
-                <artifactId>org.eclipse.equinox.preferences</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.eclipse.platform</groupId>
-                <artifactId>org.eclipse.equinox.registry</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.eclipse.platform</groupId>
-                <artifactId>org.eclipse.equinox.registry</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.eclipse.platform</groupId>
-                <artifactId>org.eclipse.core.jobs</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.eclipse.platform</groupId>
-                <artifactId>org.eclipse.core.contenttype</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.eclipse.platform</groupId>
-                <artifactId>org.eclipse.equinox.app</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.eclipse.platform</groupId>
-                <artifactId>org.eclipse.osgi</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.eclipse.platform</groupId>
-                <artifactId>org.eclipse.core.runtime</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.eclipse.platform</groupId>
-                <artifactId>org.eclipse.core.filesystem</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.eclipse.platform</groupId>
-                <artifactId>org.eclipse.core.runtime</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.eclipse.platform</groupId>
-                <artifactId>org.eclipse.core.resources</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.eclipse.platform</groupId>
-                <artifactId>org.eclipse.text</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.eclipse.jdt</groupId>
-                <artifactId>org.eclipse.jdt.core</artifactId>
-              </exclusion>
-            </exclusions>
-        </dependency>
+	<!-- ########################################################################## -->
+	<!-- ############################## DEPENDENCIES ############################## -->
+	<!-- ########################################################################## -->
+	<dependencies>
+
+		<dependency>
+			<groupId>io.sarl.maven</groupId>
+			<artifactId>io.sarl.maven.sdk</artifactId>
+			<version>${sarl.version}</version>
+
+			<!-- To remove all the WARNINGS -->
+			<exclusions>
+				<exclusion>
+					<groupId>org.eclipse.platform</groupId>
+					<artifactId>org.eclipse.equinox.common</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.platform</groupId>
+					<artifactId>org.eclipse.osgi</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.platform</groupId>
+					<artifactId>org.eclipse.equinox.common</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.platform</groupId>
+					<artifactId>org.eclipse.core.jobs</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.platform</groupId>
+					<artifactId>org.eclipse.equinox.registry</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.platform</groupId>
+					<artifactId>org.eclipse.equinox.preferences</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.platform</groupId>
+					<artifactId>org.eclipse.equinox.preferences</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.platform</groupId>
+					<artifactId>org.eclipse.core.contenttype</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.platform</groupId>
+					<artifactId>org.eclipse.equinox.app</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.platform</groupId>
+					<artifactId>org.eclipse.osgi</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.platform</groupId>
+					<artifactId>org.eclipse.equinox.common</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.platform</groupId>
+					<artifactId>org.eclipse.equinox.preferences</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.platform</groupId>
+					<artifactId>org.eclipse.equinox.registry</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.platform</groupId>
+					<artifactId>org.eclipse.equinox.registry</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.platform</groupId>
+					<artifactId>org.eclipse.core.jobs</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.platform</groupId>
+					<artifactId>org.eclipse.core.contenttype</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.platform</groupId>
+					<artifactId>org.eclipse.equinox.app</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.platform</groupId>
+					<artifactId>org.eclipse.osgi</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.platform</groupId>
+					<artifactId>org.eclipse.core.runtime</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.platform</groupId>
+					<artifactId>org.eclipse.core.filesystem</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.platform</groupId>
+					<artifactId>org.eclipse.core.runtime</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.platform</groupId>
+					<artifactId>org.eclipse.core.resources</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.platform</groupId>
+					<artifactId>org.eclipse.text</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.jdt</groupId>
+					<artifactId>org.eclipse.jdt.core</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
 		<dependency>
-		    <groupId>org.apache.commons</groupId>
-		    <artifactId>commons-lang3</artifactId>
-		    <version>3.7</version>
-		</dependency>
-        
-
-       	<!--  JUNIT for unit testing  -->
-        <dependency>
-          <groupId>junit</groupId>
-          <artifactId>junit</artifactId>
-          <version>[4.13.1,)</version>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.7</version>
 		</dependency>
 
-       	
-       	<!--  JPL bidirectional Prolog-Java: https://github.com/SWI-Prolog/packages-jpl  -->
+
+		<!--  JUNIT for unit testing  -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>[4.13.1,)</version>
+		</dependency>
+
+
+		<!--  JPL bidirectional Prolog-Java: https://github.com/SWI-Prolog/packages-jpl  -->
 		<dependency>
 			<groupId>com.github.SWI-Prolog</groupId>
 			<artifactId>packages-jpl</artifactId>
-			<version>V8.3.2</version>	<!-- version 7.6.1 of JPL -->
+			<version>V8.3.2</version> <!-- version 7.6.1 of JPL -->
 		</dependency>
 
 
-    </dependencies>
+	</dependencies>
 
-    <dependencyManagement>
+	<dependencyManagement>
 		<dependencies>
 			<dependency>
 				<groupId>org.slf4j</groupId>
@@ -187,13 +234,11 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-        
-
-   
 
 
-
-   	<!-- ############################## BUILD PIPELINE PLUGINS ############################## -->
+	<!-- ########################################################################## -->
+	<!-- ####################### BUILD PIPELINE PLUGINS ########################### -->
+	<!-- ########################################################################## -->
 	<build>
 		<resources>
 			<resource>
@@ -208,8 +253,32 @@
 
 		<testSourceDirectory>src/test/java/io/sarl/extras</testSourceDirectory>
 
-
+		<!--  PLUGINS FOR BUILDING -->
 		<plugins>
+			<plugin>
+				<!-- SARL Maven compiler plugin -->
+				<!-- Facilitate compilation of SARL source code to Java classes -->
+				<groupId>io.sarl.maven</groupId>
+				<artifactId>sarl-maven-plugin</artifactId>
+				<version>${sarl.version}</version>
+				<extensions>true</extensions>
+				<configuration>
+					<source>${jdk.version}</source>
+					<target>${jdk.version}</target>
+					<encoding>${project.build.sourceEncoding}</encoding>
+				</configuration>
+
+				<dependencies>
+					<!-- Fix to deal with issue with wrong signed class (June 2021) https://groups.google.com/g/sarl/c/dt9u1dg6PK0 -->
+					<dependency>
+						<groupId>org.eclipse.platform</groupId>
+						<artifactId>org.eclipse.equinox.common</artifactId>
+						<version>3.14.100</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -221,23 +290,6 @@
 				-->
 			</plugin>
 
-			<plugin>
-				<!-- SARL Maven compiler plugin -->
-				<!-- Facilitate compilation of SARL source code to Java classes -->
-				<groupId>io.sarl.maven</groupId>
-				<artifactId>sarl-maven-plugin</artifactId>
-				<version>${sarl.version}</version>
-				<extensions>true</extensions>
-				<configuration>
-					<source>${maven.compiler.source}</source>
-					<target>${maven.compiler.target}</target>
-					<encoding>${project.build.sourceEncoding}</encoding>
-				</configuration>
-			</plugin>
-
-			<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-javadoc-plugin</artifactId> 
-				<executions> <execution> <id>attach-javadocs</id> <goals> <goal>jar</goal> 
-				</goals> </execution> </executions> </plugin> -->
 			<!-- Attach sources -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -266,13 +318,45 @@
 				</configuration>
 			</plugin>
 
-			<!-- Class to execute via maven exec:java https://www.mojohaus.org/exec-maven-plugin/ -->
+			<!-- Aggregate project into a FULL JAR package https://maven.apache.org/plugins/maven-assembly-plugin/ 
+				check https://github.com/sarl/sarl/issues/1061 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>3.3.0</version>
+				<executions>
+					<execution>
+						<id>make-assembly-with-deps</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<descriptors>
+								<descriptor>with-dependencies.xml</descriptor>
+							</descriptors>
+							<archive>
+								<manifest>
+									<mainClass>${cliRunnerMainClass}</mainClass>
+								</manifest>
+								<manifestEntries>
+									<Automatic-Module-Name>${project.artifactId}</Automatic-Module-Name>
+								</manifestEntries>
+							</archive>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- Class to execute via Maven exec:java https://www.mojohaus.org/exec-maven-plugin/ 
+				To execute a particular class do: mvn exec:java -Dexec.mainClass=BootMAS2 -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>exec-maven-plugin</artifactId>
+				<version>3.0.0</version>
 				<configuration>
-					<!-- <mainClass>io.janusproject.Boot</mainClass> -->
-					<mainClass>BootTestAgt</mainClass>
+					<addClasspath>true</addClasspath>
+					<mainClass>${exec.mainClass}</mainClass>
 				</configuration>
 			</plugin>
 		</plugins>
